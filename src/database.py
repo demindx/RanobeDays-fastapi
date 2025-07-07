@@ -1,29 +1,31 @@
-from typing import Annotated
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
 
-from fastapi import Depends
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session
+from src.config import config
 
 
 class Base(DeclarativeBase): ...
 
 
-class DB:
-    def __init__(self, url: str, echo: bool = False) -> None:
-        self.engine = create_engine(url, echo=echo)
+engine = create_async_engine(config.POSTGRES_URL)
 
-    def init(self):
-        self.create_tables()
+sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
-    def create_tables(self) -> None:
-        Base.metadata.create_all(self.engine)
 
-    def get_session(self):
-        with Session(self.engine) as session:
+async def get_db_session() -> AsyncSession:
+    async with sessionmaker() as session:
+        try:
             yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
 
 
-db = DB("sqlite:///db.sqlite")
-
-
-DbSession = Annotated[Session, Depends(db.get_session)]
+async def init_db() -> None:
+    async with engine.begin() as conn:
+        await conn.execute(text("create extension if not exists vector;"))
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
