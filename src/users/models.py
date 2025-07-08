@@ -29,7 +29,7 @@ class User(Base):
 class UserProfile(Base):
     __tablename__ = "user_profiles"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     first_name: Mapped[str] = mapped_column(String(50))
