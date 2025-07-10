@@ -1,12 +1,8 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
 
 from src.config import config
-
-
-class Base(DeclarativeBase): ...
-
+from src.models import Base
 
 engine = create_async_engine(config.POSTGRES_URL)
 
@@ -27,5 +23,5 @@ async def get_db_session() -> AsyncSession:
 async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.execute(text("create extension if not exists vector;"))
-        await conn.run_sync(Base.metadata.drop_all)
+        # await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
