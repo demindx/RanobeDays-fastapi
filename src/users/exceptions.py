@@ -15,4 +15,6 @@ class UserProfileNotFound(BaseException):
 
 class UserAlreadyExists(BaseException):
     def __init__(self):
-        super().__init__("User with this login or email already exists", status.HTTP_404_NOT_FOUND)
+        super().__init__(
+            "User with this login or email already exists", status.HTTP_404_NOT_FOUND
+        )

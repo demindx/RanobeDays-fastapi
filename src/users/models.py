@@ -36,4 +36,6 @@ class UserProfileModel(Base, BaseTimestamps):
 
     readed_chapters: Mapped[int] = mapped_column(default=0)
 
-    user: Mapped["UserModel"] = relationship(back_populates="user_profile", single_parent=True)
+    user: Mapped["UserModel"] = relationship(
+        back_populates="user_profile", single_parent=True
+    )

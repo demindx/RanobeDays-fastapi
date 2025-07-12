@@ -3,7 +3,12 @@ import bcrypt
 from src.users.exceptions import UserAlreadyExists, UserNotFound, UserProfileNotFound
 from src.users.models import UserModel, UserProfileModel
 from src.users.repository import UserRepository
-from src.users.schemas import UserCreateRequest, UserProfileResponse, UserProfileUpdateRequest, UserResponse
+from src.users.schemas import (
+    UserCreateRequest,
+    UserProfileResponse,
+    UserProfileUpdateRequest,
+    UserResponse,
+)
 
 
 class UserService:
@@ -11,7 +16,9 @@ class UserService:
         self.repository: UserRepository = repository
 
     def _get_password_hash(self, password: str) -> str:
-        return bcrypt.hashpw(salt=bcrypt.gensalt(), password=password.encode("utf-8")).decode("utf-8")
+        return bcrypt.hashpw(
+            salt=bcrypt.gensalt(), password=password.encode("utf-8")
+        ).decode("utf-8")
 
     async def create_user(self, data: UserCreateRequest) -> UserResponse:
         user_exists = await self.repository.get_user_by_login(data.login)
@@ -19,7 +26,11 @@ class UserService:
         if user_exists:
             raise UserAlreadyExists()
 
-        user = UserModel(login=data.login, email=data.email, password_hash=self._get_password_hash(data.get_password()))
+        user = UserModel(
+            login=data.login,
+            email=data.email,
+            password_hash=self._get_password_hash(data.get_password()),
+        )
 
         await self.repository.create_user(user)
 
@@ -53,12 +64,16 @@ class UserService:
 
         return UserProfileResponse.model_validate(profile)
 
-    async def update_user_profile(self, user_id: int, data: UserProfileUpdateRequest) -> UserProfileResponse:
+    async def update_user_profile(
+        self, user_id: int, data: UserProfileUpdateRequest
+    ) -> UserProfileResponse:
         profile = await self.repository.get_user_profile(user_id)
         if not profile:
             raise UserProfileNotFound()
 
-        for attr, value in data.model_dump(exclude_unset=True, exclude_none=True).items():
+        for attr, value in data.model_dump(
+            exclude_unset=True, exclude_none=True
+        ).items():
             if hasattr(profile, attr):
                 setattr(profile, attr, value)
 

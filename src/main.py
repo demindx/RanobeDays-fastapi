@@ -22,5 +22,7 @@ app.include_router(api_v1)
 
 @app.exception_handler(BaseException)
 async def base_exception_handler(request: Request, exc: BaseException):
-    content = GenericResponse[str](code=exc.status_code, message=exc.message).model_dump()
+    content = GenericResponse[str](
+        code=exc.status_code, message=exc.message
+    ).model_dump()
     return JSONResponse(status_code=exc.status_code, content=content)
