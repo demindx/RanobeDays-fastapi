@@ -8,7 +8,7 @@ from src.users.schemas import (
     UserResponse,
 )
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/")
