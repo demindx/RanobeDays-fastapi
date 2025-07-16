@@ -17,10 +17,11 @@ class UserModel(Base, BaseTimestamps):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    login: Mapped[str] = mapped_column(String(50), unique=True)
-    email: Mapped[str] = mapped_column(String(100), unique=True)
+    login: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True, index=True)
 
-    is_active: Mapped[bool] = mapped_column(default=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    is_verified: Mapped[bool] = mapped_column(default=False)
 
     password_hash: Mapped[str] = mapped_column(String(256))
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)

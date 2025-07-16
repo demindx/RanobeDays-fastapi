@@ -1,0 +1,22 @@
+import uuid
+
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.core.models import Base, BaseTimestamps
+
+
+class RefreshSessionModel(Base, BaseTimestamps):
+    __tablename__ = "refresh_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, primary_key=True, index=True, default=uuid.uuid4
+    )
+    refresh_token: Mapped[uuid.UUID] = mapped_column(UUID, index=True)
+
+    fingerprint: Mapped[str] = mapped_column(String(200))
+
+    expires_in: Mapped[int]
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))

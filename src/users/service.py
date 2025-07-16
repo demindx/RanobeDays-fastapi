@@ -4,9 +4,9 @@ from src.users.exceptions import UserAlreadyExists, UserNotFound, UserProfileNot
 from src.users.models import UserModel, UserProfileModel
 from src.users.repository import UserRepository
 from src.users.schemas import (
-    UserCreateRequest,
     UserProfileResponse,
     UserProfileUpdateRequest,
+    UserRegisterRequest,
     UserResponse,
 )
 
@@ -20,7 +20,7 @@ class UserService:
             salt=bcrypt.gensalt(), password=password.encode("utf-8")
         ).decode("utf-8")
 
-    async def create_user(self, data: UserCreateRequest) -> UserResponse:
+    async def create_user(self, data: UserRegisterRequest) -> UserResponse:
         user_exists = await self.repository.get_user_by_login(data.login)
 
         if user_exists:
@@ -100,3 +100,6 @@ class UserService:
 
     async def delete_user(self, id: int) -> None:
         await self.repository.delete_user(id)
+
+    def is_valid_password(self, password: str, pass_hash: str) -> bool:
+        return bcrypt.checkpw(password.encode("utf-8"), pass_hash.encode("utf-8"))

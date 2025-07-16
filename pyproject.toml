@@ -10,7 +10,9 @@ dependencies = [
   "bcrypt>=4.3",
   "fastapi[standard,standard]>=0.115.14",
   "pre-commit>=4.2",
+  "pydantic[email]>=2.11.7",
   "pydantic-settings>=2.10.1",
+  "pyjwt>=2.10.1",
   "sqlalchemy>=2.0.41",
 ]
 
@@ -64,6 +66,7 @@ lint.select = [
   "W",  # pycodestyle warnings
 ]
 lint.ignore = [
+  "B904",
   "E501", # line too long, handled by formatter
 ]
 # Настройки линтинга

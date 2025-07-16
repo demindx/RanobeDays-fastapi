@@ -13,14 +13,21 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserCreateRequest(BaseModel):
+class UserLoginRequest(BaseModel):
+    login: str | None = None
+    email: EmailStr | None = None
+    password: str
+    fingerprint: str
+
+
+class UserRegisterRequest(BaseModel):
     login: str
     email: EmailStr
     password1: str
     password2: str
 
     @model_validator(mode="after")
-    def validate_user(self) -> "UserCreateRequest":
+    def validate_user(self) -> "UserRegisterRequest":
         if self.password1 != self.password2:
             raise ValidationError("Passwords mismatch")
 
