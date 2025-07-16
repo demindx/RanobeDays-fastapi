@@ -45,6 +45,7 @@ async def get_user_profile_handler(
 async def update_user_profile_handler(
     service: UserServiceDep, id: int, data: UserProfileUpdateRequest
 ) -> GenericResponse[UserProfileResponse]:
+    """Update user profile"""
     profile = await service.update_user_profile(id, data)
 
     return GenericResponse[UserProfileResponse](data=profile)

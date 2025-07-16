@@ -47,6 +47,13 @@ class UserRepository:
 
         return result
 
+    async def get_user_by_email(self, email: str) -> UserModel | None:
+        stmt = select(UserModel).where(UserModel.email == email)
+
+        result = await self.session.scalar(stmt)
+
+        return result
+
     async def get_user_profile(self, user_id: int) -> UserProfileModel | None:
         stmt = select(UserProfileModel).where(UserProfileModel.user_id == user_id)
 
