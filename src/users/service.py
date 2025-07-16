@@ -1,5 +1,3 @@
-import bcrypt
-
 from src.users.exceptions import UserAlreadyExists, UserNotFound, UserProfileNotFound
 from src.users.models import UserModel, UserProfileModel
 from src.users.repository import UserRepository
@@ -9,16 +7,12 @@ from src.users.schemas import (
     UserRegisterRequest,
     UserResponse,
 )
+from src.users.utils import get_password_hash
 
 
 class UserService:
     def __init__(self, repository: UserRepository):
         self.repository: UserRepository = repository
-
-    def _get_password_hash(self, password: str) -> str:
-        return bcrypt.hashpw(
-            salt=bcrypt.gensalt(), password=password.encode("utf-8")
-        ).decode("utf-8")
 
     async def create_user(self, data: UserRegisterRequest) -> UserResponse:
         user_exists = await self.repository.get_user_by_login(data.login)
@@ -29,7 +23,7 @@ class UserService:
         user = UserModel(
             login=data.login,
             email=data.email,
-            password_hash=self._get_password_hash(data.get_password()),
+            password_hash=get_password_hash(data.get_password()),
         )
 
         await self.repository.create_user(user)
@@ -100,6 +94,3 @@ class UserService:
 
     async def delete_user(self, id: int) -> None:
         await self.repository.delete_user(id)
-
-    def is_valid_password(self, password: str, pass_hash: str) -> bool:
-        return bcrypt.checkpw(password.encode("utf-8"), pass_hash.encode("utf-8"))
