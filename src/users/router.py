@@ -18,7 +18,9 @@ async def get_users_handler(
     """Get all users"""
     users = await service.get_all_users()
 
-    return GenericResponse[list[UserResponse]](data=users)
+    data = [UserResponse.model_validate(user) for user in users]
+
+    return GenericResponse[list[UserResponse]](data=data)
 
 
 @router.get("/{id}")
@@ -28,7 +30,9 @@ async def get_user_handler(
     """Get user by id"""
     user = await service.get_user(id)
 
-    return GenericResponse[UserResponse](data=user)
+    data = UserResponse.model_validate(user)
+
+    return GenericResponse[UserResponse](data=data)
 
 
 @router.get("/{id}/profile")
@@ -38,7 +42,9 @@ async def get_user_profile_handler(
     """Get user profile"""
     profile = await service.get_user_profile(id)
 
-    return GenericResponse[UserProfileResponse](data=profile)
+    data = UserProfileResponse.model_validate(profile)
+
+    return GenericResponse[UserProfileResponse](data=data)
 
 
 @router.patch("/{id}/profile")
@@ -47,5 +53,7 @@ async def update_user_profile_handler(
 ) -> GenericResponse[UserProfileResponse]:
     """Update user profile"""
     profile = await service.update_user_profile(id, data)
+
+    profile = UserProfileResponse.model_validate(profile)
 
     return GenericResponse[UserProfileResponse](data=profile)

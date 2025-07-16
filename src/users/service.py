@@ -2,10 +2,8 @@ from src.users.exceptions import UserAlreadyExists, UserNotFound, UserProfileNot
 from src.users.models import UserModel, UserProfileModel
 from src.users.repository import UserRepository
 from src.users.schemas import (
-    UserProfileResponse,
     UserProfileUpdateRequest,
     UserRegisterRequest,
-    UserResponse,
 )
 from src.users.utils import get_password_hash
 
@@ -14,7 +12,7 @@ class UserService:
     def __init__(self, repository: UserRepository):
         self.repository: UserRepository = repository
 
-    async def create_user(self, data: UserRegisterRequest) -> UserResponse:
+    async def create_user(self, data: UserRegisterRequest) -> UserModel:
         user_exists = await self.repository.get_user_by_login(data.login)
 
         if user_exists:
@@ -32,38 +30,38 @@ class UserService:
 
         await self.repository.create_user_profile(profile)
 
-        return UserResponse.model_validate(user)
+        return user
 
-    async def get_user(self, id: int) -> UserResponse:
+    async def get_user(self, id: int) -> UserModel:
         user = await self.repository.get_user(id)
 
         if not user:
             raise UserNotFound()
 
-        return UserResponse.model_validate(user)
+        return user
 
-    async def get_all_users(self) -> list[UserResponse]:
+    async def get_all_users(self) -> list[UserModel]:
         users = await self.repository.get_all_users()
 
         if not users:
             return []
 
-        return [UserResponse.model_validate(user) for user in users]
+        return list(users)
 
-    async def get_user_profile(self, user_id: int) -> UserProfileResponse:
+    async def get_user_profile(self, user_id: int) -> UserProfileModel:
         profile = await self.repository.get_user_profile(user_id)
 
         if not profile:
-            raise UserProfileNotFound()
+            raise UserProfileNotFound
 
-        return UserProfileResponse.model_validate(profile)
+        return profile
 
     async def update_user_profile(
         self, user_id: int, data: UserProfileUpdateRequest
-    ) -> UserProfileResponse:
+    ) -> UserProfileModel:
         profile = await self.repository.get_user_profile(user_id)
         if not profile:
-            raise UserProfileNotFound()
+            raise UserProfileNotFound
 
         for attr, value in data.model_dump(
             exclude_unset=True, exclude_none=True
@@ -73,9 +71,9 @@ class UserService:
 
         profile = await self.repository.update_user_profile(profile)
 
-        return UserProfileResponse.model_validate(profile)
+        return profile
 
-    async def _update_user_status(self, id: int, is_active: bool) -> UserResponse:
+    async def _update_user_status(self, id: int, is_active: bool) -> UserModel:
         user = await self.repository.get_user(id)
         if not user:
             raise UserNotFound()
@@ -84,12 +82,12 @@ class UserService:
 
         user = await self.repository.update_user(user)
 
-        return UserResponse.model_validate(user)
+        return user
 
-    async def activate_user(self, id: int) -> UserResponse:
+    async def activate_user(self, id: int) -> UserModel:
         return await self._update_user_status(id, True)
 
-    async def deactivate_user(self, id: int) -> UserResponse:
+    async def deactivate_user(self, id: int) -> UserModel:
         return await self._update_user_status(id, False)
 
     async def delete_user(self, id: int) -> None:
