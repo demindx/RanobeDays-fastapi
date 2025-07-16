@@ -1,0 +1,38 @@
+version: 2
+updates:
+  # Обновления Python зависимостей
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    assignees:
+      - "@timbyxty"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Обновления GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    assignees:
+      - "@timbyxty"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Обновления Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
