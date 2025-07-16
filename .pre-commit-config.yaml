@@ -1,52 +1,25 @@
 repos:
-  # Базовые проверки
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: trailing-whitespace
       - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-toml
-      - id: check-json
-      - id: check-merge-conflict
-      - id: check-added-large-files
-      - id: debug-statements
-      - id: check-docstring-first
-
-  # Ruff для форматирования и линтинга
+      - id: trailing-whitespace
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: ["--write-changes"]
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: "v2.6.0"
+    hooks:
+      - id: pyproject-fmt
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.6
+    rev: "v0.11.11"
     hooks:
-      # Формат кода
       - id: ruff-format
-        types_or: [python, pyi, jupyter]
-      # Линтинг кода
       - id: ruff
-        types_or: [python, pyi, jupyter]
-        args: [--fix, --exit-non-zero-on-fix]
-
-  # Проверка типов (если добавим mypy)
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.13.0
-  #   hooks:
-  #     - id: mypy
-  #       additional_dependencies: [types-all]
-
-  # Commitizen для стандартизации коммитов
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.2.0
+        args: ["--fix", "--unsafe-fixes", "--exit-non-zero-on-fix"]
+  - repo: meta
     hooks:
-      - id: commitizen
-        stages: [commit-msg]
-
-ci:
-  autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit.com hooks
-
-    for more information, see https://pre-commit.ci
-  autofix_prs: true
-  autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
-  autoupdate_schedule: weekly
-  skip: []
-  submodules: false
+      - id: check-hooks-apply
+      - id: check-useless-excludes

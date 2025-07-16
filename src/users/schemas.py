@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, ValidationError, model_validator
+from pydantic import BaseModel, EmailStr, ValidationError, model_validator
 
 from src.users.models import UserRoleEnum
 
@@ -9,7 +9,8 @@ class UserResponse(BaseModel):
     password_hash: str
     role: UserRoleEnum
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 
 class UserLoginRequest(BaseModel):
@@ -60,4 +61,5 @@ class UserProfileUpdateRequest(BaseModel):
 class UserProfileResponse(BaseModel):
     readed_chapters: int
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
