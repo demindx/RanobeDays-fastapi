@@ -50,4 +50,4 @@ jobs:
 
     - name: Validate pyproject.toml
       run: |
-        python -c "import tomli; tomli.load(open('pyproject.toml', 'rb'))"
+        uv run python -c "import tomli; tomli.load(open('pyproject.toml', 'rb'))"
