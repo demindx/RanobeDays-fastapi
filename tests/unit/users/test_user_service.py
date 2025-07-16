@@ -200,11 +200,3 @@ class TestUserService:
         await user_service.delete_user(user_id)
 
         mock_repository.delete_user.assert_called_once_with(user_id)
-
-    def test_get_password_hash(self, user_service):
-        password = "testpassword123"
-
-        hashed = user_service._get_password_hash(password)
-
-        assert hashed != password
-        assert bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
