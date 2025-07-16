@@ -1,5 +1,3 @@
-"""API тесты для user endpoints."""
-
 import pytest
 from httpx import AsyncClient
 
@@ -9,16 +7,11 @@ from src.users.repository import UserRepository
 
 @pytest.mark.api
 class TestUserEndpoints:
-    """Тесты для API endpoints пользователей."""
-
     async def test_get_users_empty(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест получения пустого списка пользователей."""
-        # Act
         response = await async_test_client.get("/api/v1/users/")
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
@@ -28,8 +21,6 @@ class TestUserEndpoints:
     async def test_get_users_with_data(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест получения списка пользователей с данными."""
-        # Arrange - создаем пользователей в БД
         repo = UserRepository(test_session)
 
         user1 = UserModel(
@@ -48,10 +39,8 @@ class TestUserEndpoints:
         await repo.create_user(user1)
         await repo.create_user(user2)
 
-        # Act
         response = await async_test_client.get("/api/v1/users/")
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
@@ -64,8 +53,6 @@ class TestUserEndpoints:
     async def test_get_user_by_id_success(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест успешного получения пользователя по ID."""
-        # Arrange
         repo = UserRepository(test_session)
         user = UserModel(
             login="testuser",
@@ -75,10 +62,8 @@ class TestUserEndpoints:
         )
         created_user = await repo.create_user(user)
 
-        # Act
         response = await async_test_client.get(f"/api/v1/users/{created_user.id}")
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
@@ -89,11 +74,8 @@ class TestUserEndpoints:
     async def test_get_user_by_id_not_found(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест получения несуществующего пользователя."""
-        # Act
         response = await async_test_client.get("/api/v1/users/999")
 
-        # Assert
         assert response.status_code == 404
         data = response.json()
         assert data["code"] == 404
@@ -102,8 +84,6 @@ class TestUserEndpoints:
     async def test_get_user_profile_success(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест успешного получения профиля пользователя."""
-        # Arrange
         repo = UserRepository(test_session)
 
         user = UserModel(
@@ -114,12 +94,10 @@ class TestUserEndpoints:
         profile = UserProfileModel(user_id=created_user.id, readed_chapters=42)
         await repo.create_user_profile(profile)
 
-        # Act
         response = await async_test_client.get(
             f"/api/v1/users/{created_user.id}/profile"
         )
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
@@ -128,11 +106,8 @@ class TestUserEndpoints:
     async def test_get_user_profile_not_found(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест получения профиля несуществующего пользователя."""
-        # Act
         response = await async_test_client.get("/api/v1/users/999/profile")
 
-        # Assert
         assert response.status_code == 404
         data = response.json()
         assert data["code"] == 404
@@ -140,8 +115,6 @@ class TestUserEndpoints:
     async def test_update_user_profile_success(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест успешного обновления профиля пользователя."""
-        # Arrange
         repo = UserRepository(test_session)
 
         user = UserModel(
@@ -154,12 +127,10 @@ class TestUserEndpoints:
 
         update_data = {"readed_chapters": 25}
 
-        # Act
         response = await async_test_client.patch(
             f"/api/v1/users/{created_user.id}/profile", json=update_data
         )
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
@@ -168,23 +139,17 @@ class TestUserEndpoints:
     async def test_update_user_profile_not_found(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест обновления профиля несуществующего пользователя."""
-        # Arrange
         update_data = {"readed_chapters": 25}
 
-        # Act
         response = await async_test_client.patch(
             "/api/v1/users/999/profile", json=update_data
         )
 
-        # Assert
         assert response.status_code == 404
 
     async def test_update_user_profile_partial_update(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест частичного обновления профиля (только некоторые поля)."""
-        # Arrange
         repo = UserRepository(test_session)
 
         user = UserModel(
@@ -195,15 +160,12 @@ class TestUserEndpoints:
         profile = UserProfileModel(user_id=created_user.id, readed_chapters=15)
         await repo.create_user_profile(profile)
 
-        # Обновляем только readed_chapters
         update_data = {"readed_chapters": 50}
 
-        # Act
         response = await async_test_client.patch(
             f"/api/v1/users/{created_user.id}/profile", json=update_data
         )
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["data"]["readed_chapters"] == 50
@@ -211,11 +173,8 @@ class TestUserEndpoints:
     async def test_api_response_format(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест формата ответа API."""
-        # Act
         response = await async_test_client.get("/api/v1/users/")
 
-        # Assert
         data = response.json()
         assert "code" in data
         assert "message" in data
@@ -226,18 +185,13 @@ class TestUserEndpoints:
     async def test_invalid_user_id_format(
         self, async_test_client: AsyncClient, override_get_db_session
     ):
-        """Тест с невалидным форматом ID пользователя."""
-        # Act
         response = await async_test_client.get("/api/v1/users/invalid_id")
 
-        # Assert
-        assert response.status_code == 422  # Unprocessable Entity
+        assert response.status_code == 422
 
     async def test_empty_profile_update(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест обновления профиля с пустыми данными."""
-        # Arrange
         repo = UserRepository(test_session)
 
         user = UserModel(
@@ -248,21 +202,17 @@ class TestUserEndpoints:
         profile = UserProfileModel(user_id=created_user.id, readed_chapters=20)
         await repo.create_user_profile(profile)
 
-        # Act - пустое обновление
         response = await async_test_client.patch(
             f"/api/v1/users/{created_user.id}/profile", json={}
         )
 
-        # Assert - должно пройти без изменений
         assert response.status_code == 200
         data = response.json()
-        assert data["data"]["readed_chapters"] == 20  # Значение не изменилось
+        assert data["data"]["readed_chapters"] == 20
 
     async def test_multiple_users_different_roles(
         self, async_test_client: AsyncClient, test_session, override_get_db_session
     ):
-        """Тест API с пользователями разных ролей."""
-        # Arrange
         repo = UserRepository(test_session)
 
         admin = UserModel(
@@ -281,10 +231,8 @@ class TestUserEndpoints:
         await repo.create_user(admin)
         await repo.create_user(manager)
 
-        # Act
         response = await async_test_client.get("/api/v1/users/")
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert len(data["data"]) == 2
