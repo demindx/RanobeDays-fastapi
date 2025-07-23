@@ -12,7 +12,7 @@ class UserRoleEnum(Enum):
     MANAGER = "manager"
 
 
-class UserModel(Base, BaseTimestamps):
+class User(Base, BaseTimestamps):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -26,10 +26,10 @@ class UserModel(Base, BaseTimestamps):
     password_hash: Mapped[str] = mapped_column(String(256))
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)
 
-    user_profile: Mapped["UserProfileModel"] = relationship(back_populates="user")
+    user_profile: Mapped["UserProfile"] = relationship(back_populates="user")
 
 
-class UserProfileModel(Base, BaseTimestamps):
+class UserProfile(Base, BaseTimestamps):
     __tablename__ = "user_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -37,6 +37,6 @@ class UserProfileModel(Base, BaseTimestamps):
 
     readed_chapters: Mapped[int] = mapped_column(default=0)
 
-    user: Mapped["UserModel"] = relationship(
+    user: Mapped["User"] = relationship(
         back_populates="user_profile", single_parent=True
     )

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Cookie, Depends, Response
 from src.auth.dependencies import AuthServiceDep, get_admin_user
 from src.auth.schemas import Tokens
 from src.core.schemas import GenericResponse
-from src.users.models import UserModel
+from src.users.models import User
 from src.users.schemas import UserLoginRequest, UserRegisterRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -63,5 +63,5 @@ async def logout_handler(
 
 
 @router.post("/test_protected")
-async def test(user: Annotated[UserModel, Depends(get_admin_user)]):
+async def test(user: Annotated[User, Depends(get_admin_user)]):
     return user

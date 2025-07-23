@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.core.models import Base, BaseTimestamps
 
 
-class RefreshSessionModel(Base, BaseTimestamps):
+class RefreshSession(Base, BaseTimestamps):
     __tablename__ = "refresh_sessions"
 
     id: Mapped[uuid.UUID] = mapped_column(

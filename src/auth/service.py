@@ -6,7 +6,7 @@ from src.auth.repository import AuthRepository
 from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
 from src.users.exceptions import UserNotFound
-from src.users.models import UserModel
+from src.users.models import User
 from src.users.schemas import UserLoginRequest, UserRegisterRequest
 from src.users.service import UserService
 from src.users.utils import is_valid_password
@@ -20,8 +20,8 @@ class AuthService:
     async def register(self, data: UserRegisterRequest):
         await self.user_service.create_user(data)
 
-    async def _user_auth(self, data: UserLoginRequest) -> UserModel:
-        user: UserModel | None = None
+    async def _user_auth(self, data: UserLoginRequest) -> User:
+        user: User | None = None
 
         if data.login:
             user = await self.user_service.repository.get_user_by_login(data.login)
