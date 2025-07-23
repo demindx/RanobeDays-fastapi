@@ -17,10 +17,8 @@ dependencies = [
 ]
 
 [tool.ruff]
-target-version = "py313" # Или ваша версия Python
-# Основные настройки
-line-length = 88 # Совместимо с black
-# Исключения
+target-version = "py313"
+line-length = 88
 exclude = [
   ".bzr",
   ".direnv",
@@ -43,33 +41,28 @@ exclude = [
   "node_modules",
   "venv",
 ]
-# Исправления
 fix = true
 unsafe-fixes = true
 
-# Настройки импортов (совместимо с isort)
 format.indent-style = "space"
 format.quote-style = "double"
 format.line-ending = "auto"
 format.docstring-code-line-length = "dynamic"
-# Автоматическое форматирование длинных строк
 format.docstring-code-format = true
-# Настройки форматирования
-# Правила линтинга
 lint.select = [
-  "B",  # flake8-bugbear
-  "C4", # flake8-comprehensions
-  "E",  # pycodestyle errors
-  "F",  # pyflakes
-  "I",  # isort
-  "UP", # pyupgrade
-  "W",  # pycodestyle warnings
+  "B",
+  "C4",
+  "E",
+  "F",
+  "I",
+  "UP",
+  "W",
 ]
 lint.ignore = [
   "B904",
-  "E501", # line too long, handled by formatter
+  "E501",
 ]
-# Настройки линтинга
+
 lint.isort.combine-as-imports = true
 lint.isort.force-wrap-aliases = true
 lint.isort.known-first-party = [ "src" ]

@@ -2,11 +2,18 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.auth.exceptions import ForbiddenError, InvalidTokenError
 from src.auth.repository import AuthRepository
+from src.auth.security import JwtHeaderBearer
 from src.auth.service import AuthService
+from src.auth.utils import decode_jwt_token
 from src.core.dependencies import DbSession
 from src.users.dependencies import get_user_service
+from src.users.exceptions import UserNotFound
+from src.users.models import UserModel, UserRoleEnum
 from src.users.service import UserService
+
+header_bearer = JwtHeaderBearer()
 
 
 def get_auth_repo(session: DbSession):
@@ -21,3 +28,23 @@ def get_auth_service(
 
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+
+
+async def get_current_user(
+    service: Annotated[UserService, Depends(get_user_service)],
+    token: Annotated[str, Depends(header_bearer)],
+) -> UserModel:
+    token_data = decode_jwt_token(token)
+
+    try:
+        user = await service.get_user(token_data.sub)
+    except UserNotFound:
+        raise InvalidTokenError("Invalid token")
+
+    return user
+
+
+async def get_admin_user(user: Annotated[UserModel, Depends(get_current_user)]):
+    if user.role != UserRoleEnum.ADMIN:
+        raise ForbiddenError
+    return user

@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-from typing import Literal
 
 from pydantic import BaseModel
 
@@ -12,7 +11,6 @@ class Tokens(BaseModel):
 
 class TokenData(BaseModel):
     sub: int
-    type: Literal["access", "refresh"]
     exp: datetime
 
 
