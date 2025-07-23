@@ -34,3 +34,13 @@ class RefreshSessionCreationError(BaseException):
 class RefreshSessionNotFound(BaseException):
     def __init__(self):
         super().__init__("Refresh session not found", status.HTTP_404_NOT_FOUND)
+
+
+class NotAuthenticated(BaseException):
+    def __init__(self):
+        super().__init__("Not authenticated", status.HTTP_401_UNAUTHORIZED)
+
+
+class ForbiddenError(BaseException):
+    def __init__(self):
+        super().__init__("Not allowed", status.HTTP_403_FORBIDDEN)

@@ -27,6 +27,8 @@ def decode_jwt_token(token: str) -> TokenData:
     except Exception as e:
         raise TokenError(f"Token validation failed: {e}")
 
+    payload["sub"] = int(payload["sub"])
+
     payload["exp"] = datetime.fromtimestamp(payload["exp"], UTC)
 
     return TokenData(**payload)

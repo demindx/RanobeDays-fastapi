@@ -9,6 +9,7 @@ from src.users.exceptions import UserNotFound
 from src.users.models import UserModel
 from src.users.schemas import UserLoginRequest, UserRegisterRequest
 from src.users.service import UserService
+from src.users.utils import is_valid_password
 
 
 class AuthService:
@@ -30,7 +31,7 @@ class AuthService:
         if not user:
             raise UserNotFound
 
-        if not self.user_service.is_valid_password(data.password, user.password_hash):
+        if not is_valid_password(data.password, user.password_hash):
             raise UserAuthDenied(
                 f"{'Login' if data.login else 'Email'} or password are is incorrect"
             )
