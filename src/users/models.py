@@ -1,10 +1,13 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
 
+if TYPE_CHECKING:
+    from src.teams.models import Team
 
 class UserRoleEnum(Enum):
     ADMIN = "admin"
@@ -27,6 +30,7 @@ class User(Base, BaseTimestamps):
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)
 
     user_profile: Mapped["UserProfile"] = relationship(back_populates="user")
+    teams: Mapped["Team"] = relationship(back_populates="users")
 
 
 class UserProfile(Base, BaseTimestamps):
