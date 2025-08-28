@@ -5,7 +5,7 @@ from src.auth.exceptions import TokenExpired, UserAuthDenied
 from src.auth.repository import AuthRepository
 from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
-from src.users.exceptions import UserNotFound
+from src.core.exceptions import NotFound
 from src.users.models import User
 from src.users.schemas import UserLoginRequest, UserRegisterRequest
 from src.users.service import UserService
@@ -29,7 +29,7 @@ class AuthService:
             user = await self.user_service.repository.get_user_by_email(data.email)
 
         if not user:
-            raise UserNotFound
+            raise NotFound(User)
 
         if not is_valid_password(data.password, user.password_hash):
             raise UserAuthDenied(

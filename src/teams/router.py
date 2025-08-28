@@ -1,0 +1,63 @@
+from fastapi import APIRouter
+
+from src.core.schemas import GenericResponse
+from src.teams.dependencies import TeamServiceDep
+from src.teams.schemas import TeamCreate, TeamResponse, TeamUpdate
+
+router = APIRouter(prefix="/teams", tags=["teams"])
+
+
+@router.get("/")
+async def get_teams_handler(
+    service: TeamServiceDep
+) -> GenericResponse[list[TeamResponse]]:
+    teams = await service.get_all()
+
+    teams = [TeamResponse.model_validate(team) for team in teams]
+
+    return GenericResponse[list[TeamResponse]](data=teams)
+
+
+@router.post("/")
+async def create_team_handler(
+    service: TeamServiceDep,
+    data: TeamCreate
+) -> GenericResponse[TeamResponse]:
+    team = await service.create(data)
+
+    team = TeamResponse.model_validate(team)
+
+    return GenericResponse[TeamResponse](data=team)
+
+
+@router.get("/{id}")
+async def get_team(
+    service: TeamServiceDep,
+    id: int
+) -> GenericResponse[TeamResponse]:
+    team = await service.get_by_id(id)
+
+    team = TeamResponse.model_validate(team)
+
+    return GenericResponse[TeamResponse](data=team)
+
+
+@router.patch("/{id}")
+async def update_team_handler(
+    service: TeamServiceDep,
+    data: TeamUpdate,
+    id: int
+) -> GenericResponse[TeamResponse]:
+    team = await service.update(id, data)
+
+    team = TeamResponse.model_validate(team)
+
+    return GenericResponse[TeamResponse](data=team)
+
+
+@router.delete("/{id}")
+async def delete_team_handler(
+    service: TeamServiceDep,
+    id: int
+) -> None:
+    await service.delete(id)

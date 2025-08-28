@@ -26,7 +26,7 @@ class UserRepository:
 
         return profile
 
-    async def get_all_users(self) -> Sequence[User] | None:
+    async def get_all_users(self) -> Sequence[User]:
         stmt = select(User)
 
         result = await self.session.scalars(stmt)

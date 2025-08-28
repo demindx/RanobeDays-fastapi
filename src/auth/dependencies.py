@@ -8,8 +8,8 @@ from src.auth.security import JwtHeaderBearer
 from src.auth.service import AuthService
 from src.auth.utils import decode_jwt_token
 from src.core.dependencies import DbSession
+from src.core.exceptions import NotFound
 from src.users.dependencies import get_user_service
-from src.users.exceptions import UserNotFound
 from src.users.models import User, UserRoleEnum
 from src.users.service import UserService
 
@@ -38,7 +38,7 @@ async def get_current_user(
 
     try:
         user = await service.get_user(token_data.sub)
-    except UserNotFound:
+    except NotFound:
         raise InvalidTokenError("Invalid token")
 
     return user
