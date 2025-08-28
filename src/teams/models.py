@@ -28,11 +28,10 @@ class Team(Base):
     users: Mapped[list[User]] = relationship(back_populates="teams")
 
 
-#TODO: add some additional info like who added what a role of memeber joined_date and etc.
 class TeamUsers(Base):
     __tablename__ = "team_users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), unique=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"), unique=True)
