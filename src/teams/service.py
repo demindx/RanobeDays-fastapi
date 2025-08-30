@@ -1,4 +1,4 @@
-from src.teams.models import Team
+from src.teams.models import Team, TeamUserRole, TeamUsers
 from src.teams.repository import TeamRepository
 from src.teams.schemas import TeamCreate, TeamUpdate
 
@@ -26,10 +26,23 @@ class TeamService:
             creator_id=data.creator_id,
         )
 
-        return await self.repository.create(team)
+        team = await self.repository.create(team)
+
+        await self.add_user(team.creator_id, team.id, TeamUserRole.CREATOR)
+
+        return team
 
     async def update(self, id: int, data: TeamUpdate) -> Team:
         return await self.repository.update(id, data)
 
     async def delete(self, id: int) -> None:
         await self.repository.delete(id)
+
+    async def add_user(self, user_id: int, team_id: int, role: TeamUserRole):
+        team_user_conn = TeamUsers(
+            user_id = user_id,
+            team_id = team_id,
+            role = role
+        )
+
+        await self.repository.add_user(team_user_conn)

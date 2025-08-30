@@ -2,20 +2,9 @@ from fastapi import APIRouter
 
 from src.core.schemas import GenericResponse
 from src.teams.dependencies import TeamServiceDep
-from src.teams.schemas import TeamCreate, TeamResponse, TeamUpdate
+from src.teams.schemas import TeamAddUser, TeamCreate, TeamResponse, TeamUpdate
 
 router = APIRouter(prefix="/teams", tags=["teams"])
-
-
-@router.get("/")
-async def get_teams_handler(
-    service: TeamServiceDep
-) -> GenericResponse[list[TeamResponse]]:
-    teams = await service.get_all()
-
-    teams = [TeamResponse.model_validate(team) for team in teams]
-
-    return GenericResponse[list[TeamResponse]](data=teams)
 
 
 @router.post("/")
@@ -28,6 +17,17 @@ async def create_team_handler(
     team = TeamResponse.model_validate(team)
 
     return GenericResponse[TeamResponse](data=team)
+
+
+@router.get("/")
+async def get_teams_handler(
+    service: TeamServiceDep
+) -> GenericResponse[list[TeamResponse]]:
+    teams = await service.get_all()
+
+    teams = [TeamResponse.model_validate(team) for team in teams]
+
+    return GenericResponse[list[TeamResponse]](data=teams)
 
 
 @router.get("/{id}")
@@ -61,3 +61,12 @@ async def delete_team_handler(
     id: int
 ) -> None:
     await service.delete(id)
+
+
+@router.post("/{id}/users")
+async def add_user_to_team_handler(
+    service: TeamServiceDep,
+    id: int,
+    data: TeamAddUser
+):
+    await service.add_user(data.user_id, id, data.role)
