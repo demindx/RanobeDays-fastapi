@@ -46,5 +46,5 @@ class TeamUsers(Base):
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"))
 
     __table_args__ = (
-        UniqueConstraint("user_id", "team_id", name="user_id and team_id unique constraint")
+        UniqueConstraint("user_id", "team_id", name="user_id and team_id unique constraint"),
     )
