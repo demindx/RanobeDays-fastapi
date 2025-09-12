@@ -1,9 +1,11 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.repository import BaseRepository
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamUpdate
+from src.core.exceptions import AlreadyExists
 
 
 class TeamRepository(BaseRepository[Team, TeamUpdate]):
@@ -23,3 +25,16 @@ class TeamRepository(BaseRepository[Team, TeamUpdate]):
         result = await self.session.scalars(stmt)
 
         return list(result.all())
+
+
+    async def add_user(self, connection: TeamUsers) -> None:
+        try:
+            self.session.add(connection)
+            await self.session.flush()
+        except IntegrityError as e:
+            err = str(e)
+
+            if "unique" in err:
+                raise AlreadyExists(TeamUsers)
+
+            raise

@@ -6,6 +6,7 @@ RUN pip install uv
 
 COPY . .
 
+ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
 RUN uv sync
 
 EXPOSE 8080

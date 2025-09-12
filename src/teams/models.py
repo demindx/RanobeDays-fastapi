@@ -1,6 +1,6 @@
 from enum import Enum
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base
@@ -13,12 +13,19 @@ class TeamType(Enum):
     TRANSLATORS = "translators"
 
 
+class TeamUserRole(Enum):
+    CREATOR = "creator"
+    MANAGER = "manager"
+    NEWBIE = "newbie"
+
+
 class Team(Base):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
 
     name: Mapped[str] = mapped_column(String(255))
+
     type: Mapped[TeamType]
 
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
@@ -33,5 +40,11 @@ class TeamUsers(Base):
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"), unique=True)
+    role: Mapped[TeamUserRole]
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"))
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "team_id", name="user_id and team_id unique constraint"),
+    )
