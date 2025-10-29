@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -7,7 +8,7 @@ from src.core.exceptions import AlreadyExists, NotFound
 from src.core.models import Base
 
 
-class BaseRepository[ModelType: Base, UpdateSchema: BaseModel]:
+class BaseRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
     def __init__(self, session: AsyncSession, model: type[ModelType]):
         self.session: AsyncSession = session
         self.model: type[ModelType] = model
