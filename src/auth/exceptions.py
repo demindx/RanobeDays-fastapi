@@ -1,24 +1,24 @@
 from fastapi import status
 
-from src.core.exceptions import BaseException
+from src.core.exceptions import AppException
 
 
-class UserAuthDenied(BaseException):
+class UserAuthDenied(AppException):
     def __init__(self, message: str, status: int = status.HTTP_401_UNAUTHORIZED):
         super().__init__(message, status)
 
 
-class TokenError(BaseException):
+class TokenError(AppException):
     def __init__(self, message: str, status_code: int = status.HTTP_401_UNAUTHORIZED):
         super().__init__(message, status_code)
 
 
-class TokenExpired(BaseException):
+class TokenExpired(AppException):
     def __init__(self):
         super().__init__("Token has been expired", status.HTTP_401_UNAUTHORIZED)
 
 
-class CookieError(BaseException):
+class CookieError(AppException):
     def __init__(self, message: str, status_code: int = status.HTTP_401_UNAUTHORIZED):
         super().__init__(message, status_code)
 
@@ -26,21 +26,21 @@ class CookieError(BaseException):
 class InvalidTokenError(TokenError): ...
 
 
-class RefreshSessionCreationError(BaseException):
+class RefreshSessionCreationError(AppException):
     def __init__(self):
         super().__init__("Failed to create session", status.HTTP_401_UNAUTHORIZED)
 
 
-class RefreshSessionNotFound(BaseException):
+class RefreshSessionNotFound(AppException):
     def __init__(self):
         super().__init__("Refresh session not found", status.HTTP_404_NOT_FOUND)
 
 
-class NotAuthenticated(BaseException):
+class NotAuthenticated(AppException):
     def __init__(self):
         super().__init__("Not authenticated", status.HTTP_401_UNAUTHORIZED)
 
 
-class ForbiddenError(BaseException):
+class ForbiddenError(AppException):
     def __init__(self):
         super().__init__("Not allowed", status.HTTP_403_FORBIDDEN)
