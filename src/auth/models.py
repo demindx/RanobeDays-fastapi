@@ -19,6 +19,6 @@ class RefreshSession(Base[uuid.UUID, RefreshSessionCreate], BaseTimestamps):
 
     fingerprint: Mapped[str] = mapped_column(String(200))
 
-    expires_in: Mapped[int]
+    expires_in: Mapped[int] = mapped_column()
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
