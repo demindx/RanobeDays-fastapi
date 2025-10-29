@@ -19,7 +19,7 @@ class TeamUserRole(Enum):
     NEWBIE = "newbie"
 
 
-class Team(Base):
+class Team(Base[int]):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
