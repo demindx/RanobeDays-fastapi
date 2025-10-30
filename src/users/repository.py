@@ -8,7 +8,7 @@ from src.users.models import User, UserProfile
 
 class UserRepository:
     def __init__(self, session: AsyncSession):
-        self.session = session
+        self.session: AsyncSession = session
 
     async def create_user(self, user: User) -> User:
         self.session.add(user)
