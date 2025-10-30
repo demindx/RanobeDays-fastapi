@@ -35,7 +35,7 @@ class Team(Base[int]):
     users: Mapped[list[User]] = relationship(back_populates="teams")
 
 
-class TeamUsers(Base):
+class TeamUsers(Base[int]):
     __tablename__ = "team_users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)

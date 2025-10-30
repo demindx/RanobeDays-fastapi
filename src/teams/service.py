@@ -5,7 +5,7 @@ from src.teams.schemas import TeamCreate, TeamUpdate
 
 class TeamService:
     def __init__(self, repository: TeamRepository) -> None:
-        self.repository = repository
+        self.repository: TeamRepository = repository
 
     async def get_by_id(self, id: int) -> Team:
         return await self.repository.get_by_id(id)

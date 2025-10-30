@@ -9,6 +9,7 @@ from src.core.models import Base, BaseTimestamps
 if TYPE_CHECKING:
     from src.teams.models import Team
 
+
 class UserRoleEnum(Enum):
     ADMIN = "admin"
     COMMON = "common"

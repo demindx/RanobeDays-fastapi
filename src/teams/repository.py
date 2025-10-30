@@ -2,13 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.repository import BaseRepository
+from src.core.repository import PostgresRepository
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamUpdate
 from src.core.exceptions import AlreadyExists
 
 
-class TeamRepository(BaseRepository[Team, TeamUpdate]):
+class TeamRepository(PostgresRepository[Team, TeamUpdate]):
     def __init__(self, session: AsyncSession, model: type[Team]):
         super().__init__(session, model)
 

@@ -1,4 +1,5 @@
 from typing import Any
+import uuid
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -8,12 +9,12 @@ from src.core.exceptions import AlreadyExists, NotFound
 from src.core.models import Base
 
 
-class BaseRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
+class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
     def __init__(self, session: AsyncSession, model: type[ModelType]):
         self.session: AsyncSession = session
         self.model: type[ModelType] = model
 
-    async def get_by_id(self, id: int) -> ModelType:
+    async def get_by_id(self, id: int | uuid.UUID) -> ModelType:
         stmt = select(self.model).where(self.model.id == id)
 
         try:
@@ -43,7 +44,7 @@ class BaseRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
 
         return instance
 
-    async def update(self, id: int, data: UpdateSchema) -> ModelType:
+    async def update(self, id: int | uuid.UUID, data: UpdateSchema) -> ModelType:
         instance = await self.get_by_id(id)
 
         for field, value in data.model_dump(exclude_none=True, exclude_unset=True).items():
@@ -64,7 +65,7 @@ class BaseRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
 
         return instance
 
-    async def delete(self, id: int) -> None:
+    async def delete(self, id: int | uuid.UUID) -> None:
         instance = await self.get_by_id(id)
         await self.session.delete(instance)
         await self.session.flush()
