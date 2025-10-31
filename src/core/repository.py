@@ -1,4 +1,5 @@
-from typing import Any
+from abc import ABC
+from typing import Any, override
 import uuid
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -9,41 +10,64 @@ from src.core.exceptions import AlreadyExists, NotFound
 from src.core.models import Base
 
 
-class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
-    def __init__(self, session: AsyncSession, model: type[ModelType]):
-        self.session: AsyncSession = session
-        self.model: type[ModelType] = model
+class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
+    async def get_by_id(self, id: Any) -> ModelType:
+        raise NotImplementedError
 
+    async def get_all(self, limit: int, offset: int) -> list[ModelType]:
+        raise NotImplementedError
+
+    async def create(self, instance: ModelType) -> ModelType:
+        raise NotImplementedError
+
+    async def update(self, id: Any, data: UpdateSchema) -> ModelType:
+        raise NotImplementedError
+
+    async def delete(self, id: Any) -> None:
+        raise NotImplementedError
+
+
+class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
+    AbstractRepository[ModelType, UpdateSchema]
+):
+    def __init__(self, session: AsyncSession, model: type[ModelType]):
+        self._session: AsyncSession = session
+        self.__model: type[ModelType] = model
+
+    @override
     async def get_by_id(self, id: int | uuid.UUID) -> ModelType:
-        stmt = select(self.model).where(self.model.id == id)
+        stmt = select(self.__model).where(self.__model.id == id)
 
         try:
-            result = (await self.session.execute(stmt)).scalar_one()
+            result = (await self._session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_id.__name__, id)
+            raise NotFound(self.__model, self.get_by_id.__name__, id)
 
         return result
 
+    @override
     async def get_all(self, limit: int, offset: int) -> list[ModelType]:
-        stmt = select(self.model).limit(limit).offset(offset)
+        stmt = select(self.__model).limit(limit).offset(offset)
 
-        result = (await self.session.execute(stmt)).scalars()
+        result = (await self._session.execute(stmt)).scalars()
 
         return list(result)
 
+    @override
     async def create(self, instance: ModelType) -> ModelType:
         try:
-            self.session.add(instance)
-            await self.session.flush()
-            await self.session.refresh(instance)
+            self._session.add(instance)
+            await self._session.flush()
+            await self._session.refresh(instance)
         except IntegrityError as e:
             err = str(e)
 
             if "unique" in err:
-                raise AlreadyExists(self.model)
+                raise AlreadyExists(self.__model)
 
         return instance
 
+    @override
     async def update(self, id: int | uuid.UUID, data: UpdateSchema) -> ModelType:
         instance = await self.get_by_id(id)
 
@@ -52,20 +76,21 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel]:
                 setattr(instance, field, value)
 
         try:
-            self.session.add(instance)
-            await self.session.flush()
-            await self.session.refresh(instance)
+            self._session.add(instance)
+            await self._session.flush()
+            await self._session.refresh(instance)
         except IntegrityError as e:
             err = str(e)
 
             if "unique" in err:
-                raise AlreadyExists(self.model)
+                raise AlreadyExists(self.__model)
 
             raise
 
         return instance
 
+    @override
     async def delete(self, id: int | uuid.UUID) -> None:
         instance = await self.get_by_id(id)
-        await self.session.delete(instance)
-        await self.session.flush()
+        await self._session.delete(instance)
+        await self._session.flush()
