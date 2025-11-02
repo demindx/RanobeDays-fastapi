@@ -73,6 +73,8 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
             if "unique" in err:
                 raise AlreadyExists(self.model)
 
+            raise
+
         return instance
 
     @override
