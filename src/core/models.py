@@ -1,3 +1,6 @@
+from abc import ABCMeta, abstractmethod
+from typing import Self
+from pydantic import BaseModel
 from datetime import UTC, datetime
 
 from sqlalchemy import DateTime
@@ -8,6 +11,9 @@ class Base[T](DeclarativeBase):
     __abstract__ = True
     id: Mapped[T]
 
+    @classmethod
+    def from_data(cls, data: BaseModel) -> Self:
+        return cls(**data.model_dump())
 
 class BaseTimestamps:
     created_at: Mapped[datetime] = mapped_column(

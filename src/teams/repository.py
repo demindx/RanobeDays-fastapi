@@ -15,22 +15,22 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
     async def get_by_creator_id(self, id: int) -> list[Team]:
         stmt = select(Team).where(Team.creator_id == id)
 
-        result = await self._session.scalars(stmt)
+        result = await self.session.scalars(stmt)
 
         return list(result.all())
 
     async def get_user_teams(self, id: int) -> list[Team]:
         stmt = select(Team).join(TeamUsers, Team.id == TeamUsers.team_id).where(TeamUsers.user_id == id)
 
-        result = await self._session.scalars(stmt)
+        result = await self.session.scalars(stmt)
 
         return list(result.all())
 
 
     async def add_user(self, connection: TeamUsers) -> None:
         try:
-            self._session.add(connection)
-            await self._session.flush()
+            self.session.add(connection)
+            await self.session.flush()
         except IntegrityError as e:
             err = str(e)
 

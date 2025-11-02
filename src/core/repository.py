@@ -11,6 +11,18 @@ from src.core.models import Base
 
 
 class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
+    def __init__(self, session: AsyncSession, model: type[ModelType]) -> None:
+        self.__session: AsyncSession = session
+        self.__model: type[ModelType] = model
+
+    @property
+    def model(self) -> type[ModelType]:
+        return self.__model
+
+    @property
+    def session(self) -> AsyncSession:
+        return self.__session
+
     async def get_by_id(self, id: Any) -> ModelType:
         raise NotImplementedError
 
@@ -30,40 +42,36 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
 class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
     AbstractRepository[ModelType, UpdateSchema]
 ):
-    def __init__(self, session: AsyncSession, model: type[ModelType]):
-        self._session: AsyncSession = session
-        self.__model: type[ModelType] = model
-
     @override
     async def get_by_id(self, id: int | uuid.UUID) -> ModelType:
-        stmt = select(self.__model).where(self.__model.id == id)
+        stmt = select(self.model).where(self.model.id == id)
 
         try:
-            result = (await self._session.execute(stmt)).scalar_one()
+            result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.__model, self.get_by_id.__name__, id)
+            raise NotFound(self.model, self.get_by_id.__name__, id)
 
         return result
 
     @override
     async def get_all(self, limit: int, offset: int) -> list[ModelType]:
-        stmt = select(self.__model).limit(limit).offset(offset)
+        stmt = select(self.model).limit(limit).offset(offset)
 
-        result = (await self._session.execute(stmt)).scalars()
+        result = (await self.session.execute(stmt)).scalars()
 
         return list(result)
 
     @override
     async def create(self, instance: ModelType) -> ModelType:
         try:
-            self._session.add(instance)
-            await self._session.flush()
-            await self._session.refresh(instance)
+            self.session.add(instance)
+            await self.session.flush()
+            await self.session.refresh(instance)
         except IntegrityError as e:
             err = str(e)
 
             if "unique" in err:
-                raise AlreadyExists(self.__model)
+                raise AlreadyExists(self.model)
 
         return instance
 
@@ -76,14 +84,14 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
                 setattr(instance, field, value)
 
         try:
-            self._session.add(instance)
-            await self._session.flush()
-            await self._session.refresh(instance)
+            self.session.add(instance)
+            await self.session.flush()
+            await self.session.refresh(instance)
         except IntegrityError as e:
             err = str(e)
 
             if "unique" in err:
-                raise AlreadyExists(self.__model)
+                raise AlreadyExists(self.model)
 
             raise
 
@@ -92,5 +100,5 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
     @override
     async def delete(self, id: int | uuid.UUID) -> None:
         instance = await self.get_by_id(id)
-        await self._session.delete(instance)
-        await self._session.flush()
+        await self.session.delete(instance)
+        await self.session.flush()
