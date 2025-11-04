@@ -7,29 +7,30 @@ from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
 from src.core.exceptions import NotFound
 from src.users.models import User
-from src.users.schemas import UserLoginRequest, UserRegisterRequest
-from src.users.service import UserService
+from src.users.schemas import UserLogin, UserRegister
+from src.users.service import UserService, UserProfileService
 from src.users.utils import is_valid_password
 
 
 class AuthService:
-    def __init__(self, repo: AuthRepository, user_service: UserService):
+    def __init__(self, repo: AuthRepository, user_service: UserService, user_profile_service: UserProfileService):
         self.user_service: UserService = user_service
+        self.user_profile_service: UserProfileService = user_profile_service
         self.repository: AuthRepository = repo
 
-    async def register(self, data: UserRegisterRequest):
-        await self.user_service.create_user(data)
+    async def register(self, data: UserRegister):
+        _ = await self.user_service.create(data)
 
-    async def _user_auth(self, data: UserLoginRequest) -> User:
+    async def _user_auth(self, data: UserLogin) -> User:
         user: User | None = None
 
         if data.login:
-            user = await self.user_service.repository.get_user_by_login(data.login)
+            user = await self.user_service.get_by_login(data.login)
         elif data.email:
-            user = await self.user_service.repository.get_user_by_email(data.email)
+            user = await self.user_service.get_by_email(data.email)
 
         if not user:
-            raise NotFound(User)
+            raise NotFound(User, self._user_auth.__name__, data.login if data.login else data.email)
 
         if not is_valid_password(data.password, user.password_hash):
             raise UserAuthDenied(
@@ -38,7 +39,7 @@ class AuthService:
 
         return user
 
-    async def login(self, data: UserLoginRequest) -> Tokens:
+    async def login(self, data: UserLogin) -> Tokens:
         user = await self._user_auth(data)
 
         expires_in = int((datetime.now(UTC) + timedelta(weeks=4)).timestamp())
