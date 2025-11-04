@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any, override
 import uuid
 from pydantic import BaseModel
@@ -23,20 +23,25 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
     def session(self) -> AsyncSession:
         return self.__session
 
+    @abstractmethod
     async def get_by_id(self, id: Any) -> ModelType:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def get_all(self, limit: int, offset: int) -> list[ModelType]:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def create(self, instance: ModelType) -> ModelType:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def update(self, id: Any, data: UpdateSchema) -> ModelType:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def delete(self, id: Any) -> None:
-        raise NotImplementedError
+        ...
 
 
 class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
