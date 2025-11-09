@@ -5,7 +5,7 @@ from src.core.repository import AbstractRepository
 
 
 class AbstractService[
-    ModelType: Base[Any], 
+    ModelType: Base[Any, Any], 
     CreateSchema: BaseModel,
     UpdateSchema: BaseModel,
     RepoType: AbstractRepository[Any, Any]

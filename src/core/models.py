@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractmethod
 from typing import Self
 from pydantic import BaseModel
 from datetime import UTC, datetime
@@ -6,14 +5,20 @@ from datetime import UTC, datetime
 from sqlalchemy import DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+from src.core.exceptions import NoneObjectEncoutered
 
-class Base[T](DeclarativeBase):
+
+class Base[T, Scheme: BaseModel | None](DeclarativeBase):
     __abstract__ = True
     id: Mapped[T]
 
     @classmethod
-    def from_data(cls, data: BaseModel) -> Self:
-        return cls(**data.model_dump())
+    def from_data(cls, data: Scheme) -> Self:
+        if data is not None:
+            return cls(**data.model_dump())
+
+        raise NoneObjectEncoutered
+
 
 class BaseTimestamps:
     created_at: Mapped[datetime] = mapped_column(

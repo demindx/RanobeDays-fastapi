@@ -5,9 +5,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.models import Base, BaseTimestamps
+from src.auth.schemas import RefreshSessionCreate
 
 
-class RefreshSession(Base[uuid.UUID], BaseTimestamps):
+class RefreshSession(Base[uuid.UUID, RefreshSessionCreate], BaseTimestamps):
     __tablename__ = "refresh_sessions"
 
     id: Mapped[uuid.UUID] = mapped_column(

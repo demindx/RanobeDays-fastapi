@@ -1,3 +1,4 @@
+from typing import override
 from src.users.repository import UserProfileRepository, UserRepository
 from src.users.schemas import (
     UserProfileUpdate, 
@@ -13,6 +14,7 @@ class UserService(AbstractService[
                   User, 
                   UserRegister,
                   UserPasswordUpdate, UserRepository]):
+
     async def get_by_login(self, login: str) -> User:
         return await self.repo.get_by_login(login)
 

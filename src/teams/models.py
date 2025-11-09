@@ -6,6 +6,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.core.models import Base
 from src.users.models import User
 
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from src.teams.schemas import TeamCreate
+
+
 
 class TeamType(Enum):
     PUBLISHERS = "publishers"
@@ -19,7 +26,7 @@ class TeamUserRole(Enum):
     NEWBIE = "newbie"
 
 
-class Team(Base[int]):
+class Team(Base[int, "TeamCreate"]):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -35,7 +42,7 @@ class Team(Base[int]):
     users: Mapped[list[User]] = relationship(back_populates="teams")
 
 
-class TeamUsers(Base[int]):
+class TeamUsers(Base[int, None]):
     __tablename__ = "team_users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
