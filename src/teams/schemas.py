@@ -15,6 +15,7 @@ class TeamUpdate(BaseModel):
 
 
 class TeamResponse(BaseModel):
+    id: int
     name: str
     type: TeamType
 
