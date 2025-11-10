@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TYPE_CHECKING, override, Self
+from typing import TYPE_CHECKING, Self, override
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -7,10 +7,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.core.models import Base, BaseTimestamps
 from src.users.utils import get_password_hash
 
-
 if TYPE_CHECKING:
     from src.teams.models import Team
-    from src.users.schemas import UserRegister, UserProfileCreate
+    from src.users.schemas import UserRegister
 
 
 class UserRoleEnum(Enum):

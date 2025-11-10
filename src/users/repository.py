@@ -1,16 +1,13 @@
 import uuid
 from typing import override
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
+from src.core.exceptions import AlreadyExists, NotFound
+from src.core.repository import PostgresRepository
 from src.users.models import User, UserProfile
 from src.users.schemas import UserPasswordUpdate, UserProfileUpdate
-from src.core.repository import PostgresRepository
-from src.core.exceptions import NotFound, AlreadyExists
-
-from sqlalchemy import select
-
 from src.users.utils import get_password_hash
 
 
@@ -63,6 +60,6 @@ class UserProfileRepository(PostgresRepository[UserProfile, UserProfileUpdate]):
         try:
             result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_user_id.__name__, user_id);
+            raise NotFound(self.model, self.get_by_user_id.__name__, user_id)
 
         return result

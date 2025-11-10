@@ -22,7 +22,7 @@ def get_auth_repo(session: DbSession):
 def get_auth_service(
     repo: Annotated[AuthRepository, Depends(get_auth_repo)],
     user_service: UserServiceDep,
-    user_profile_service: UserProfileServiceDep
+    user_profile_service: UserProfileServiceDep,
 ) -> AuthService:
     return AuthService(repo, user_service, user_profile_service)
 

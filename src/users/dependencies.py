@@ -17,13 +17,13 @@ def get_user_profile_repo(session: DbSession) -> UserProfileRepository:
 
 
 def get_user_service(
-    repo: Annotated[UserRepository, Depends(get_user_repo)]
+    repo: Annotated[UserRepository, Depends(get_user_repo)],
 ) -> UserService:
     return UserService(repo)
 
 
 def get_user_profile_service(
-    repo: Annotated[UserProfileRepository, Depends(get_user_profile_repo)]
+    repo: Annotated[UserProfileRepository, Depends(get_user_profile_repo)],
 ) -> UserProfileService:
     return UserProfileService(repo)
 

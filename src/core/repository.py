@@ -1,6 +1,7 @@
+import uuid
 from abc import ABC, abstractmethod
 from typing import Any, override
-import uuid
+
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -24,24 +25,19 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
         return self.__session
 
     @abstractmethod
-    async def get_by_id(self, id: Any) -> ModelType:
-        ...
+    async def get_by_id(self, id: Any) -> ModelType: ...
 
     @abstractmethod
-    async def get_all(self, limit: int, offset: int) -> list[ModelType]:
-        ...
+    async def get_all(self, limit: int, offset: int) -> list[ModelType]: ...
 
     @abstractmethod
-    async def create(self, instance: ModelType) -> ModelType:
-        ...
+    async def create(self, instance: ModelType) -> ModelType: ...
 
     @abstractmethod
-    async def update(self, id: Any, data: UpdateSchema) -> ModelType:
-        ...
+    async def update(self, id: Any, data: UpdateSchema) -> ModelType: ...
 
     @abstractmethod
-    async def delete(self, id: Any) -> None:
-        ...
+    async def delete(self, id: Any) -> None: ...
 
 
 class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
@@ -86,7 +82,9 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
     async def update(self, id: int | uuid.UUID, data: UpdateSchema) -> ModelType:
         instance = await self.get_by_id(id)
 
-        for field, value in data.model_dump(exclude_none=True, exclude_unset=True).items():
+        for field, value in data.model_dump(
+            exclude_none=True, exclude_unset=True
+        ).items():
             if hasattr(instance, field):
                 setattr(instance, field, value)
 

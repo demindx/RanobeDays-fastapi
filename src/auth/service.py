@@ -8,12 +8,17 @@ from src.auth.utils import generate_jwt_token
 from src.core.exceptions import NotFound
 from src.users.models import User
 from src.users.schemas import UserLogin, UserRegister
-from src.users.service import UserService, UserProfileService
+from src.users.service import UserProfileService, UserService
 from src.users.utils import is_valid_password
 
 
 class AuthService:
-    def __init__(self, repo: AuthRepository, user_service: UserService, user_profile_service: UserProfileService):
+    def __init__(
+        self,
+        repo: AuthRepository,
+        user_service: UserService,
+        user_profile_service: UserProfileService,
+    ):
         self.user_service: UserService = user_service
         self.user_profile_service: UserProfileService = user_profile_service
         self.repository: AuthRepository = repo
@@ -30,7 +35,9 @@ class AuthService:
             user = await self.user_service.get_by_email(data.email)
 
         if not user:
-            raise NotFound(User, self._user_auth.__name__, data.login if data.login else data.email)
+            raise NotFound(
+                User, self._user_auth.__name__, data.login if data.login else data.email
+            )
 
         if not is_valid_password(data.password, user.password_hash):
             raise UserAuthDenied(

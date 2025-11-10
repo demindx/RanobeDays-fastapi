@@ -1,14 +1,16 @@
 from typing import Any
+
 from pydantic import BaseModel
+
 from src.core.models import Base
 from src.core.repository import AbstractRepository
 
 
 class AbstractService[
-    ModelType: Base[Any, Any], 
+    ModelType: Base[Any, Any],
     CreateSchema: BaseModel,
     UpdateSchema: BaseModel,
-    RepoType: AbstractRepository[Any, Any]
+    RepoType: AbstractRepository[Any, Any],
 ]:
     def __init__(self, repository: RepoType) -> None:
         self.__repo: RepoType = repository

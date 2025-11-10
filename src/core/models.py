@@ -1,7 +1,7 @@
-from typing import Self
-from pydantic import BaseModel
 from datetime import UTC, datetime
+from typing import Self
 
+from pydantic import BaseModel
 from sqlalchemy import DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 

@@ -15,10 +15,6 @@ class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository])
         return await self.repo.get_user_teams(id)
 
     async def add_user(self, user_id: int, team_id: int, role: TeamUserRole):
-        team_user_conn = TeamUsers(
-            user_id = user_id,
-            team_id = team_id,
-            role = role
-        )
+        team_user_conn = TeamUsers(user_id=user_id, team_id=team_id, role=role)
 
         await self.repo.add_user(team_user_conn)

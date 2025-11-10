@@ -9,8 +9,7 @@ router = APIRouter(prefix="/teams", tags=["teams"])
 
 @router.post("/")
 async def create_team_handler(
-    service: TeamServiceDep,
-    data: TeamCreate
+    service: TeamServiceDep, data: TeamCreate
 ) -> GenericResponse[TeamResponse]:
     team = await service.create(data)
 
@@ -21,7 +20,7 @@ async def create_team_handler(
 
 @router.get("/")
 async def get_teams_handler(
-    service: TeamServiceDep
+    service: TeamServiceDep,
 ) -> GenericResponse[list[TeamResponse]]:
     teams = await service.get_all()
 
@@ -31,10 +30,7 @@ async def get_teams_handler(
 
 
 @router.get("/{id}")
-async def get_team(
-    service: TeamServiceDep,
-    id: int
-) -> GenericResponse[TeamResponse]:
+async def get_team(service: TeamServiceDep, id: int) -> GenericResponse[TeamResponse]:
     team = await service.get_by_id(id)
 
     team = TeamResponse.model_validate(team)
@@ -44,9 +40,7 @@ async def get_team(
 
 @router.patch("/{id}")
 async def update_team_handler(
-    service: TeamServiceDep,
-    data: TeamUpdate,
-    id: int
+    service: TeamServiceDep, data: TeamUpdate, id: int
 ) -> GenericResponse[TeamResponse]:
     team = await service.update(id, data)
 
@@ -56,17 +50,10 @@ async def update_team_handler(
 
 
 @router.delete("/{id}")
-async def delete_team_handler(
-    service: TeamServiceDep,
-    id: int
-) -> None:
+async def delete_team_handler(service: TeamServiceDep, id: int) -> None:
     await service.delete(id)
 
 
 @router.post("/{id}/users")
-async def add_user_to_team_handler(
-    service: TeamServiceDep,
-    id: int,
-    data: TeamAddUser
-):
+async def add_user_to_team_handler(service: TeamServiceDep, id: int, data: TeamAddUser):
     await service.add_user(data.user_id, id, data.role)
