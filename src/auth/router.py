@@ -7,24 +7,24 @@ from src.auth.dependencies import AuthServiceDep, get_admin_user
 from src.auth.schemas import Tokens
 from src.core.schemas import GenericResponse
 from src.users.models import User
-from src.users.schemas import UserLoginRequest, UserRegisterRequest
+from src.users.schemas import UserLogin, UserRegister
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register")
 async def register_handler(
-    service: AuthServiceDep, data: UserRegisterRequest
-) -> GenericResponse:
+    service: AuthServiceDep, data: UserRegister
+) -> GenericResponse[None]:
     """Register users"""
     await service.register(data)
 
-    return GenericResponse(message="User was successfully created")
+    return GenericResponse[None](message="User was successfully created")
 
 
 @router.post("/login")
 async def login_handler(
-    service: AuthServiceDep, data: UserLoginRequest, response: Response
+    service: AuthServiceDep, data: UserLogin, response: Response
 ) -> GenericResponse[Tokens]:
     """Login users"""
     tokens = await service.login(data)
@@ -53,13 +53,13 @@ async def logout_handler(
     service: AuthServiceDep,
     response: Response,
     refresh_token: Annotated[str | None, Cookie()] = None,
-) -> GenericResponse:
+) -> GenericResponse[None]:
     """Logout users"""
     await service.logout(uuid.UUID(hex=refresh_token))
 
     response.delete_cookie("refresh_token")
 
-    return GenericResponse(message="Logout was successful")
+    return GenericResponse[None](message="Logout was successful")
 
 
 @router.post("/test_protected")

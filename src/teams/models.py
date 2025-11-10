@@ -1,10 +1,14 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base
 from src.users.models import User
+
+if TYPE_CHECKING:
+    pass
 
 
 class TeamType(Enum):
@@ -19,7 +23,7 @@ class TeamUserRole(Enum):
     NEWBIE = "newbie"
 
 
-class Team(Base[int]):
+class Team(Base[int, "TeamCreate"]):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -35,7 +39,7 @@ class Team(Base[int]):
     users: Mapped[list[User]] = relationship(back_populates="teams")
 
 
-class TeamUsers(Base[int]):
+class TeamUsers(Base[int, None]):
     __tablename__ = "team_users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -46,5 +50,7 @@ class TeamUsers(Base[int]):
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"))
 
     __table_args__ = (
-        UniqueConstraint("user_id", "team_id", name="user_id and team_id unique constraint"),
+        UniqueConstraint(
+            "user_id", "team_id", name="user_id and team_id unique constraint"
+        ),
     )

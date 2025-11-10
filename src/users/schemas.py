@@ -13,21 +13,21 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserLoginRequest(BaseModel):
+class UserLogin(BaseModel):
     login: str | None = None
     email: EmailStr | None = None
     password: str
     fingerprint: str
 
 
-class UserRegisterRequest(BaseModel):
+class UserRegister(BaseModel):
     login: str
     email: EmailStr
     password1: str
     password2: str
 
     @model_validator(mode="after")
-    def validate_user(self) -> "UserRegisterRequest":
+    def validate_user(self) -> "UserRegister":
         if self.password1 != self.password2:
             raise ValidationError("Passwords mismatch")
 
@@ -37,24 +37,24 @@ class UserRegisterRequest(BaseModel):
         return self.password1
 
 
-class UserPasswordUpdateRequest(BaseModel):
+class UserPasswordUpdate(BaseModel):
     password1: str
     password2: str
 
     @model_validator(mode="after")
-    def validate_password(self) -> "UserPasswordUpdateRequest":
+    def validate_password(self) -> "UserPasswordUpdate":
         if self.password1 != self.password2:
             raise ValidationError("Passwords mismatch")
 
         return self
 
 
-class UserProfileCreateRequest(BaseModel):
+class UserProfileCreate(BaseModel):
     first_name: str
     last_name: str
 
 
-class UserProfileUpdateRequest(BaseModel):
+class UserProfileUpdate(BaseModel):
     readed_chapters: int | None = None
 
 

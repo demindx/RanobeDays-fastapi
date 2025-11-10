@@ -1,83 +1,65 @@
-from collections.abc import Sequence
+import uuid
+from typing import override
 
-from sqlalchemy import delete, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
+from src.core.exceptions import AlreadyExists, NotFound
+from src.core.repository import PostgresRepository
 from src.users.models import User, UserProfile
+from src.users.schemas import UserPasswordUpdate, UserProfileUpdate
+from src.users.utils import get_password_hash
 
 
-class UserRepository:
-    def __init__(self, session: AsyncSession):
-        self.session: AsyncSession = session
+class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
+    @override
+    async def update(self, id: int | uuid.UUID, data: UserPasswordUpdate) -> User:
+        instance: User = await self.get_by_id(id)
 
-    async def create_user(self, user: User) -> User:
-        self.session.add(user)
+        instance.password_hash = get_password_hash(data.password1)
 
-        await self.session.flush()
-        await self.session.refresh(user)
+        try:
+            self.session.add(instance)
+            await self.session.flush()
+            await self.session.refresh(instance)
+        except IntegrityError as e:
+            err = str(e)
 
-        return user
+            if "unique" in err:
+                raise AlreadyExists(self.model)
 
-    async def create_user_profile(self, profile: UserProfile) -> UserProfile:
-        self.session.add(profile)
+            raise
 
-        await self.session.flush()
-        await self.session.refresh(profile)
+        return instance
 
-        return profile
+    async def get_by_login(self, login: str) -> User:
+        stmt = select(self.model).where(self.model.login == login)
 
-    async def get_all_users(self) -> Sequence[User]:
-        stmt = select(User)
-
-        result = await self.session.scalars(stmt)
-
-        return result.all()
-
-    async def get_user(self, id: int) -> User | None:
-        stmt = select(User).where(User.id == id)
-
-        result = await self.session.scalar(stmt)
-
-        return result
-
-    async def get_user_by_login(self, login: str) -> User | None:
-        stmt = select(User).where(User.login == login)
-
-        result = await self.session.scalar(stmt)
+        try:
+            result = (await self.session.execute(stmt)).scalar_one()
+        except NoResultFound:
+            raise NotFound(self.model, self.get_by_login.__name__, id)
 
         return result
 
-    async def get_user_by_email(self, email: str) -> User | None:
-        stmt = select(User).where(User.email == email)
+    async def get_by_email(self, email: str) -> User:
+        stmt = select(self.model).where(self.model.email == email)
 
-        result = await self.session.scalar(stmt)
-
-        return result
-
-    async def get_user_profile(self, user_id: int) -> UserProfile | None:
-        stmt = select(UserProfile).where(UserProfile.user_id == user_id)
-
-        result = await self.session.scalar(stmt)
+        try:
+            result = (await self.session.execute(stmt)).scalar_one()
+        except NoResultFound:
+            raise NotFound(self.model, self.get_by_email.__name__, id)
 
         return result
 
-    async def update_user(self, user: User) -> User:
-        self.session.add(user)
 
-        await self.session.flush()
-        await self.session.refresh(user)
+class UserProfileRepository(PostgresRepository[UserProfile, UserProfileUpdate]):
+    async def get_by_user_id(self, user_id: int) -> UserProfile:
+        stmt = select(self.model).where(self.model.user_id == user_id)
 
-        return user
+        try:
+            result = (await self.session.execute(stmt)).scalar_one()
+        except NoResultFound:
+            raise NotFound(self.model, self.get_by_user_id.__name__, user_id)
 
-    async def update_user_profile(self, profile: UserProfile) -> UserProfile:
-        self.session.add(profile)
-
-        await self.session.flush()
-        await self.session.refresh(profile)
-
-        return profile
-
-    async def delete_user(self, id: int) -> None:
-        stmt = delete(User).where(User.id == id)
-
-        await self.session.execute(stmt)
+        return result

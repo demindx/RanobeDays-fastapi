@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
 from src.core.schemas import GenericResponse
-from src.users.dependencies import UserServiceDep
+from src.users.dependencies import UserProfileServiceDep, UserServiceDep
 from src.users.schemas import (
     UserProfileResponse,
-    UserProfileUpdateRequest,
+    UserProfileUpdate,
     UserResponse,
 )
 
@@ -16,7 +16,7 @@ async def get_users_handler(
     service: UserServiceDep,
 ) -> GenericResponse[list[UserResponse]]:
     """Get all users"""
-    users = await service.get_all_users()
+    users = await service.get_all()
 
     data = [UserResponse.model_validate(user) for user in users]
 
@@ -28,7 +28,7 @@ async def get_user_handler(
     service: UserServiceDep, id: int
 ) -> GenericResponse[UserResponse]:
     """Get user by id"""
-    user = await service.get_user(id)
+    user = await service.get_by_id(id)
 
     data = UserResponse.model_validate(user)
 
@@ -37,10 +37,10 @@ async def get_user_handler(
 
 @router.get("/{id}/profile")
 async def get_user_profile_handler(
-    service: UserServiceDep, id: int
+    service: UserProfileServiceDep, id: int
 ) -> GenericResponse[UserProfileResponse]:
     """Get user profile"""
-    profile = await service.get_user_profile(id)
+    profile = await service.get_by_id(id)
 
     data = UserProfileResponse.model_validate(profile)
 
@@ -49,10 +49,10 @@ async def get_user_profile_handler(
 
 @router.patch("/{id}/profile")
 async def update_user_profile_handler(
-    service: UserServiceDep, id: int, data: UserProfileUpdateRequest
+    service: UserProfileServiceDep, id: int, data: UserProfileUpdate
 ) -> GenericResponse[UserProfileResponse]:
     """Update user profile"""
-    profile = await service.update_user_profile(id, data)
+    profile = await service.update(id, data)
 
     profile = UserProfileResponse.model_validate(profile)
 

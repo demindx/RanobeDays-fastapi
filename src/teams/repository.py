@@ -2,10 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.exceptions import AlreadyExists
 from src.core.repository import PostgresRepository
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamUpdate
-from src.core.exceptions import AlreadyExists
 
 
 class TeamRepository(PostgresRepository[Team, TeamUpdate]):
@@ -20,12 +20,15 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
         return list(result.all())
 
     async def get_user_teams(self, id: int) -> list[Team]:
-        stmt = select(Team).join(TeamUsers, Team.id == TeamUsers.team_id).where(TeamUsers.user_id == id)
+        stmt = (
+            select(Team)
+            .join(TeamUsers, Team.id == TeamUsers.team_id)
+            .where(TeamUsers.user_id == id)
+        )
 
         result = await self.session.scalars(stmt)
 
         return list(result.all())
-
 
     async def add_user(self, connection: TeamUsers) -> None:
         try:

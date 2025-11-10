@@ -12,7 +12,9 @@ def get_team_repo(session: DbSession) -> TeamRepository:
     return TeamRepository(session, Team)
 
 
-def get_team_service(repo: Annotated[TeamRepository, Depends(get_team_repo)]) -> TeamService:
+def get_team_service(
+    repo: Annotated[TeamRepository, Depends(get_team_repo)],
+) -> TeamService:
     return TeamService(repo)
 
 

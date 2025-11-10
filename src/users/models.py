@@ -1,13 +1,15 @@
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self, override
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
+from src.users.utils import get_password_hash
 
 if TYPE_CHECKING:
     from src.teams.models import Team
+    from src.users.schemas import UserRegister
 
 
 class UserRoleEnum(Enum):
@@ -16,7 +18,7 @@ class UserRoleEnum(Enum):
     MANAGER = "manager"
 
 
-class User(Base[int], BaseTimestamps):
+class User(Base[int, "UserRegister"], BaseTimestamps):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -33,8 +35,17 @@ class User(Base[int], BaseTimestamps):
     user_profile: Mapped["UserProfile"] = relationship(back_populates="user")
     teams: Mapped["Team"] = relationship(back_populates="users")
 
+    @override
+    @classmethod
+    def from_data(cls, data: "UserRegister") -> Self:
+        instance = cls(**data.model_dump(exclude={"password1", "password2"}))
 
-class UserProfile(Base[int], BaseTimestamps):
+        instance.password_hash = get_password_hash(data.password1)
+
+        return instance
+
+
+class UserProfile(Base[int, "UserProfileCreate"], BaseTimestamps):
     __tablename__ = "user_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
