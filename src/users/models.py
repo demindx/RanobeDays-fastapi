@@ -9,7 +9,7 @@ from src.users.utils import get_password_hash
 
 if TYPE_CHECKING:
     from src.teams.models import Team
-    from src.users.schemas import UserRegister
+    from src.users.schemas import UserProfileCreate, UserRegister  # noqa: F401
 
 
 class UserRoleEnum(Enum):
@@ -32,12 +32,12 @@ class User(Base[int, "UserRegister"], BaseTimestamps):
     password_hash: Mapped[str] = mapped_column(String(256))
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)
 
-    user_profile: Mapped["UserProfile"] = relationship(back_populates="user")
-    teams: Mapped["Team"] = relationship(back_populates="users")
+    user_profile: Mapped[UserProfile] = relationship(back_populates="user")
+    teams: Mapped[Team] = relationship(back_populates="users")
 
     @override
     @classmethod
-    def from_data(cls, data: "UserRegister") -> Self:
+    def from_data(cls, data: UserRegister) -> Self:
         instance = cls(**data.model_dump(exclude={"password1", "password2"}))
 
         instance.password_hash = get_password_hash(data.password1)
@@ -53,6 +53,4 @@ class UserProfile(Base[int, "UserProfileCreate"], BaseTimestamps):
 
     readed_chapters: Mapped[int] = mapped_column(default=0)
 
-    user: Mapped["User"] = relationship(
-        back_populates="user_profile", single_parent=True
-    )
+    user: Mapped[User] = relationship(back_populates="user_profile", single_parent=True)
