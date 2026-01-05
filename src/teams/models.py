@@ -8,7 +8,7 @@ from src.core.models import Base
 from src.users.models import User
 
 if TYPE_CHECKING:
-    pass
+    from src.teams.schemas import TeamCreate  # noqa: F401
 
 
 class TeamType(Enum):

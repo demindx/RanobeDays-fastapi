@@ -11,7 +11,7 @@ from src.core.exceptions import AlreadyExists, NotFound
 from src.core.models import Base
 
 
-class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
+class AbstractRepository[ModelType: Base[Any, Any], UpdateSchema: BaseModel](ABC):
     def __init__(self, session: AsyncSession, model: type[ModelType]) -> None:
         self.__session: AsyncSession = session
         self.__model: type[ModelType] = model
@@ -40,7 +40,7 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
     async def delete(self, id: Any) -> None: ...
 
 
-class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
+class PostgresRepository[ModelType: Base[Any, Any], UpdateSchema: BaseModel](
     AbstractRepository[ModelType, UpdateSchema]
 ):
     @override
