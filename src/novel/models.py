@@ -1,9 +1,15 @@
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import DateTime, ForeignKey, String
+from typing import TYPE_CHECKING
+
 from pgvector.sqlalchemy import Vector
+from sqlalchemy import DateTime, ForeignKey, String, event
 from sqlalchemy.orm import Mapped, mapped_column
-from src.core.models import Base ,BaseTimestamps
+
+from src.core.models import Base, BaseTimestamps
+
+if TYPE_CHECKING:
+    pass
 
 
 class NovelType(Enum):
@@ -18,24 +24,35 @@ class NovelStatus(Enum):
     ABADONED = "abadoned"
 
 
-class Novel(Base, BaseTimestamps):
+class Novel(Base[int, "NovelCreate"], BaseTimestamps):
     __tablename__ = "novel"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     title: Mapped[str] = mapped_column(String(255))
     slug: Mapped[str] = mapped_column(String(255))
-    cover_path: Mapped[str] = mapped_column(String(255))
+    cover_path: Mapped[str] = mapped_column(String(255), default="default_cover.png")
 
-    team_id: Mapped[int] = mapped_column(ForeignKey("team.id"))
-    embedding: Mapped[Vector] = mapped_column(Vector())
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    embedding: Mapped[Vector] = mapped_column(Vector(), default=[0.0, 0.0, 0.1])
     description: Mapped[str] = mapped_column()
 
     publish_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     type: Mapped[NovelType] = mapped_column()
-    status: Mapped[NovelStatus] = mapped_column()
+    status: Mapped[NovelStatus] = mapped_column(default=NovelStatus.CONTINUES)
 
     age_limit: Mapped[int] = mapped_column()
 
     is_approved: Mapped[bool] = mapped_column(default=False)
+
+    @staticmethod
+    def generate_slug(target: Novel, value: str, oldvalue: str, initiator: str):
+        if value and (oldvalue is not value):
+            slug = value.lower().split()
+            slug = "-".join(slug)
+
+            target.slug = slug
+
+
+event.listen(Novel.title, "set", Novel.generate_slug, retval=False)

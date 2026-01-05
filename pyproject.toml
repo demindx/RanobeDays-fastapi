@@ -3,22 +3,22 @@ name = "ranobedays"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
-classifiers = [ "Programming Language :: Python :: 3 :: Only", "Programming Language :: Python :: 3.13" ]
+requires-python = ">=3.14"
+classifiers = [ "Programming Language :: Python :: 3 :: Only" ]
 dependencies = [
   "asyncpg>=0.30",
   "bcrypt>=4.3",
   "fastapi[standard,standard]>=0.115.14",
+  "pgvector>=0.4.1",
   "pre-commit>=4.2",
   "pydantic[email]>=2.11.7",
   "pydantic-settings>=2.10.1",
   "pyjwt>=2.10.1",
   "sqlalchemy>=2.0.41",
-  "pgvector>=0.4.1",
 ]
 
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 line-length = 88
 exclude = [
   ".bzr",
