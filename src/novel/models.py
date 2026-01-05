@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.core.models import Base, BaseTimestamps
 
 if TYPE_CHECKING:
-    pass
+    from src.novel.schemas import NovelCreate  # noqa: F401
 
 
 class NovelType(Enum):
