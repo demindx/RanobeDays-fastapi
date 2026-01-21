@@ -23,7 +23,7 @@ class TeamUserRole(Enum):
     NEWBIE = "newbie"
 
 
-class Team(Base[int, "TeamCreate"]):
+class Team(Base["TeamCreate"]):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -39,7 +39,7 @@ class Team(Base[int, "TeamCreate"]):
     users: Mapped[list[User]] = relationship(back_populates="teams")
 
 
-class TeamUsers(Base[int, None]):
+class TeamUsers(Base[None]):
     __tablename__ = "team_users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)

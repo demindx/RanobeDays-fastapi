@@ -18,7 +18,7 @@ class UserRoleEnum(Enum):
     MANAGER = "manager"
 
 
-class User(Base[int, "UserRegister"], BaseTimestamps):
+class User(Base["UserRegister"], BaseTimestamps):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -45,7 +45,7 @@ class User(Base[int, "UserRegister"], BaseTimestamps):
         return instance
 
 
-class UserProfile(Base[int, "UserProfileCreate"], BaseTimestamps):
+class UserProfile(Base["UserProfileCreate"], BaseTimestamps):
     __tablename__ = "user_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
