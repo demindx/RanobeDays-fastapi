@@ -25,7 +25,7 @@ class NovelStatus(Enum):
 
 
 class Novel(Base[int, "NovelCreate"], BaseTimestamps):
-    __tablename__ = "novel"
+    __tablename__ = "novels"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
