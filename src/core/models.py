@@ -8,9 +8,8 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from src.core.exceptions import NoneObjectEncoutered
 
 
-class Base[T, Scheme: BaseModel | None](DeclarativeBase):
+class Base[Scheme: BaseModel | None](DeclarativeBase):
     __abstract__ = True
-    id: Mapped[T]
 
     @classmethod
     def from_data(cls, data: Scheme) -> Self:

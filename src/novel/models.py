@@ -24,11 +24,10 @@ class NovelStatus(Enum):
     ABADONED = "abadoned"
 
 
-class Novel(Base[int, "NovelCreate"], BaseTimestamps):
-    __tablename__ = "novel"
+class Novel(Base["NovelCreate"], BaseTimestamps):
+    __tablename__ = "novels"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-
     title: Mapped[str] = mapped_column(String(255))
     slug: Mapped[str] = mapped_column(String(255))
     cover_path: Mapped[str] = mapped_column(String(255), default="default_cover.png")

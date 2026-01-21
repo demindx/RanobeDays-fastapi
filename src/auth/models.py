@@ -8,7 +8,7 @@ from src.auth.schemas import RefreshSessionCreate
 from src.core.models import Base, BaseTimestamps
 
 
-class RefreshSession(Base[uuid.UUID, RefreshSessionCreate], BaseTimestamps):
+class RefreshSession(Base[RefreshSessionCreate], BaseTimestamps):
     __tablename__ = "refresh_sessions"
 
     id: Mapped[uuid.UUID] = mapped_column(
