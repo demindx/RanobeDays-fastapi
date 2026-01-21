@@ -23,3 +23,6 @@ class ChapterResponse(BaseModel):
     content: str
 
     is_published: bool
+
+    class Config:
+        from_attributes = True
