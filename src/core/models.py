@@ -8,11 +8,11 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from src.core.exceptions import NoneObjectEncoutered
 
 
-class Base[Scheme: BaseModel | None](DeclarativeBase):
+class Base[CreateScheme: BaseModel | None](DeclarativeBase):
     __abstract__ = True
 
     @classmethod
-    def from_data(cls, data: Scheme) -> Self:
+    def from_data(cls, data: CreateScheme) -> Self:
         if data is not None:
             return cls(**data.model_dump())
 
