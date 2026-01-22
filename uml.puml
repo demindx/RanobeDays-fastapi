@@ -1,0 +1,102 @@
+@startuml
+!define table(x) entity x << (T, white) >>
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define column(x) <color:#efefef><&media-record></color> x
+
+left to right direction
+skinparam roundcorner 5
+skinparam linetype ortho
+skinparam shadowing false
+
+skinparam class {
+    BackgroundColor white
+    ArrowColor #2688d4
+    BorderColor #2688d4
+}
+
+package Novel {
+	enum StatusEnum {
+		FROZEN
+		FINISHED
+		CONTINUES
+	}
+
+	enum CategoryEnum {
+		TAG
+		GENRE
+	}
+
+	table(Novel) {
+		primary_key(id): Serial
+		title: String
+		cover: Path
+		status: StatusEnum
+		description: Text
+		age_limit: Integer
+		view_count: Integer
+		foreign_key(language_id): Serial FK
+		foreign_key(country_id): Serial FK
+	}
+
+	table(Chapter) {
+		primary_key(id): Serial
+		content: Text
+		foreign_key(novel_id): Serial FK
+		number: Integer
+		name: String
+		is_published: Boolean
+	}
+
+	table(Country) {
+		primary_key(id): Serial
+		name: String
+	}
+
+	table(Language) {
+		primary_key(id): Serial
+		name: String
+		code: String
+	}
+
+	table(Category) {
+		primary_key(id): Serial
+		name: String
+		type: CategoryEnum
+	}
+
+	Novel ||--|{ Category
+	Novel ||--|{ Chapter
+	Novel ||--|| Country
+	Novel ||--|| Language
+	Novel -- StatusEnum
+	Category -- CategoryEnum
+}
+
+package User {
+
+	enum UserRole {
+		COMMON
+		ADMIN
+	}
+
+	table(User) {
+		primary_key(id): UUID
+		login: String
+		email: String
+		password_hash: String
+		role: UserRole
+	}
+
+	table(UserProfile) {
+		primary_key(id): Serial
+		first_name: String
+		last_name: String
+		foreign_key(user_id): UUID FK
+		readed_chapters: Integer
+	}
+
+	User -- UserRole
+	User ||--|| UserProfile
+}
+@enduml
