@@ -4,11 +4,12 @@ from typing import TYPE_CHECKING
 
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import DateTime, ForeignKey, String, event
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
 
 if TYPE_CHECKING:
+    from src.category.model import Category  # noqa: F401
     from src.novel.schemas import NovelCreate  # noqa: F401
 
 
@@ -45,6 +46,8 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
     is_approved: Mapped[bool] = mapped_column(default=False)
 
+    categories: Mapped[list[Category]] = relationship()
+
     @staticmethod
     def generate_slug(target: Novel, value: str, oldvalue: str, initiator: str):
         if value and (oldvalue is not value):
@@ -52,6 +55,15 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
             slug = "-".join(slug)
 
             target.slug = slug
+
+
+class NovelCategories(Base[None]):
+    __tablename__ = "novel_categories"
+
+    novel_id: Mapped[int] = mapped_column(ForeignKey("novels.id"), primary_key=True)
+    category_id: Mapped[int] = mapped_column(
+        ForeignKey("categories.id"), primary_key=True
+    )
 
 
 event.listen(Novel.title, "set", Novel.generate_slug, retval=False)
