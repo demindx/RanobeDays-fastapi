@@ -46,7 +46,7 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
     is_approved: Mapped[bool] = mapped_column(default=False)
 
-    categories: Mapped[list[Category]] = relationship()
+    categories: Mapped[list[Category]] = relationship(secondary="novel_categories")
 
     @staticmethod
     def generate_slug(target: Novel, value: str, oldvalue: str, initiator: str):
