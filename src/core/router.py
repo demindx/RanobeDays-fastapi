@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from src.auth.router import router as auth_router
 from src.category.router import router as category_router
 from src.chapter.router import router as chapter_router
+from src.country.router import router as country_router
 from src.language.router import router as language_router
 from src.novel.router import router as novel_router
 from src.teams.router import router as team_router
@@ -17,3 +18,4 @@ api_v1.include_router(novel_router)
 api_v1.include_router(chapter_router)
 api_v1.include_router(category_router)
 api_v1.include_router(language_router)
+api_v1.include_router(country_router)
