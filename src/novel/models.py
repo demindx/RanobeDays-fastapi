@@ -7,6 +7,9 @@ from sqlalchemy import DateTime, ForeignKey, String, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
+from src.country.models import Country
+from src.language.models import Language
+from src.teams.models import Team
 
 if TYPE_CHECKING:
     from src.category.model import Category  # noqa: F401
@@ -15,7 +18,7 @@ if TYPE_CHECKING:
 
 class NovelType(Enum):
     ORIGINAL = "original"
-    TRANSLATION = "translation"
+    AUTHORS = "authors"
 
 
 class NovelStatus(Enum):
@@ -34,6 +37,8 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
     cover_path: Mapped[str] = mapped_column(String(255), default="default_cover.png")
 
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"))
+    country_id: Mapped[int] = mapped_column(ForeignKey("countries.id"))
     embedding: Mapped[Vector] = mapped_column(Vector(), default=[0.0, 0.0, 0.1])
     description: Mapped[str] = mapped_column()
 
@@ -47,6 +52,10 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
     is_approved: Mapped[bool] = mapped_column(default=False)
 
     categories: Mapped[list[Category]] = relationship(secondary="novel_categories")
+
+    team: Mapped[Team] = relationship(lazy="joined")
+    language: Mapped[Language] = relationship(lazy="joined")
+    country: Mapped[Country] = relationship(lazy="joined")
 
     @staticmethod
     def generate_slug(target: Novel, value: str, oldvalue: str, initiator: str):
