@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.chapters.models import Chapter
+from src.chapter.models import Chapter
 from src.core.repository import PostgresRepository
 
 

@@ -1,6 +1,6 @@
-from src.chapters.models import Chapter
-from src.chapters.repository import ChapterRepository
-from src.chapters.schemas import ChapterCreate, ChapterUpdate
+from src.chapter.models import Chapter
+from src.chapter.repository import ChapterRepository
+from src.chapter.schemas import ChapterCreate, ChapterUpdate
 from src.core.service import AbstractService
 
 

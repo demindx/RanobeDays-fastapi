@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.chapters.models import Chapter
-from src.chapters.repository import ChapterRepository
-from src.chapters.service import ChapterService
+from src.chapter.models import Chapter
+from src.chapter.repository import ChapterRepository
+from src.chapter.service import ChapterService
 from src.core.dependencies import DbSession
 
 

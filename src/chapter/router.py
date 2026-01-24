@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from src.chapters.dependencies import ChapterServiceDep
-from src.chapters.schemas import ChapterCreate, ChapterResponse, ChapterUpdate
+from src.chapter.dependencies import ChapterServiceDep
+from src.chapter.schemas import ChapterCreate, ChapterResponse, ChapterUpdate
 from src.core.schemas import GenericResponse
 
 router = APIRouter(prefix="/chapter", tags=["chapter"])
