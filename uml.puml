@@ -56,7 +56,6 @@ package Novel {
 	table(Language) {
 		primary_key(id): Serial
 		name: String
-		code: String
 	}
 
 	table(Category) {
