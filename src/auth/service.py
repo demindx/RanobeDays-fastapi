@@ -7,7 +7,7 @@ from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
 from src.core.exceptions import NotFound
 from src.users.models import User
-from src.users.schemas import UserLogin, UserRegister
+from src.users.schemas import UserLogin, UserProfileCreate, UserRegister
 from src.users.service import UserProfileService, UserService
 from src.users.utils import is_valid_password
 
@@ -24,7 +24,11 @@ class AuthService:
         self.repository: AuthRepository = repo
 
     async def register(self, data: UserRegister):
-        _ = await self.user_service.create(data)
+        user = await self.user_service.create(data)
+
+        profile_data = UserProfileCreate(nickname=data.nickname, user_id=user.id)
+
+        await self.user_profile_service.create(profile_data)
 
     async def _user_auth(self, data: UserLogin) -> User:
         user: User | None = None

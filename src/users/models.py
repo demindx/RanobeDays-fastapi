@@ -53,4 +53,6 @@ class UserProfile(Base["UserProfileCreate"], BaseTimestamps):
 
     readed_chapters: Mapped[int] = mapped_column(default=0)
 
+    nickname: Mapped[str]
+
     user: Mapped[User] = relationship(back_populates="user_profile", single_parent=True)
