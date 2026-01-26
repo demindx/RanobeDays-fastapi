@@ -1,7 +1,9 @@
+from typing import override
+
 from src.core.service import AbstractService
-from src.teams.models import Team, TeamUserRole, TeamUsers
+from src.teams.models import Team, TeamUserRole
 from src.teams.repository import TeamRepository
-from src.teams.schemas import TeamCreate, TeamUpdate
+from src.teams.schemas import TeamAddUser, TeamCreate, TeamUpdate
 
 
 class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository]):
@@ -14,7 +16,21 @@ class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository])
     async def get_user_teams(self, id: int) -> list[Team]:
         return await self.repo.get_user_teams(id)
 
-    async def add_user(self, user_id: int, team_id: int, role: TeamUserRole):
-        team_user_conn = TeamUsers(user_id=user_id, team_id=team_id, role=role)
+    async def get_team_users(self, id: int) -> list[tuple]:
+        return await self.repo.get_team_users(id)
 
-        await self.repo.add_user(team_user_conn)
+    async def add_user(self, id: int, data: TeamAddUser):
+        await self.repo.add_user(id, data)
+
+    async def remove_user(self, id: int, user_id: int) -> None:
+        await self.repo.remove_user(id, user_id)
+
+    @override
+    async def create(self, data: TeamCreate) -> Team:
+        team = await super().create(data)
+
+        team_add_user = TeamAddUser(role=TeamUserRole.CREATOR, user_id=data.creator_id)
+
+        await self.repo.add_user(team.id, team_add_user)
+
+        return team

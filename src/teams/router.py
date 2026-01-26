@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from src.core.schemas import GenericResponse
 from src.teams.dependencies import TeamServiceDep
 from src.teams.schemas import TeamAddUser, TeamCreate, TeamResponse, TeamUpdate
+from src.users.schemas import UserTeamResponse
 
 router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -54,6 +55,28 @@ async def delete_team_handler(service: TeamServiceDep, id: int) -> None:
     await service.delete(id)
 
 
-@router.post("/{id}/users")
-async def add_user_to_team_handler(service: TeamServiceDep, id: int, data: TeamAddUser):
-    await service.add_user(data.user_id, id, data.role)
+@router.get("/{id}/users")
+async def get_team_users(
+    service: TeamServiceDep, id: int
+) -> GenericResponse[list[UserTeamResponse]]:
+    users = await service.get_team_users(id)
+
+    users = [UserTeamResponse.from_tuple(user) for user in users]
+
+    return GenericResponse[list[UserTeamResponse]](data=users)
+
+
+@router.patch("/{id}/users")
+async def add_user_to_team_handler(
+    service: TeamServiceDep, id: int, data: TeamAddUser
+) -> GenericResponse[None]:
+    await service.add_user(id, data)
+
+    return GenericResponse[None]()
+
+
+@router.delete("/{id}/users/{user_id}")
+async def remove_user_from_team(service: TeamServiceDep, id: int, user_id: int):
+    await service.remove_user(id, user_id)
+
+    return GenericResponse[None]()

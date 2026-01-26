@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, ValidationError, model_validator
 
+from src.teams.models import TeamUserRole
 from src.users.models import UserRoleEnum
 
 
@@ -13,6 +14,15 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+class UserTeamResponse(BaseModel):
+    role: TeamUserRole
+    nickname: str
+
+    @staticmethod
+    def from_tuple(data: tuple) -> UserTeamResponse:
+        return UserTeamResponse(nickname=data[0], role=data[1])
+
+
 class UserLogin(BaseModel):
     login: str | None = None
     email: EmailStr | None = None
@@ -23,11 +33,12 @@ class UserLogin(BaseModel):
 class UserRegister(BaseModel):
     login: str
     email: EmailStr
+    nickname: str
     password1: str
     password2: str
 
     @model_validator(mode="after")
-    def validate_user(self) -> "UserRegister":
+    def validate_user(self) -> UserRegister:
         if self.password1 != self.password2:
             raise ValidationError("Passwords mismatch")
 
@@ -42,7 +53,7 @@ class UserPasswordUpdate(BaseModel):
     password2: str
 
     @model_validator(mode="after")
-    def validate_password(self) -> "UserPasswordUpdate":
+    def validate_password(self) -> UserPasswordUpdate:
         if self.password1 != self.password2:
             raise ValidationError("Passwords mismatch")
 
@@ -50,15 +61,18 @@ class UserPasswordUpdate(BaseModel):
 
 
 class UserProfileCreate(BaseModel):
-    first_name: str
-    last_name: str
+    user_id: int
+    nickname: str
+    readed_chapters: int = 0
 
 
 class UserProfileUpdate(BaseModel):
+    nickname: str | None = None
     readed_chapters: int | None = None
 
 
 class UserProfileResponse(BaseModel):
+    nickname: str
     readed_chapters: int
 
     class Config:
