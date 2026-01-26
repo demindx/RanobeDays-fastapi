@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, override
 
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -102,9 +102,9 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
 
         return instance
 
-    # TODO: rewrite to use sql stmt delete()
     @override
     async def delete(self, id: int | uuid.UUID) -> None:
-        instance = await self.get_by_id(id)
-        await self.session.delete(instance)
+        stmt = delete(self.model).where(self.model.id == id)
+
+        await self.session.execute(stmt)
         await self.session.flush()
