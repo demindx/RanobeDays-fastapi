@@ -65,3 +65,4 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
         )
 
         await self.session.execute(stmt)
+        await self.session.flush()
