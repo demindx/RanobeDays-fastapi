@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions import AlreadyExists
 from src.core.repository import PostgresRepository
+from src.novel.models import Novel
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamAddUser, TeamUpdate
 from src.users.models import User, UserProfile
@@ -66,3 +67,9 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
 
         await self.session.execute(stmt)
         await self.session.flush()
+
+    async def get_novels(self, id: int) -> list[Novel]:
+        team = await self.get_by_id(id)
+        await self.session.run_sync(lambda sess: team.novels)
+
+        return team.novels

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from src.core.schemas import GenericResponse
+from src.novel.schemas import NovelResponse
 from src.teams.dependencies import TeamServiceDep
 from src.teams.schemas import TeamAddUser, TeamCreate, TeamResponse, TeamUpdate
 from src.users.schemas import UserTeamResponse
@@ -59,7 +60,7 @@ async def delete_team_handler(service: TeamServiceDep, id: int) -> None:
 async def get_team_users(
     service: TeamServiceDep, id: int
 ) -> GenericResponse[list[UserTeamResponse]]:
-    users = await service.get_team_users(id)
+    users = await service.get_users(id)
 
     users = [UserTeamResponse.from_tuple(user) for user in users]
 
@@ -80,3 +81,14 @@ async def remove_user_from_team(service: TeamServiceDep, id: int, user_id: int):
     await service.remove_user(id, user_id)
 
     return GenericResponse[None]()
+
+
+@router.get("/{id}/novels")
+async def get_novels(
+    service: TeamServiceDep, id: int
+) -> GenericResponse[list[NovelResponse]]:
+    novels = await service.get_novels(id)
+
+    novels = [NovelResponse.model_validate(novel) for novel in novels]
+
+    return GenericResponse[list[NovelResponse]](data=novels)

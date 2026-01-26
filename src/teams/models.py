@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base
+from src.novel.models import Novel
 from src.users.models import User
 
 if TYPE_CHECKING:
@@ -37,6 +38,8 @@ class Team(Base["TeamCreate"]):
     is_verified: Mapped[bool] = mapped_column(default=False)
 
     users: Mapped[list[User]] = relationship(back_populates="teams")
+
+    novels: Mapped[list[Novel]] = relationship()
 
 
 class TeamUsers(Base[None]):
