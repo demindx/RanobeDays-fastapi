@@ -12,8 +12,8 @@ from src.language.models import Language
 
 if TYPE_CHECKING:
     from src.category.model import Category  # noqa: F401
+    from src.chapter.models import Chapter  # noqa: F401
     from src.novel.schemas import NovelCreate  # noqa: F401
-    from src.teams.models import Team  # noqa: F401
 
 
 class NovelType(Enum):
@@ -55,6 +55,8 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
     language: Mapped[Language] = relationship(lazy="joined")
     country: Mapped[Country] = relationship(lazy="joined")
+
+    chapters: Mapped[list[Chapter]] = relationship()
 
     @staticmethod
     def generate_slug(target: Novel, value: str, oldvalue: str, initiator: str):
