@@ -102,6 +102,7 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
 
         return instance
 
+    # TODO: rewrite to use sql stmt delete()
     @override
     async def delete(self, id: int | uuid.UUID) -> None:
         instance = await self.get_by_id(id)
