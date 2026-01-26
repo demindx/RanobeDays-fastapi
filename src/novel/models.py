@@ -9,11 +9,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.core.models import Base, BaseTimestamps
 from src.country.models import Country
 from src.language.models import Language
-from src.teams.models import Team
 
 if TYPE_CHECKING:
     from src.category.model import Category  # noqa: F401
     from src.novel.schemas import NovelCreate  # noqa: F401
+    from src.teams.models import Team  # noqa: F401
 
 
 class NovelType(Enum):
@@ -39,7 +39,7 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
     language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"))
     country_id: Mapped[int] = mapped_column(ForeignKey("countries.id"))
-    embedding: Mapped[Vector] = mapped_column(Vector(), default=[0.0, 0.0, 0.1])
+    embedding: Mapped[Vector] = mapped_column(Vector(), default=[0.0, 0.0, 0.0])
     description: Mapped[str] = mapped_column()
 
     publish_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -53,7 +53,6 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
     categories: Mapped[list[Category]] = relationship(secondary="novel_categories")
 
-    team: Mapped[Team] = relationship(lazy="joined")
     language: Mapped[Language] = relationship(lazy="joined")
     country: Mapped[Country] = relationship(lazy="joined")
 

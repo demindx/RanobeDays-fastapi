@@ -31,6 +31,7 @@ class NovelUpdate(BaseModel):
 
 class NovelResponse(BaseModel):
     title: str
+    slug: str
     description: str
     type: NovelType
     publish_date: datetime
