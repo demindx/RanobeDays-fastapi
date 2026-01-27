@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from src.auth.dependencies import CurrentUser
+from src.core.dependencies import DbSession
 from src.core.schemas import GenericResponse
 from src.users.dependencies import UserProfileServiceDep, UserServiceDep
 from src.users.schemas import (
@@ -9,6 +11,17 @@ from src.users.schemas import (
 )
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
+@router.get("/me")
+async def get_me(
+    user: CurrentUser, session: DbSession
+) -> GenericResponse[UserResponse]:
+    await session.run_sync(lambda _: user.user_profile)
+
+    response = UserResponse.model_validate(user)
+
+    return GenericResponse[UserResponse](data=response)
 
 
 @router.get("/")

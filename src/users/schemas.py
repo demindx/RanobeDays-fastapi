@@ -5,10 +5,9 @@ from src.users.models import UserRoleEnum
 
 
 class UserResponse(BaseModel):
-    login: str
     email: EmailStr
-    password_hash: str
     role: UserRoleEnum
+    user_profile: UserProfileResponse
 
     class Config:
         from_attributes = True
