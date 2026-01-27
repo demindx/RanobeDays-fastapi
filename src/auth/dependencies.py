@@ -48,3 +48,6 @@ async def get_admin_user(user: Annotated[User, Depends(get_current_user)]):
     if user.role != UserRoleEnum.ADMIN:
         raise ForbiddenError
     return user
+
+
+CurrentUser = Annotated[User, Depends(get_current_user)]
