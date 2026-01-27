@@ -21,3 +21,4 @@ class Chapter(Base["ChapterCreate"], BaseTimestamps):
     is_published: Mapped[bool] = mapped_column(default=False)
 
     novel_id: Mapped[int] = mapped_column(ForeignKey("novels.id"), primary_key=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), primary_key=True)
