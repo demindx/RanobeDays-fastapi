@@ -7,6 +7,7 @@ class ChapterCreate(BaseModel):
     content: str
 
     novel_id: int
+    team_id: int
 
 
 class ChapterUpdate(BaseModel):
