@@ -17,6 +17,19 @@ services:
     environment:
       - PYTHONPATH=/app
 
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+
+    ports:
+      - "5173:5173"
+
+    volumes:
+      - ./frontend/:/app
+
+    restart: unless-stopped
+
   db:
     image: ankane/pgvector
     ports:
