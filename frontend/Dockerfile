@@ -1,14 +1,15 @@
 FROM oven/bun:latest
 
-WORKDIR app
+WORKDIR /app
 
-COPY public/ .
-COPY src/ .
-COPY index.html .
-COPY bun.lock .
-COPY package.json .
-COPY vite.config.js .
-COPY jsconfig.json .
+COPY . .
+# COPY public/ .
+# COPY src/ .
+# COPY index.html .
+# COPY bun.lock .
+# COPY package.json .
+# COPY vite.config.js .
+# COPY jsconfig.json .
 
 EXPOSE 5173
 
