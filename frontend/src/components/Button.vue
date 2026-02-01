@@ -17,23 +17,23 @@
 
 <style lang="scss" scoped>
 .button {
-	background-color: $first-color;
+	background-color: var(--first-color);
 	border-radius: 8px;
 	border: none;
 	font-family: Inter;
 	font-size: 12px;
-	color: $foreground-color;
+	color: var(--foreground-color);
 	padding: 2px 10px;
 	padding-bottom: 3px;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		background-color: darken($first-color, 10%);
+		background-color: black;
 	}
 
 	&:active {
-		background-color: $first-color;
+		background-color: var(--first-color);
 	}
 
 	// &:hover{

@@ -6,5 +6,6 @@ import HomeView from "./views/HomeView.vue"
 	<HomeView/>
 </template>
 
-<style lang="less" scoped>
+<style>
+@import "./assets/_variables.css";
 </style>

@@ -16,7 +16,7 @@
 	display: flex;
 
 	&__input {
-		background-color: $secondary-color;
+		background-color: var(--secondary-color);
 		border: none;
 		border-radius: 16px;
 		width: 340px;
@@ -24,7 +24,7 @@
 
 		padding: 0px 10px;
 
-		color: $foreground-color;
+		color: var(--foreground-color);
 
 		box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1) inset;
 
