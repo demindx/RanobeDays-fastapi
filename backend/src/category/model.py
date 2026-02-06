@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.core.models import Base
 
 if TYPE_CHECKING:
-    from src.chapters.schemas import ChapterCreate  # noqa: F401
+    from src.chapter.schemas import ChapterCreate  # noqa: F401
 
 
 class CategoryTypeEnum(Enum):
