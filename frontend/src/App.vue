@@ -1,9 +1,15 @@
 <script setup>
-import HomeView from "./views/HomeView.vue"
+import { RouterView } from 'vue-router';
+import Header from './components/Header.vue';
 </script>
 
 <template>
-	<HomeView/>
+  <div class="flex flex-col min-h-screen">
+    <Header />
+    <main class="flex-grow">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <style>

@@ -1,44 +1,36 @@
-<script setup>
-	import SearchIcon from './icons/SearchIcon.vue';
-</script>
-
-
 <template>
-	<div class="searchbar">
-		<input id="searchbar__input" type="text" class="searchbar__input inset-shadow-sm">
-		<SearchIcon class="searchbar__icon"/>
-	</div>
+  <div class="relative w-full">
+    <input
+      type="text"
+      :placeholder="placeholder"
+      class="w-full py-2 px-4 pr-10 rounded-full bg-[#B3CB80] text-[#494949] focus:outline-none focus:ring-2 focus:ring-[#C4FF61]"
+    />
+    <div
+      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#494949] cursor-pointer"
+      @click="onSearchClick"
+    >
+      <SearchIcon />
+    </div>
+  </div>
 </template>
 
+<script setup>
+import SearchIcon from './icons/SearchIcon.vue';
 
-<style lang="scss" scoped>
-.searchbar {
-	display: flex;
+const props = defineProps({
+  placeholder: {
+    type: String,
+    default: 'Search...'
+  },
+  onSearch: {
+    type: Function,
+    default: null
+  }
+});
 
-	&__input {
-		background-color: var(--secondary-color);
-		border: none;
-		border-radius: 16px;
-		width: 340px;
-		height: 25px;
-
-		padding: 0px 10px;
-
-		color: var(--foreground-color);
-
-		box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1) inset;
-
-		&:focus {
-			border: none;
-			outline: none;
-		}
-
-	}
-
-	&__icon {
-		position: relative;
-		right: 30px;
-	}
-
-}
-</style>
+const onSearchClick = () => {
+  if (props.onSearch) {
+    props.onSearch();
+  }
+};
+</script>

@@ -1,51 +1,23 @@
 <script setup>
-	const props = defineProps({
-		callback: {
-			type: Function,
-			required: true
-		}
-	})
+const props = defineProps({
+  callback: {
+    type: Function,
+    default: null
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+});
 </script>
 
-
 <template>
-	<button class="button" @click="props.callback">
-		<slot/>
-	</button>
+  <button
+    class="bg-[#C4FF61] hover:bg-[#b3e659] text-[#494949] font-medium py-2 px-6 rounded-full transition-colors duration-200"
+    :class="{'opacity-50 cursor-not-allowed': disabled}"
+    :disabled="disabled"
+    @click="callback"
+  >
+    <slot/>
+  </button>
 </template>
-
-
-<style lang="scss" scoped>
-.button {
-	background-color: var(--first-color);
-	border-radius: 8px;
-	border: none;
-	font-family: Inter;
-	font-size: 12px;
-	color: var(--foreground-color);
-	padding: 2px 10px;
-	padding-bottom: 3px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-
-	&:hover {
-		background-color: black;
-	}
-
-	&:active {
-		background-color: var(--first-color);
-	}
-
-	// &:hover{
-	// 	background-color: darken($first-color, 10%);
-	// 	transform: translateY(-0.1px);
-	// 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	// }
-	//
-	// &:active{
-	// 	background-color: darken($first-color, 15%);
-	// 	transform: translateY(0);
-	// 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	// }
-}
-</style>

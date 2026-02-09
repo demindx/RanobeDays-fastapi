@@ -1,22 +1,22 @@
-<script setup>
-	const props = defineProps({
-		url: {
-			type: String,
-			default: "#"
-		}
-	})
-</script>
-
-
 <template>
-	<a :href="props.url"><slot/></a>
+  <router-link
+    :to="to"
+    class="text-white font-medium hover:text-[#C4FF61] transition-colors duration-200"
+    active-class="text-[#C4FF61]"
+  >
+    {{ name }}
+  </router-link>
 </template>
 
-
-<style lang="scss" scoped>
-a {
-	color: white;
-	margin: 10px 40px;
-	font-family: Inter;
-}
-</style>
+<script setup>
+defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  to: {
+    type: String,
+    required: true
+  }
+});
+</script>
