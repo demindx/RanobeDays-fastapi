@@ -7,8 +7,8 @@
     <div class="w-full h-[60px] flex items-center justify-between relative z-10">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1250px] w-full">
         <div class="flex items-center justify-between h-[60px]">
-          <!-- Logo section -->
-          <div class="flex items-center">
+          <!-- Logo section - visible on desktop -->
+          <div class="hidden md:flex items-center">
             <router-link to="/">
               <Icon class="h-8 cursor-pointer" />
             </router-link>
@@ -16,11 +16,18 @@
 
           <!-- Desktop navigation -->
           <nav class="hidden md:flex items-center space-x-6 ml-8">
-            <NavItem v-for="item in navItems" :key="item.name" :to="item.to" :name="item.name" />
+            <NavItem :to="navItems[0].to" :name="navItems[0].name" />
+            <NavItem :to="navItems[1].to" :name="navItems[1].name" />
+            <NavItem :to="navItems[4].to" :name="navItems[4].name" />
           </nav>
 
-          <!-- Search bar - visible on all screen sizes -->
-          <div class="flex-grow max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl mx-4">
+          <!-- Search bar - full width on mobile, visible on desktop -->
+          <div class="md:hidden w-full px-4">
+            <SearchBar placeholder="Поиск" @on-search="handleSearch" />
+          </div>
+
+          <!-- Search bar - visible on desktop -->
+          <div class="hidden md:flex flex-grow max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl mx-4">
             <SearchBar placeholder="Поиск" @on-search="handleSearch" />
           </div>
 
@@ -40,109 +47,57 @@
           <div class="hidden md:block" v-else>
             <Button @click="handleLogin">Войти</Button>
           </div>
-
-          <!-- Mobile menu button -->
-          <button
-            @click="toggleMobileMenu"
-            class="md:hidden text-white focus:outline-none z-50 ml-4"
-            aria-label="Toggle menu"
-          >
-            <svg
-              v-if="!mobileMenuOpen"
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-            <svg
-              v-else
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile menu -->
-    <div
-      v-if="mobileMenuOpen"
-      class="md:hidden fixed inset-0 bg-transparent z-40 transition-opacity"
-      @click="closeMobileMenu"
-    ></div>
+    <!-- Bottom navigation for mobile -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#232323] border-t border-gray-700 py-2 md:hidden z-50">
+      <div class="flex items-center justify-around">
+        <!-- Left menu item: Catalog -->
+        <router-link to="/catalog" class="flex flex-col items-center text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          <span class="text-xs mt-1">Каталог</span>
+        </router-link>
 
-    <div
-      v-if="mobileMenuOpen"
-      class="md:hidden fixed top-0 left-0 h-full w-full bg-[#232323] z-40"
-    >
-      <div class="flex flex-col h-full">
-        <!-- Header section with logo -->
-        <div class="p-4 border-b border-gray-700">
-          <div class="flex items-center justify-between">
-            <router-link to="/" @click="closeMobileMenu">
-              <Icon class="h-8 cursor-pointer" />
-            </router-link>
-            <button
-              @click="closeMobileMenu"
-              class="text-white focus:outline-none"
-              aria-label="Close menu"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
+        <!-- Left menu item: Notifications -->
+        <router-link to="/notifications" class="flex flex-col items-center text-white">
+          <div class="relative">
+            <NotificationIcon class="w-6 h-6" />
+            <div v-if="hasNotifications" class="absolute -top-1 -right-1 w-3 h-3 bg-[#C4FF61] rounded-full"></div>
           </div>
-        </div>
+          <span class="text-xs mt-1">Уведомления</span>
+        </router-link>
 
-        <!-- Main content area -->
-        <div class="flex-grow p-4 overflow-y-auto">
-          <nav class="grid grid-cols-2 gap-4 mb-6">
-            <NavItem
-              v-for="item in navItems"
-              :key="item.name"
-              :to="item.to"
-              :name="item.name"
-              @click="closeMobileMenu"
-              class="py-3 text-center bg-[#2C2C2C] rounded-lg"
-            />
-          </nav>
+        <!-- Center: Logo -->
+        <router-link to="/" class="flex flex-col items-center">
+          <Icon class="h-8 cursor-pointer" />
+        </router-link>
 
-          <div class="mt-auto" v-if="isLoggedIn">
-            <div class="flex justify-center space-x-6 mb-4">
-              <div class="relative">
-                <BookIcon class="w-6 h-6 text-white cursor-pointer" @click="handleBookClick" />
-              </div>
-              <div class="relative">
-                <NotificationIcon class="w-6 h-6 text-white cursor-pointer" @click="handleNotificationClick" />
-                <div v-if="hasNotifications" class="absolute -top-1 -right-1 w-3 h-3 bg-[#C4FF61] rounded-full"></div>
-              </div>
-              <div class="w-8 h-8 rounded-full bg-[#C4FF61] flex items-center justify-center" :class="{'shadow-inner': !userProfile.hasImage}">
-                <span class="text-[#494949] font-bold text-sm">{{ userProfile.initials }}</span>
-              </div>
+        <!-- Right menu item: Favorites -->
+        <router-link to="/favorites" class="flex flex-col items-center text-white">
+          <BookIcon class="w-6 h-6" />
+          <span class="text-xs mt-1">Закладки</span>
+        </router-link>
+
+        <!-- Right menu item: Profile -->
+        <div class="flex flex-col items-center text-white" v-if="isLoggedIn">
+          <router-link to="/profile" class="flex flex-col items-center">
+            <div class="w-6 h-6 rounded-full bg-[#C4FF61] flex items-center justify-center">
+              <span class="text-[#494949] font-bold text-xs">А</span>
             </div>
-            <Button @click="handleLogout" class="w-full">Выйти</Button>
-          </div>
-          <div class="mt-auto" v-else>
-            <Button @click="handleLogin" class="w-full">Войти</Button>
-          </div>
+            <span class="text-xs mt-1">Профиль</span>
+          </router-link>
+        </div>
+        <div class="flex flex-col items-center text-white" v-else>
+          <router-link to="/login" class="flex flex-col items-center">
+            <div class="w-6 h-6 rounded-full bg-[#C4FF61] flex items-center justify-center">
+              <span class="text-[#494949] font-bold text-xs">В</span>
+            </div>
+            <span class="text-xs mt-1">Войти</span>
+          </router-link>
         </div>
       </div>
     </div>
@@ -158,23 +113,18 @@ import Button from '@/components/Button.vue';
 import NotificationIcon from '@/components/icons/Notification.vue';
 import BookIcon from '@/components/icons/Book.vue';
 
-const mobileMenuOpen = ref(false);
 const isLoggedIn = ref(true); // This would typically come from your auth store/state
 const hasNotifications = ref(true); // This would typically come from your notification store/state
 
 const navItems = [
   { name: 'Главная', to: '/' },
   { name: 'Каталог', to: '/catalog' },
-  { name: 'Случайный тайтл', to: '/random' },
+  { name: 'Уведомления', to: '/notifications' },
+  { name: 'Закладки', to: '/favorites' },
+  { name: 'Профиль', to: '/profile' }
 ];
 
-const toggleMobileMenu = () => {
-  mobileMenuOpen.value = !mobileMenuOpen.value;
-};
-
-const closeMobileMenu = () => {
-  mobileMenuOpen.value = false;
-};
+// Mobile menu functionality removed as we're using a bottom navigation bar
 
 const handleSearch = () => {
   // Handle search functionality here
