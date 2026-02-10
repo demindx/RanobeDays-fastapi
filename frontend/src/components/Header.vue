@@ -19,8 +19,8 @@
             <NavItem v-for="item in navItems" :key="item.name" :to="item.to" :name="item.name" />
           </nav>
 
-          <!-- Search bar -->
-          <div class="hidden md:block mx-8 flex-grow max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl">
+          <!-- Search bar - visible on all screen sizes -->
+          <div class="flex-grow max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl mx-4">
             <SearchBar placeholder="Поиск" @on-search="handleSearch" />
           </div>
 
@@ -44,7 +44,7 @@
           <!-- Mobile menu button -->
           <button
             @click="toggleMobileMenu"
-            class="md:hidden text-white focus:outline-none z-50"
+            class="md:hidden text-white focus:outline-none z-50 ml-4"
             aria-label="Toggle menu"
           >
             <svg
@@ -94,9 +94,9 @@
       class="md:hidden fixed top-0 left-0 h-full w-full bg-[#232323] z-40"
     >
       <div class="flex flex-col h-full">
-        <!-- Header section with logo and search -->
+        <!-- Header section with logo -->
         <div class="p-4 border-b border-gray-700">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between">
             <router-link to="/" @click="closeMobileMenu">
               <Icon class="h-8 cursor-pointer" />
             </router-link>
@@ -110,7 +110,6 @@
               </svg>
             </button>
           </div>
-          <SearchBar placeholder="Поиск" @on-search="handleSearch" />
         </div>
 
         <!-- Main content area -->
