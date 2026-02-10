@@ -1,7 +1,7 @@
 <template>
   <header class="w-full relative">
     <!-- Full-width background -->
-    <div class="absolute inset-0 bg-[#232323]"></div>
+    <div class="absolute inset-0 bg-[#161616]"></div>
 
     <!-- Main header content -->
     <div class="w-full h-[60px] flex items-center justify-between relative z-10">
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Bottom navigation for mobile -->
-    <div class="fixed bottom-0 left-0 right-0 bg-[#232323] border-t border-gray-700 py-2 md:hidden z-50">
+    <div class="fixed bottom-0 left-0 right-0 bg-[#161616] border-t border-gray-700 py-2 md:hidden z-50">
       <div class="flex items-center justify-around">
         <!-- Left menu item: Catalog -->
         <router-link to="/catalog" class="flex flex-col items-center text-white">
