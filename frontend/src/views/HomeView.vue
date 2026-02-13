@@ -1,7 +1,7 @@
 <script setup>
-import Header from '../components/Header.vue'
-import NovelCardComponent from '../components/NovelCardComponent.vue'
-import NovelCardWithTags from '../components/NovelCardWithTags.vue'
+import Header from '../components/layout/Header.vue'
+import NovelCardComponent from '../components/novel/NovelCardComponent.vue'
+import NovelCardWithTags from '../components/novel/NovelCardWithTags.vue'
 </script>
 
 <template>
