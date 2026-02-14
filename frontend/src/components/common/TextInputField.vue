@@ -79,15 +79,19 @@ const handleKeydown = (event) => {
   display: inline-flex;
   align-items: center;
   height: 34px;
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--third-color);
-  border: 1px solid transparent;
+  border: 1px solid var(--border-soft-color);
+  box-shadow: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.rd-field:hover {
+  border-color: color-mix(in srgb, white 24%, var(--border-soft-color));
+}
+
 .rd-field:focus-within {
-  border-color: var(--first-color);
-  box-shadow: 0 0 0 2px var(--focus-ring-color);
+  box-shadow: 0 0 0 1px var(--first-color);
 }
 
 .rd-field__input {
@@ -96,14 +100,15 @@ const handleKeydown = (event) => {
   border: none;
   background: transparent;
   padding: 0 12px 0 20px;
-  color: #dbdbdb;
+  color: var(--foreground-third-color);
   font-size: 12px;
+  font-weight: 500;
   line-height: 1;
 }
 
 .rd-field__input::placeholder {
-  color: #dbdbdb;
-  opacity: 0.85;
+  color: var(--foreground-secondary-color);
+  opacity: 1;
 }
 
 .rd-field__input:focus {

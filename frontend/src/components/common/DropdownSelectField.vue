@@ -194,16 +194,20 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   height: 34px;
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--third-color);
-  border: 1px solid transparent;
+  border: 1px solid var(--border-soft-color);
+  box-shadow: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rd-select:hover {
+  border-color: color-mix(in srgb, white 24%, var(--border-soft-color));
 }
 
 .rd-select:focus-within,
 .rd-select--open {
-  border-color: var(--first-color);
-  box-shadow: 0 0 0 2px var(--focus-ring-color);
+  box-shadow: 0 0 0 1px var(--first-color);
 }
 
 .rd-select__trigger {
@@ -211,8 +215,9 @@ onBeforeUnmount(() => {
   height: 100%;
   border: none;
   background: transparent;
-  color: #dbdbdb;
+  color: var(--foreground-third-color);
   font-size: 12px;
+  font-weight: 500;
   line-height: 1;
   padding: 0 34px 0 20px;
   cursor: pointer;
@@ -235,7 +240,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #dbdbdb;
+  color: var(--foreground-third-color);
 }
 
 .rd-select__icon {
@@ -261,26 +266,38 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: 6px;
   list-style: none;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border-soft-color);
-  background: color-mix(in srgb, var(--third-color) 92%, black);
-  box-shadow: var(--shadow-lg);
+  background: color-mix(in srgb, var(--third-color) 94%, black);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 color-mix(in srgb, white 7%, transparent);
   z-index: 40;
+}
+
+.rd-select__menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rd-select__menu::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--first-color) 28%, transparent);
+  border-radius: 999px;
 }
 
 .rd-select__option {
   min-height: 34px;
   border-radius: 6px;
   padding: 8px 10px;
-  color: #dbdbdb;
+  color: var(--foreground-third-color);
   display: flex;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .rd-select__option:hover {
   background: var(--surface-strong-overlay-color);
+  transform: translateX(2px);
 }
 
 .rd-select__option--active {

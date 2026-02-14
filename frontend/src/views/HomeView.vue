@@ -5,18 +5,31 @@ import NovelCardWithTags from '../components/novel/NovelCardWithTags.vue'
 import StatePanel from '@/components/common/StatePanel.vue'
 import TextInputField from '@/components/common/TextInputField.vue'
 import DropdownSelectField from '@/components/common/DropdownSelectField.vue'
+import TagDropdownSelector from '@/components/common/TagDropdownSelector.vue'
 import { novels, novelsWithTags } from '../mocks/novels'
 
 const hasNovels = computed(() => novels.length > 0)
 const hasNovelsWithTags = computed(() => novelsWithTags.length > 0)
 const demoInput = ref('')
 const demoSelect = ref('jp')
+const demoTags = ref(['action', 'romance', 'adventure', 'comedy', 'drama'])
 
 const countryOptions = [
   { label: 'Япония', value: 'jp' },
   { label: 'Корея', value: 'kr' },
   { label: 'Китай', value: 'cn' },
 ]
+
+const tagOptions = [
+  { label: 'Экшен', value: 'action' },
+  { label: 'Романтика', value: 'romance' },
+  { label: 'Приключения', value: 'adventure' },
+  { label: 'Комедия', value: 'comedy' },
+  { label: 'Драма', value: 'drama' },
+  { label: 'Фэнтези', value: 'fantasy' },
+  { label: 'Мистика', value: 'mystery' },
+]
+
 </script>
 
 <template>
@@ -95,6 +108,11 @@ const countryOptions = [
           v-model="demoSelect"
           aria-label="Пример выпадающего списка"
           :options="countryOptions"
+        />
+        <TagDropdownSelector
+          v-model="demoTags"
+          aria-label="Пример селектора тегов"
+          :options="tagOptions"
         />
       </div>
     </div>
