@@ -1,12 +1,22 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import NovelCardComponent from '../components/novel/NovelCardComponent.vue'
 import NovelCardWithTags from '../components/novel/NovelCardWithTags.vue'
 import StatePanel from '@/components/common/StatePanel.vue'
+import TextInputField from '@/components/common/TextInputField.vue'
+import DropdownSelectField from '@/components/common/DropdownSelectField.vue'
 import { novels, novelsWithTags } from '../mocks/novels'
 
 const hasNovels = computed(() => novels.length > 0)
 const hasNovelsWithTags = computed(() => novelsWithTags.length > 0)
+const demoInput = ref('')
+const demoSelect = ref('jp')
+
+const countryOptions = [
+  { label: 'Япония', value: 'jp' },
+  { label: 'Корея', value: 'kr' },
+  { label: 'Китай', value: 'cn' },
+]
 </script>
 
 <template>
@@ -67,6 +77,24 @@ const hasNovelsWithTags = computed(() => novelsWithTags.length > 0)
           :image-src="novel.imageSrc"
           :tags="novel.tags"
           :slug="novel.slug"
+        />
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+      <h2 class="text-white text-xl mb-4">
+        Пример полей
+      </h2>
+      <div class="flex flex-wrap items-center gap-rd-4">
+        <TextInputField
+          v-model="demoInput"
+          aria-label="Пример текстового поля"
+          placeholder="Введите значение"
+        />
+        <DropdownSelectField
+          v-model="demoSelect"
+          aria-label="Пример выпадающего списка"
+          :options="countryOptions"
         />
       </div>
     </div>
