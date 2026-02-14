@@ -87,7 +87,7 @@ describe('Header', () => {
     expect(routerPush).toHaveBeenCalledWith('/favorites')
   })
 
-  it('marks notifications as read from desktop and mobile controls', async () => {
+  it('marks notifications as read and navigates to notifications from desktop and mobile controls', async () => {
     const store = useAppStore()
     store.hasNotifications = true
 
@@ -99,11 +99,13 @@ describe('Header', () => {
     desktopControls.vm.$emit('notifications-click')
     await nextTick()
     expect(store.hasNotifications).toBe(false)
+    expect(routerPush).toHaveBeenCalledWith('/notifications')
 
     store.hasNotifications = true
     mobileNav.vm.$emit('notifications-click')
     await nextTick()
     expect(store.hasNotifications).toBe(false)
+    expect(routerPush).toHaveBeenCalledWith('/notifications')
   })
 
   it('hides mobile header on downward scroll after threshold', async () => {

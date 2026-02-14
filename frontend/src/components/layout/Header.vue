@@ -131,5 +131,6 @@ const handleBookClick = () => {
 
 const handleNotificationClick = () => {
   markNotificationsRead()
+  void router.push('/notifications')
 }
 </script>
