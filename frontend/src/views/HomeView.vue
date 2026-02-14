@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import NovelCardComponent from '../components/novel/NovelCardComponent.vue'
+import NovelHeroCarousel from '../components/novel/NovelHeroCarousel.vue'
 import NovelCardWithTags from '../components/novel/NovelCardWithTags.vue'
 import StatePanel from '@/components/common/StatePanel.vue'
 import TextInputField from '@/components/common/TextInputField.vue'
@@ -34,6 +35,12 @@ const tagOptions = [
 
 <template>
   <main class="bg-[var(--background-color)] min-h-screen">
+    <NovelHeroCarousel
+      v-if="hasNovels"
+      :novels="novels"
+      title="Подборка для вас"
+    />
+
     <div class="container mx-auto px-4 py-8">
       <h1 class="text-white text-2xl mb-6">
         Ранобэ
@@ -60,6 +67,7 @@ const tagOptions = [
             :country="novel.country"
             :image-src="novel.imageSrc"
             :slug="novel.slug"
+            :bookmark-status="novel.bookmarkStatus"
           />
         </div>
       </template>
@@ -90,6 +98,7 @@ const tagOptions = [
           :image-src="novel.imageSrc"
           :tags="novel.tags"
           :slug="novel.slug"
+          :bookmark-status="novel.bookmarkStatus"
         />
       </div>
     </div>
