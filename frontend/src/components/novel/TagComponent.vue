@@ -44,6 +44,7 @@ const handleClick = (event) => {
     :to="clickable ? `/catalog?tag=${id}` : undefined"
     :class="tagClass"
     :aria-label="`Тег: ${name}`"
+    :aria-disabled="clickable ? undefined : 'true'"
     @click="handleClick"
   >
     {{ name }}
@@ -69,8 +70,17 @@ const handleClick = (event) => {
   transform: scale(1.02);
 }
 
+.tag:focus-visible {
+  outline: 2px solid var(--first-color);
+  outline-offset: 2px;
+}
+
 .tag:active {
   transform: scale(0.98);
+}
+
+.tag[aria-disabled='true'] {
+  cursor: default;
 }
 
 .tag--sm {
@@ -86,5 +96,12 @@ const handleClick = (event) => {
 .tag--lg {
   padding: 0.375rem 1rem;
   font-size: 0.875rem;
+}
+
+@media (pointer: coarse) {
+  .tag {
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+  }
 }
 </style>

@@ -52,6 +52,7 @@ defineEmits(['login', 'book-click', 'notifications-click'])
       <div
         v-if="hasNotifications"
         class="absolute -top-1 -right-1 w-3 h-3 bg-rd-accent rounded-full"
+        aria-hidden="true"
       />
     </div>
     <router-link

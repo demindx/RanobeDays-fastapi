@@ -10,7 +10,10 @@ defineProps({
 </script>
 
 <template>
-  <nav class="hidden md:flex items-center space-x-6 ml-8">
+  <nav
+    class="hidden md:flex items-center space-x-6 ml-8"
+    aria-label="Основное меню"
+  >
     <NavItem
       v-for="item in navItems"
       :key="item.to"

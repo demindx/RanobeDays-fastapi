@@ -25,7 +25,10 @@
         <div class="flex items-center justify-between h-[60px]">
           <!-- Logo section - visible on desktop -->
           <div class="hidden md:flex items-center">
-            <router-link to="/">
+            <router-link
+              to="/"
+              aria-label="Открыть главную"
+            >
               <Icon class="h-8 cursor-pointer" />
             </router-link>
           </div>
@@ -109,7 +112,7 @@ const navItems = [
   { name: 'Главная', to: '/' },
   { name: 'Каталог', to: '/catalog' },
   { name: 'Уведомления', to: '/notifications' },
-  { name: 'Закладки', to: '/favorites' },
+  { name: 'Топ', to: '/top' },
   { name: 'Профиль', to: '/profile' },
 ]
 const desktopNavItems = [navItems[0], navItems[1], navItems[3]]

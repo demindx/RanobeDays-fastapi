@@ -54,7 +54,6 @@ const onImageError = (event) => {
       :to="hasSlug ? `/novel/${slug}` : undefined"
       class="novel-card-with-tags__link"
       :class="{ 'novel-card-with-tags__link--disabled': !hasSlug }"
-      :aria-label="`Открыть ${title}`"
       :aria-disabled="!hasSlug ? 'true' : undefined"
     >
       <div class="novel-card-with-tags__image-wrapper">
@@ -104,7 +103,7 @@ const onImageError = (event) => {
   background: var(--background-color);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -112,12 +111,17 @@ const onImageError = (event) => {
 
 .novel-card-with-tags:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .novel-card-with-tags__link {
   display: flex;
   text-decoration: none;
+}
+
+.novel-card-with-tags__link:focus-visible {
+  outline: 2px solid var(--first-color);
+  outline-offset: 4px;
 }
 
 .novel-card-with-tags__link--disabled {
@@ -175,7 +179,7 @@ const onImageError = (event) => {
 .novel-card-with-tags__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
@@ -189,6 +193,10 @@ const onImageError = (event) => {
 }
 
 .novel-card-with-tags:hover .novel-card-with-tags__title {
+  color: var(--first-color);
+}
+
+.novel-card-with-tags__link:focus-visible .novel-card-with-tags__title {
   color: var(--first-color);
 }
 

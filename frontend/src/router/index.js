@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import('../views/FavoritesView.vue'),
     },
     {
+      path: '/top',
+      name: 'top',
+      component: () => import('../views/TopView.vue'),
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),

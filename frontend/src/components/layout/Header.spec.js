@@ -5,6 +5,7 @@ import { mount, RouterLinkStub } from '@vue/test-utils'
 
 const routerPush = vi.fn()
 const searchSpy = vi.fn()
+const mockUseRoute = vi.fn(() => ({ path: '/' }))
 
 const mockUseRouter = vi.fn(() => ({
   push: routerPush,
@@ -15,6 +16,7 @@ vi.mock('vue-router', async (importOriginal) => {
   return {
     ...actual,
     useRouter: () => mockUseRouter(),
+    useRoute: () => mockUseRoute(),
   }
 })
 

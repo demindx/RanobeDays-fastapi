@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import NovelCardComponent from '@/components/novel/NovelCardComponent.vue'
+import StatePanel from '@/components/common/StatePanel.vue'
 import { fetchCatalogNovels } from '@/services/novels'
 
 const route = useRoute()
@@ -48,57 +49,53 @@ watch(
       </p>
     </div>
 
-    <div
+    <StatePanel
       v-if="error"
-      class="rounded-md border border-red-500/40 bg-red-950/20 px-4 py-3 mb-4"
-      role="alert"
-    >
-      <p class="text-sm text-red-200 mb-2">
-        {{ error }}
-      </p>
-      <button
-        type="button"
-        class="inline-flex px-3 py-1.5 rounded-md bg-rd-accent text-rd-text-strong font-semibold text-sm"
-        @click="loadNovels"
-      >
-        Повторить
-      </button>
-    </div>
+      title="Ошибка загрузки"
+      :description="error"
+      variant="error"
+      action-label="Повторить"
+      @action="loadNovels"
+    />
 
     <div
       v-else-if="isLoading"
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-rd-4"
       aria-live="polite"
       aria-busy="true"
+      aria-label="Загрузка каталога"
     >
       <div
         v-for="index in 5"
         :key="index"
-        class="h-[260px] rounded-md bg-[var(--surface-elevated-color)] animate-pulse"
+        class="h-[260px] rounded-rd-md bg-[var(--surface-elevated-color)] animate-pulse"
       />
     </div>
 
-    <div
+    <StatePanel
       v-else-if="novels.length === 0"
-      class="rounded-md border bg-[var(--surface-elevated-color)] border-[var(--border-soft-color)] px-4 py-6 text-rd-text-muted"
-      aria-live="polite"
-    >
-      По вашему запросу ничего не найдено.
-    </div>
+      title="Ничего не найдено"
+      description="Попробуйте изменить запрос или убрать фильтры."
+      variant="empty"
+    />
 
-    <div
-      v-else
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-      aria-live="polite"
-    >
-      <NovelCardComponent
-        v-for="novel in novels"
-        :key="novel.slug"
-        :title="novel.title"
-        :country="novel.country"
-        :slug="novel.slug"
-        :image-src="novel.imageSrc"
-      />
-    </div>
+    <template v-else>
+      <h2 class="sr-only">
+        Результаты каталога
+      </h2>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-rd-4"
+        aria-live="polite"
+      >
+        <NovelCardComponent
+          v-for="novel in novels"
+          :key="novel.slug"
+          :title="novel.title"
+          :country="novel.country"
+          :slug="novel.slug"
+          :image-src="novel.imageSrc"
+        />
+      </div>
+    </template>
   </section>
 </template>

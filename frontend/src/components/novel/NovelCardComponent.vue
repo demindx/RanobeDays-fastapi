@@ -47,7 +47,6 @@ const onImageError = (event) => {
     <router-link
       :to="`/novel/${slug}`"
       class="novel-card__link"
-      :aria-label="`Открыть ${title}`"
     >
       <div class="novel-card__image-wrapper">
         <div
@@ -94,6 +93,12 @@ const onImageError = (event) => {
   display: flex;
   flex-direction: column;
   width: 160px;
+  border-radius: 4px;
+}
+
+.novel-card__link:focus-visible {
+  outline: 2px solid var(--first-color);
+  outline-offset: 4px;
 }
 
 .novel-card__image-wrapper {
@@ -102,7 +107,7 @@ const onImageError = (event) => {
   height: 200px;
   overflow: hidden;
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-soft);
   background-color: var(--surface-elevated-color);
 }
 
@@ -166,6 +171,10 @@ const onImageError = (event) => {
 }
 
 .novel-card:hover .novel-card__title {
+  color: var(--first-color);
+}
+
+.novel-card__link:focus-visible .novel-card__title {
   color: var(--first-color);
 }
 </style>

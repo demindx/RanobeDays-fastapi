@@ -8,7 +8,7 @@
     </p>
     <router-link
       to="/"
-      class="inline-flex px-4 py-2 rounded-md bg-[var(--first-color)] text-[var(--foreground-color)] font-semibold"
+      class="inline-flex px-4 py-2 rounded-md bg-[var(--first-color)] text-[var(--foreground-color)] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-bg"
     >
       На главную
     </router-link>

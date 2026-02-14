@@ -1,4 +1,6 @@
 <script setup>
+import StatePanel from '@/components/common/StatePanel.vue'
+
 const props = defineProps({
   slug: {
     type: String,
@@ -12,8 +14,10 @@ const props = defineProps({
     <h1 class="text-2xl font-semibold mb-3">
       Карточка ранобэ
     </h1>
-    <p class="text-gray-300">
-      Slug: {{ props.slug }}
-    </p>
+    <StatePanel
+      title="Детальная страница в разработке"
+      :description="`Slug: ${props.slug}`"
+      variant="info"
+    />
   </section>
 </template>

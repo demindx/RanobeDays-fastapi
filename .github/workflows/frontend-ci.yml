@@ -43,3 +43,13 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Check bundle budget
+        run: bun run check:bundle-budget
+
+      - name: Lighthouse mobile thresholds
+        env:
+          LIGHTHOUSE_CHROME_PATH: /home/runner/.cache/ms-playwright/chromium-*/chrome-linux/chrome
+        run: |
+          CHROME_PATH=$(ls -1 $LIGHTHOUSE_CHROME_PATH | head -n1)
+          LIGHTHOUSE_CHROME_PATH="$CHROME_PATH" bun run lighthouse:mobile

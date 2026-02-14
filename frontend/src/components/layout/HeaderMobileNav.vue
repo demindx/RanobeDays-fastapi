@@ -1,7 +1,12 @@
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Icon from '@/components/icons/Icon.vue'
 import NotificationIcon from '@/components/icons/Notification.vue'
 import BookIcon from '@/components/icons/Book.vue'
+
+const route = useRoute()
+const currentPath = computed(() => route.path)
 
 defineProps({
   isLoggedIn: {
@@ -22,13 +27,15 @@ defineEmits(['notifications-click'])
 </script>
 
 <template>
-  <div
+  <nav
     class="fixed bottom-0 left-0 right-0 bg-rd-surface border-t border-gray-700 py-2 md:hidden z-50"
+    aria-label="Мобильная навигация"
   >
     <div class="flex items-center justify-around">
       <router-link
         to="/catalog"
-        class="flex flex-col items-center text-white"
+        class="flex flex-col items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+        :aria-current="currentPath === '/catalog' ? 'page' : undefined"
       >
         <svg
           class="w-6 h-6"
@@ -49,7 +56,8 @@ defineEmits(['notifications-click'])
 
       <router-link
         to="/notifications"
-        class="flex flex-col items-center text-white"
+        class="flex flex-col items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+        :aria-current="currentPath === '/notifications' ? 'page' : undefined"
         @click="$emit('notifications-click')"
       >
         <div class="relative">
@@ -57,6 +65,7 @@ defineEmits(['notifications-click'])
           <div
             v-if="hasNotifications"
             class="absolute -top-1 -right-1 w-3 h-3 bg-rd-accent rounded-full"
+            aria-hidden="true"
           />
         </div>
         <span class="text-xs mt-1">Уведомления</span>
@@ -64,17 +73,20 @@ defineEmits(['notifications-click'])
 
       <router-link
         to="/"
-        class="flex flex-col items-center"
+        class="flex flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+        aria-label="Открыть главную"
+        :aria-current="currentPath === '/' ? 'page' : undefined"
       >
         <Icon class="h-8 cursor-pointer" />
       </router-link>
 
       <router-link
-        to="/favorites"
-        class="flex flex-col items-center text-white"
+        to="/top"
+        class="flex flex-col items-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+        :aria-current="currentPath === '/top' ? 'page' : undefined"
       >
         <BookIcon class="w-6 h-6" />
-        <span class="text-xs mt-1">Закладки</span>
+        <span class="text-xs mt-1">Топ</span>
       </router-link>
 
       <div
@@ -83,7 +95,8 @@ defineEmits(['notifications-click'])
       >
         <router-link
           to="/profile"
-          class="flex flex-col items-center"
+          class="flex flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+          :aria-current="currentPath === '/profile' ? 'page' : undefined"
         >
           <div class="w-6 h-6 rounded-full bg-rd-accent flex items-center justify-center">
             <span class="text-rd-text-strong font-bold text-xs">{{ userInitials }}</span>
@@ -97,7 +110,8 @@ defineEmits(['notifications-click'])
       >
         <router-link
           to="/login"
-          class="flex flex-col items-center"
+          class="flex flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rd-surface rounded-sm"
+          :aria-current="currentPath === '/login' ? 'page' : undefined"
         >
           <div class="w-6 h-6 rounded-full bg-rd-accent flex items-center justify-center">
             <span class="text-rd-text-strong font-bold text-xs">В</span>
@@ -106,5 +120,5 @@ defineEmits(['notifications-click'])
         </router-link>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
