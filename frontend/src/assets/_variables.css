@@ -2,13 +2,25 @@
 	--foreground-color: #494949;
 	--foreground-secondary-color: #BFBFBF;
 	--foreground-third-color: white;
+	--foreground-placeholder-color: #6B7280;
 
 	--background-color: #232323;
+	--surface-elevated-color: #2A2A2A;
+	--surface-hover-color: #3A3A3A;
+	--surface-overlay-color: rgba(0, 0, 0, 0.7);
+	--surface-muted-overlay-color: rgba(255, 255, 255, 0.1);
+	--surface-strong-overlay-color: rgba(73, 73, 73, 0.1);
 
 	--first-color: #C4FF61;
 	--secondary-color: #B3CB80;
+	--first-color-hover: #B3E659;
+	--first-color-soft: rgba(196, 255, 97, 0.1);
+	--focus-ring-color: rgba(196, 255, 97, 0.4);
 	--third-color: #2C2C2C;
 	--fourth-color: #161616;
+	--danger-color: #DC2626;
+	--danger-soft-color: rgba(220, 38, 38, 0.1);
+	--border-soft-color: rgba(255, 255, 255, 0.1);
 
 	--wrapper-width: 1250px;
 }

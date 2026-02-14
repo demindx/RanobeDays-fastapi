@@ -28,7 +28,11 @@ const navbarClass = computed(() => {
 </script>
 
 <template>
-  <nav :class="navbarClass" role="navigation" aria-label="Основная навигация">
+  <nav
+    :class="navbarClass"
+    role="navigation"
+    aria-label="Основная навигация"
+  >
     <div class="navbar__container">
       <slot />
     </div>
@@ -38,7 +42,7 @@ const navbarClass = computed(() => {
 <style scoped>
 .navbar {
   width: 100%;
-  background: #161616;
+  background: var(--fourth-color);
 }
 
 .navbar__container {

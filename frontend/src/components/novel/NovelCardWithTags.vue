@@ -27,6 +27,7 @@ const props = defineProps({
 
 const isLoading = ref(true)
 const hasError = ref(false)
+const hasSlug = computed(() => Boolean(props.slug))
 
 const displayImage = computed(() => {
   if (hasError.value || !props.imageSrc) {
@@ -48,13 +49,20 @@ const onImageError = (event) => {
 
 <template>
   <article class="novel-card-with-tags">
-    <router-link
-      :to="slug ? `/novel/${slug}` : '#'"
+    <component
+      :is="hasSlug ? 'router-link' : 'div'"
+      :to="hasSlug ? `/novel/${slug}` : undefined"
       class="novel-card-with-tags__link"
+      :class="{ 'novel-card-with-tags__link--disabled': !hasSlug }"
       :aria-label="`Открыть ${title}`"
+      :aria-disabled="!hasSlug ? 'true' : undefined"
     >
       <div class="novel-card-with-tags__image-wrapper">
-        <div v-if="isLoading" class="novel-card-with-tags__skeleton" aria-hidden="true"></div>
+        <div
+          v-if="isLoading"
+          class="novel-card-with-tags__skeleton"
+          aria-hidden="true"
+        />
         <img
           :src="displayImage"
           :alt="title"
@@ -63,24 +71,37 @@ const onImageError = (event) => {
           loading="lazy"
           @load="onImageLoad"
           @error="onImageError"
-        />
+        >
       </div>
 
       <div class="novel-card-with-tags__content">
-        <div class="novel-card-with-tags__tags" v-if="tags.length">
-          <TagComponent v-for="tag in tags" :key="tag.id" :name="tag.name" :id="tag.id" size="sm" />
+        <div
+          v-if="tags.length"
+          class="novel-card-with-tags__tags"
+        >
+          <TagComponent
+            v-for="tag in tags"
+            :id="tag.id"
+            :key="tag.id"
+            :name="tag.name"
+            size="sm"
+          />
         </div>
 
-        <h3 class="novel-card-with-tags__title">{{ title }}</h3>
-        <p class="novel-card-with-tags__description">{{ description }}</p>
+        <h3 class="novel-card-with-tags__title">
+          {{ title }}
+        </h3>
+        <p class="novel-card-with-tags__description">
+          {{ description }}
+        </p>
       </div>
-    </router-link>
+    </component>
   </article>
 </template>
 
 <style scoped>
 .novel-card-with-tags {
-  background: #232323;
+  background: var(--background-color);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -99,18 +120,27 @@ const onImageError = (event) => {
   text-decoration: none;
 }
 
+.novel-card-with-tags__link--disabled {
+  cursor: default;
+}
+
 .novel-card-with-tags__image-wrapper {
   position: relative;
   width: 160px;
   flex-shrink: 0;
   overflow: hidden;
-  background-color: #2a2a2a;
+  background-color: var(--surface-elevated-color);
 }
 
 .novel-card-with-tags__skeleton {
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, #2a2a2a 8%, #3a3a3a 18%, #2a2a2a 33%);
+  background: linear-gradient(
+    110deg,
+    var(--surface-elevated-color) 8%,
+    var(--surface-hover-color) 18%,
+    var(--surface-elevated-color) 33%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }
@@ -159,11 +189,11 @@ const onImageError = (event) => {
 }
 
 .novel-card-with-tags:hover .novel-card-with-tags__title {
-  color: #c4ff61;
+  color: var(--first-color);
 }
 
 .novel-card-with-tags__description {
-  color: #bfbfbf;
+  color: var(--foreground-secondary-color);
   font-size: 0.875rem;
   line-height: 1.5;
   display: -webkit-box;

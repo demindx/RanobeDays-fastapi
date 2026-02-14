@@ -56,8 +56,8 @@ const handleClick = (event) => {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background: #c3e57e;
-  color: #494949;
+  background: var(--secondary-color);
+  color: var(--foreground-color);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -65,7 +65,7 @@ const handleClick = (event) => {
 }
 
 .tag:hover {
-  background: #b8dc6a;
+  background: var(--first-color-hover);
   transform: scale(1.02);
 }
 

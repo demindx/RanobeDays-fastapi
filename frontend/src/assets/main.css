@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --color-rd-bg: var(--background-color);
+  --color-rd-surface: var(--fourth-color);
+  --color-rd-accent: var(--first-color);
+  --color-rd-accent-soft: var(--secondary-color);
+  --color-rd-text: var(--foreground-third-color);
+  --color-rd-text-muted: var(--foreground-secondary-color);
+  --color-rd-text-strong: var(--foreground-color);
+}
+
 
 /* .wrapper { */
 /*   max-width: $wrapper-width; */

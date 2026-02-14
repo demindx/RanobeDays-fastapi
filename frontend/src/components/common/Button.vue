@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   callback: {
@@ -36,8 +36,6 @@ const props = defineProps({
 
 const emit = defineEmits(['click'])
 
-const isLoading = ref(false)
-
 const buttonClass = computed(() => {
   const base = 'btn'
   const variantClass = `btn--${props.variant}`
@@ -57,26 +55,29 @@ const handleClick = async (event) => {
     return
   }
 
-  if (props.loading) {
-    isLoading.value = true
-  }
-
   emit('click', event)
 
   if (props.callback) {
-    try {
-      await props.callback()
-    } finally {
-      isLoading.value = false
-    }
+    await props.callback()
   }
 }
 </script>
 
 <template>
-  <button :type="type" :class="buttonClass" :disabled="disabled || loading" @click="handleClick">
-    <span v-if="loading" class="btn__spinner"></span>
-    <span class="btn__content" :class="{ 'btn__content--hidden': loading }">
+  <button
+    :type="type"
+    :class="buttonClass"
+    :disabled="disabled || loading"
+    @click="handleClick"
+  >
+    <span
+      v-if="loading"
+      class="btn__spinner"
+    />
+    <span
+      class="btn__content"
+      :class="{ 'btn__content--hidden': loading }"
+    >
       <slot />
     </span>
   </button>
@@ -98,7 +99,7 @@ const handleClick = async (event) => {
 
 .btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(196, 255, 97, 0.4);
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
 }
 
 .btn:active:not(:disabled) {
@@ -106,43 +107,43 @@ const handleClick = async (event) => {
 }
 
 .btn--primary {
-  background: #c4ff61;
-  color: #494949;
+  background: var(--first-color);
+  color: var(--foreground-color);
   border: none;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #b3e659;
+  background: var(--first-color-hover);
 }
 
 .btn--secondary {
-  background: #494949;
-  color: #ffffff;
+  background: var(--foreground-color);
+  color: var(--foreground-third-color);
   border: none;
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background: #5a5a5a;
+  background: var(--surface-hover-color);
 }
 
 .btn--outline {
   background: transparent;
-  color: #c4ff61;
-  border: 2px solid #c4ff61;
+  color: var(--first-color);
+  border: 2px solid var(--first-color);
 }
 
 .btn--outline:hover:not(:disabled) {
-  background: rgba(196, 255, 97, 0.1);
+  background: var(--first-color-soft);
 }
 
 .btn--ghost {
   background: transparent;
-  color: #ffffff;
+  color: var(--foreground-third-color);
   border: none;
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--surface-muted-overlay-color);
 }
 
 .btn--sm {
@@ -179,7 +180,7 @@ const handleClick = async (event) => {
   width: 1rem;
   height: 1rem;
   border: 2px solid transparent;
-  border-top-color: #494949;
+  border-top-color: var(--foreground-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

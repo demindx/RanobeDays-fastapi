@@ -30,8 +30,6 @@ const displayImage = computed(() => {
   return props.imageSrc
 })
 
-const handleClick = () => {}
-
 const onImageLoad = () => {
   isLoading.value = false
 }
@@ -46,9 +44,17 @@ const onImageError = (event) => {
 
 <template>
   <article class="novel-card">
-    <router-link :to="`/novel/${slug}`" class="novel-card__link" :aria-label="`Открыть ${title}`">
+    <router-link
+      :to="`/novel/${slug}`"
+      class="novel-card__link"
+      :aria-label="`Открыть ${title}`"
+    >
       <div class="novel-card__image-wrapper">
-        <div v-if="isLoading" class="novel-card__skeleton" aria-hidden="true"></div>
+        <div
+          v-if="isLoading"
+          class="novel-card__skeleton"
+          aria-hidden="true"
+        />
         <img
           :src="displayImage"
           :alt="title"
@@ -57,12 +63,14 @@ const onImageError = (event) => {
           loading="lazy"
           @load="onImageLoad"
           @error="onImageError"
-        />
+        >
         <div class="novel-card__country-badge">
           {{ country }}
         </div>
       </div>
-      <h3 class="novel-card__title">{{ title }}</h3>
+      <h3 class="novel-card__title">
+        {{ title }}
+      </h3>
     </router-link>
   </article>
 </template>
@@ -95,13 +103,18 @@ const onImageError = (event) => {
   overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  background-color: #2a2a2a;
+  background-color: var(--surface-elevated-color);
 }
 
 .novel-card__skeleton {
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, #2a2a2a 8%, #3a3a3a 18%, #2a2a2a 33%);
+  background: linear-gradient(
+    110deg,
+    var(--surface-elevated-color) 8%,
+    var(--surface-hover-color) 18%,
+    var(--surface-elevated-color) 33%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }
@@ -129,8 +142,8 @@ const onImageError = (event) => {
   top: 8px;
   left: 8px;
   padding: 2px 8px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #c4ff61;
+  background: var(--surface-overlay-color);
+  color: var(--first-color);
   font-size: 0.7rem;
   font-weight: 500;
   border-radius: 4px;
@@ -139,7 +152,7 @@ const onImageError = (event) => {
 
 .novel-card__title {
   margin-top: 0.75rem;
-  color: #ffffff;
+  color: var(--foreground-third-color);
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.3;
@@ -153,6 +166,6 @@ const onImageError = (event) => {
 }
 
 .novel-card:hover .novel-card__title {
-  color: #c4ff61;
+  color: var(--first-color);
 }
 </style>

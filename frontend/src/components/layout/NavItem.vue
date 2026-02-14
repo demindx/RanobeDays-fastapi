@@ -52,7 +52,10 @@ const linkProps = computed(() => {
     :class="sizeClass"
     :aria-current="$route.path === to ? 'page' : undefined"
   >
-    <span v-if="icon" class="nav-item__icon">
+    <span
+      v-if="icon"
+      class="nav-item__icon"
+    >
       <component :is="icon" />
     </span>
     <span class="nav-item__text">{{ name }}</span>
@@ -78,16 +81,22 @@ const linkProps = computed(() => {
   left: 0;
   width: 0;
   height: 2px;
-  background: #c4ff61;
+  background: var(--first-color);
   transition: width 0.2s ease;
 }
 
 .nav-item:hover {
-  color: #c4ff61;
+  color: var(--first-color);
 }
 
 .nav-item:hover::after {
   width: 100%;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--first-color);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .nav-item--sm {
@@ -113,7 +122,7 @@ const linkProps = computed(() => {
 
 .nav-item.router-link-exact-active,
 .nav-item[aria-current='page'] {
-  color: #c4ff61;
+  color: var(--first-color);
 }
 
 .nav-item.router-link-exact-active::after,

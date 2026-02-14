@@ -11,9 +11,9 @@ const props = defineProps({
     type: String,
     default: 'Поиск...',
   },
-  onSearch: {
-    type: Function,
-    default: null,
+  ariaLabel: {
+    type: String,
+    default: 'Поиск по ранобэ',
   },
   debounce: {
     type: Number,
@@ -66,9 +66,6 @@ const handleSearch = () => {
     clearTimeout(debounceTimer)
   }
   emit('search', inputValue.value)
-  if (props.onSearch) {
-    props.onSearch(inputValue.value)
-  }
 }
 
 const handleClear = () => {
@@ -87,25 +84,29 @@ const handleKeydown = (event) => {
 </script>
 
 <template>
-  <div class="search-bar" :class="[sizeClass, { 'search-bar--focused': isFocused }]">
+  <div
+    class="search-bar"
+    :class="[sizeClass, { 'search-bar--focused': isFocused }]"
+  >
     <input
       type="text"
       :value="inputValue"
       :placeholder="placeholder"
+      :aria-label="ariaLabel"
       class="search-bar__input"
       @input="handleInput"
       @focus="isFocused = true"
       @blur="isFocused = false"
       @keydown="handleKeydown"
-    />
+    >
 
     <div class="search-bar__actions">
       <button
         v-if="clearable && inputValue"
         class="search-bar__clear"
-        @click="handleClear"
         type="button"
         aria-label="Очистить"
+        @click="handleClear"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +122,12 @@ const handleKeydown = (event) => {
         </svg>
       </button>
 
-      <button class="search-bar__submit" @click="handleSearch" type="button" aria-label="Поиск">
+      <button
+        class="search-bar__submit"
+        type="button"
+        aria-label="Поиск"
+        @click="handleSearch"
+      >
         <SearchIcon />
       </button>
     </div>
@@ -140,13 +146,13 @@ const handleKeydown = (event) => {
   width: 100%;
   border: none;
   border-radius: 9999px;
-  background: #b3cb80;
-  color: #494949;
+  background: var(--secondary-color);
+  color: var(--foreground-color);
   transition: all 0.2s ease;
 }
 
 .search-bar__input::placeholder {
-  color: #6b7280;
+  color: var(--foreground-placeholder-color);
 }
 
 .search-bar__input:focus {
@@ -169,7 +175,7 @@ const handleKeydown = (event) => {
 }
 
 .search-bar--focused .search-bar__input {
-  box-shadow: 0 0 0 3px rgba(196, 255, 97, 0.4);
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
 }
 
 .search-bar__actions {
@@ -187,7 +193,7 @@ const handleKeydown = (event) => {
   justify-content: center;
   background: transparent;
   border: none;
-  color: #494949;
+  color: var(--foreground-color);
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 50%;
@@ -195,11 +201,18 @@ const handleKeydown = (event) => {
 }
 
 .search-bar__submit:hover {
-  background: rgba(73, 73, 73, 0.1);
+  background: var(--surface-strong-overlay-color);
 }
 
 .search-bar__clear:hover {
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.1);
+  color: var(--danger-color);
+  background: var(--danger-soft-color);
+}
+
+.search-bar__input:focus-visible,
+.search-bar__submit:focus-visible,
+.search-bar__clear:focus-visible {
+  outline: 2px solid var(--first-color);
+  outline-offset: 2px;
 }
 </style>
