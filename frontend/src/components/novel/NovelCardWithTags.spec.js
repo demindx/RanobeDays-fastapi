@@ -76,4 +76,23 @@ describe('NovelCardWithTags', () => {
     await image.trigger('error')
     expect(image.attributes('src')).toContain('data:image/svg+xml')
   })
+
+  it('renders bookmark status badge when status provided', () => {
+    const wrapper = mount(NovelCardWithTags, {
+      props: {
+        ...baseProps,
+        slug: 'rezero',
+        bookmarkStatus: 'Любимые',
+      },
+      global: {
+        stubs: {
+          RouterLink: RouterLinkStub,
+        },
+      },
+    })
+
+    const badge = wrapper.find('.novel-card-with-tags__bookmark-badge')
+    expect(badge.exists()).toBe(true)
+    expect(badge.text()).toContain('Любимые')
+  })
 })

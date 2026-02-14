@@ -94,6 +94,7 @@ watch(
           :country="novel.country"
           :slug="novel.slug"
           :image-src="novel.imageSrc"
+          :bookmark-status="novel.bookmarkStatus"
         />
       </div>
     </template>

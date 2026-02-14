@@ -23,6 +23,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  bookmarkStatus: {
+    type: String,
+    default: '',
+  },
 })
 
 const isLoading = ref(true)
@@ -45,6 +49,15 @@ const onImageError = (event) => {
   hasError.value = true
   event.target.src = displayImage.value
 }
+
+const bookmarkBadgeClass = computed(() => {
+  const normalized = props.bookmarkStatus.toLowerCase()
+
+  if (normalized.includes('люб')) return 'novel-card-with-tags__bookmark-badge--favorite'
+  if (normalized.includes('буд')) return 'novel-card-with-tags__bookmark-badge--planned'
+  if (normalized.includes('чита')) return 'novel-card-with-tags__bookmark-badge--reading'
+  return 'novel-card-with-tags__bookmark-badge--default'
+})
 </script>
 
 <template>
@@ -57,20 +70,29 @@ const onImageError = (event) => {
       :aria-disabled="!hasSlug ? 'true' : undefined"
     >
       <div class="novel-card-with-tags__image-wrapper">
-        <div
-          v-if="isLoading"
-          class="novel-card-with-tags__skeleton"
-          aria-hidden="true"
-        />
-        <img
-          :src="displayImage"
-          :alt="title"
-          class="novel-card-with-tags__image"
-          :class="{ 'novel-card-with-tags__image--loaded': !isLoading }"
-          loading="lazy"
-          @load="onImageLoad"
-          @error="onImageError"
-        >
+        <div class="novel-card-with-tags__image-clip">
+          <div
+            v-if="isLoading"
+            class="novel-card-with-tags__skeleton"
+            aria-hidden="true"
+          />
+          <img
+            :src="displayImage"
+            :alt="title"
+            class="novel-card-with-tags__image"
+            :class="{ 'novel-card-with-tags__image--loaded': !isLoading }"
+            loading="lazy"
+            @load="onImageLoad"
+            @error="onImageError"
+          >
+          <div
+            v-if="bookmarkStatus"
+            class="novel-card-with-tags__bookmark-badge"
+            :class="bookmarkBadgeClass"
+          >
+            {{ bookmarkStatus }}
+          </div>
+        </div>
       </div>
 
       <div class="novel-card-with-tags__content">
@@ -132,8 +154,15 @@ const onImageError = (event) => {
   position: relative;
   width: 160px;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: visible;
   background-color: var(--surface-elevated-color);
+}
+
+.novel-card-with-tags__image-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .novel-card-with-tags__skeleton {
@@ -165,6 +194,55 @@ const onImageError = (event) => {
 
 .novel-card-with-tags__image--loaded {
   opacity: 1;
+}
+
+.novel-card-with-tags__bookmark-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 16px);
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.novel-card-with-tags__bookmark-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+}
+
+.novel-card-with-tags__bookmark-badge--reading {
+  background: linear-gradient(135deg, rgba(47, 143, 104, 0.94), rgba(31, 102, 73, 0.92));
+}
+
+.novel-card-with-tags__bookmark-badge--planned {
+  background: linear-gradient(135deg, rgba(58, 79, 159, 0.94), rgba(42, 60, 126, 0.92));
+}
+
+.novel-card-with-tags__bookmark-badge--favorite {
+  background: linear-gradient(135deg, rgba(158, 58, 103, 0.94), rgba(125, 45, 82, 0.92));
+}
+
+.novel-card-with-tags__bookmark-badge--default {
+  background: linear-gradient(135deg, rgba(79, 79, 79, 0.94), rgba(58, 58, 58, 0.92));
 }
 
 .novel-card-with-tags__content {

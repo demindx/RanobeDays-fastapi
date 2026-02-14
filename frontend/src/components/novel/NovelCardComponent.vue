@@ -18,6 +18,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  bookmarkStatus: {
+    type: String,
+    default: '',
+  },
 })
 
 const isLoading = ref(true)
@@ -40,6 +44,15 @@ const onImageError = (event) => {
   const target = event.target
   target.src = displayImage.value
 }
+
+const bookmarkBadgeClass = computed(() => {
+  const normalized = props.bookmarkStatus.toLowerCase()
+
+  if (normalized.includes('люб')) return 'novel-card__bookmark-badge--favorite'
+  if (normalized.includes('буд')) return 'novel-card__bookmark-badge--planned'
+  if (normalized.includes('чита')) return 'novel-card__bookmark-badge--reading'
+  return 'novel-card__bookmark-badge--default'
+})
 </script>
 
 <template>
@@ -49,21 +62,32 @@ const onImageError = (event) => {
       class="novel-card__link"
     >
       <div class="novel-card__image-wrapper">
+        <div class="novel-card__image-clip">
+          <div
+            v-if="isLoading"
+            class="novel-card__skeleton"
+            aria-hidden="true"
+          />
+          <img
+            :src="displayImage"
+            :alt="title"
+            class="novel-card__image"
+            :class="{ 'novel-card__image--loaded': !isLoading }"
+            loading="lazy"
+            @load="onImageLoad"
+            @error="onImageError"
+          >
+        </div>
         <div
-          v-if="isLoading"
-          class="novel-card__skeleton"
-          aria-hidden="true"
-        />
-        <img
-          :src="displayImage"
-          :alt="title"
-          class="novel-card__image"
-          :class="{ 'novel-card__image--loaded': !isLoading }"
-          loading="lazy"
-          @load="onImageLoad"
-          @error="onImageError"
+          v-if="bookmarkStatus"
+          class="novel-card__bookmark-badge"
+          :class="bookmarkBadgeClass"
         >
-        <div class="novel-card__country-badge">
+          {{ bookmarkStatus }}
+        </div>
+        <div
+          class="novel-card__country-badge"
+        >
           {{ country }}
         </div>
       </div>
@@ -105,10 +129,18 @@ const onImageError = (event) => {
   position: relative;
   width: 100%;
   height: 200px;
-  overflow: hidden;
   border-radius: 4px;
+  overflow: visible;
   box-shadow: var(--shadow-soft);
   background-color: var(--surface-elevated-color);
+}
+
+.novel-card__image-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .novel-card__skeleton {
@@ -147,12 +179,61 @@ const onImageError = (event) => {
   top: 8px;
   left: 8px;
   padding: 2px 8px;
-  background: var(--surface-overlay-color);
+  background: color-mix(in srgb, var(--surface-overlay-color) 68%, transparent);
   color: var(--first-color);
   font-size: 0.7rem;
   font-weight: 500;
   border-radius: 4px;
   backdrop-filter: blur(4px);
+}
+
+.novel-card__bookmark-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 16px);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.novel-card__bookmark-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+}
+
+.novel-card__bookmark-badge--reading {
+  background: linear-gradient(135deg, rgba(47, 143, 104, 0.94), rgba(31, 102, 73, 0.92));
+}
+
+.novel-card__bookmark-badge--planned {
+  background: linear-gradient(135deg, rgba(58, 79, 159, 0.94), rgba(42, 60, 126, 0.92));
+}
+
+.novel-card__bookmark-badge--favorite {
+  background: linear-gradient(135deg, rgba(158, 58, 103, 0.94), rgba(125, 45, 82, 0.92));
+}
+
+.novel-card__bookmark-badge--default {
+  background: linear-gradient(135deg, rgba(79, 79, 79, 0.94), rgba(58, 58, 58, 0.92));
 }
 
 .novel-card__title {

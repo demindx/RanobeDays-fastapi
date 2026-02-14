@@ -60,4 +60,22 @@ describe('NovelCardComponent', () => {
     expect(image.attributes('src')).toContain('data:image/svg+xml')
     expect(wrapper.find('.novel-card__skeleton').exists()).toBe(false)
   })
+
+  it('renders bookmark status badge when status provided', () => {
+    const wrapper = mount(NovelCardComponent, {
+      props: {
+        ...baseProps,
+        bookmarkStatus: 'Читаю',
+      },
+      global: {
+        stubs: {
+          RouterLink: RouterLinkStub,
+        },
+      },
+    })
+
+    const badge = wrapper.find('.novel-card__bookmark-badge')
+    expect(badge.exists()).toBe(true)
+    expect(badge.text()).toBe('Читаю')
+  })
 })
