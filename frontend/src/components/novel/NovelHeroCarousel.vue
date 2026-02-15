@@ -98,7 +98,6 @@ const snapToNearest = () => {
 
 const runInertia = () => {
   if (Math.abs(velocity.value) < 0.01) {
-    snapToNearest()
     return
   }
 
@@ -115,7 +114,6 @@ const runInertia = () => {
 
     if (Math.abs(velocity.value) < 0.02) {
       inertiaRaf.value = null
-      snapToNearest()
       return
     }
 
