@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref } from 'vue'
-import NovelCardComponent from '../components/novel/NovelCardComponent.vue'
+import NovelPosterCard from '@/components/novel/NovelPosterCard.vue'
 import NovelHeroCarousel from '../components/novel/NovelHeroCarousel.vue'
-import NovelCardWithTags from '../components/novel/NovelCardWithTags.vue'
+import NovelDetailCard from '@/components/novel/NovelDetailCard.vue'
+import NovelCompactCard from '@/components/novel/NovelCompactCard.vue'
 import StatePanel from '@/components/common/StatePanel.vue'
+import SectionAccentTitle from '@/components/common/SectionAccentTitle.vue'
 import TextInputField from '@/components/common/TextInputField.vue'
 import DropdownSelectField from '@/components/common/DropdownSelectField.vue'
 import TagDropdownSelector from '@/components/common/TagDropdownSelector.vue'
@@ -42,9 +44,12 @@ const tagOptions = [
     />
 
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-white text-2xl mb-6">
+      <SectionAccentTitle
+        as="h1"
+        class="mb-6"
+      >
         Ранобэ
-      </h1>
+      </SectionAccentTitle>
 
       <StatePanel
         v-if="!hasNovels"
@@ -60,7 +65,7 @@ const tagOptions = [
         <div
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-rd-4"
         >
-          <NovelCardComponent
+          <NovelPosterCard
             v-for="novel in novels"
             :key="novel.slug"
             :title="novel.title"
@@ -90,13 +95,30 @@ const tagOptions = [
         v-else
         class="flex flex-wrap gap-rd-4"
       >
-        <NovelCardWithTags
+        <NovelDetailCard
           v-for="novel in novelsWithTags"
           :key="novel.slug"
           :title="novel.title"
           :description="novel.description"
           :image-src="novel.imageSrc"
           :tags="novel.tags"
+          :slug="novel.slug"
+          :bookmark-status="novel.bookmarkStatus"
+        />
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+      <h2 class="text-white text-xl mb-4">
+        Компактная карточка
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-rd-4">
+        <NovelCompactCard
+          v-for="novel in novelsWithTags.slice(0, 6)"
+          :key="`compact-${novel.slug}`"
+          :title="novel.title"
+          :description="novel.description"
+          :image-src="novel.imageSrc"
           :slug="novel.slug"
           :bookmark-status="novel.bookmarkStatus"
         />

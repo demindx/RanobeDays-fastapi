@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import NovelCardComponent from '@/components/novel/NovelCardComponent.vue'
+import NovelPosterCard from '@/components/novel/NovelPosterCard.vue'
+import SectionAccentTitle from '@/components/common/SectionAccentTitle.vue'
 
 const props = defineProps({
   novels: {
@@ -30,6 +31,7 @@ const activePointerId = ref(null)
 
 const inertiaRaf = ref(null)
 const snapRaf = ref(null)
+const wheelSnapTimeout = ref(null)
 
 const sourceNovels = computed(() => props.novels || [])
 const loopedNovels = computed(() => [...sourceNovels.value, ...sourceNovels.value, ...sourceNovels.value])
@@ -45,6 +47,13 @@ const stopSnap = () => {
   if (snapRaf.value) {
     cancelAnimationFrame(snapRaf.value)
     snapRaf.value = null
+  }
+}
+
+const stopWheelSnapTimeout = () => {
+  if (wheelSnapTimeout.value) {
+    clearTimeout(wheelSnapTimeout.value)
+    wheelSnapTimeout.value = null
   }
 }
 
@@ -143,10 +152,43 @@ const scrollByPage = (direction) => {
   if (!viewportRef.value) return
   stopInertia()
   stopSnap()
+  stopWheelSnapTimeout()
   velocity.value = 0
   trackX.value += direction * -viewportRef.value.clientWidth * 0.82
   normalizeTrack()
   snapToNearest()
+}
+
+const scheduleWheelSnap = () => {
+  stopWheelSnapTimeout()
+  wheelSnapTimeout.value = setTimeout(() => {
+    wheelSnapTimeout.value = null
+    snapToNearest()
+  }, 140)
+}
+
+const onWheel = (event) => {
+  if (!viewportRef.value || sourceNovels.value.length === 0 || isDragging.value) return
+
+  const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportRef.value.clientWidth : 1
+  const absX = Math.abs(event.deltaX)
+  const absY = Math.abs(event.deltaY)
+  const dominantDelta = absX > absY ? event.deltaX : event.deltaY
+  const delta = dominantDelta * multiplier
+
+  if (Math.abs(delta) < 0.5) return
+
+  if (event.cancelable) {
+    event.preventDefault()
+  }
+
+  stopInertia()
+  stopSnap()
+  velocity.value = 0
+
+  trackX.value -= delta
+  normalizeTrack()
+  scheduleWheelSnap()
 }
 
 const onPointerDown = (event) => {
@@ -255,6 +297,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', measure)
   stopInertia()
   stopSnap()
+  stopWheelSnapTimeout()
 })
 </script>
 
@@ -265,9 +308,9 @@ onBeforeUnmount(() => {
   >
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1250px] w-full">
       <div class="hero-carousel__header">
-        <h2 class="hero-carousel__title">
+        <SectionAccentTitle>
           {{ title }}
-        </h2>
+        </SectionAccentTitle>
         <div class="hero-carousel__actions">
           <button
             type="button"
@@ -288,7 +331,6 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
-
     <div
       ref="viewportRef"
       class="hero-carousel__viewport"
@@ -298,6 +340,7 @@ onBeforeUnmount(() => {
       @pointerup="onPointerUp"
       @pointercancel="onPointerCancel"
       @click.capture="onClickCapture"
+      @wheel="onWheel"
     >
       <div
         ref="trackRef"
@@ -309,7 +352,7 @@ onBeforeUnmount(() => {
           :key="`${novel.slug}-${index}`"
           class="hero-carousel__slide"
         >
-          <NovelCardComponent
+          <NovelPosterCard
             :title="novel.title"
             :country="novel.country"
             :image-src="novel.imageSrc"
@@ -324,46 +367,107 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .hero-carousel {
+  position: relative;
   width: 100%;
-  padding: 1.25rem 0 1.75rem;
+  padding: 1rem 0 1.75rem;
+}
+
+.hero-carousel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 210px;
+  background: radial-gradient(
+    70% 120% at 50% 0,
+    color-mix(in srgb, var(--first-color) 9%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
 .hero-carousel__header {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem 0.5rem;
-}
-
-.hero-carousel__title {
-  color: var(--foreground-third-color);
-  font-size: 1.1rem;
-  font-weight: 700;
+  gap: 1rem;
+  padding: 0 0.15rem 0.65rem;
 }
 
 .hero-carousel__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .hero-carousel__nav {
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 999px;
-  border: 1px solid var(--border-soft-color);
-  background: color-mix(in srgb, var(--third-color) 84%, transparent);
+  border: 1px solid color-mix(in srgb, white 12%, var(--border-soft-color));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-hover-color) 50%, transparent),
+    color-mix(in srgb, var(--third-color) 86%, transparent)
+  );
   color: var(--foreground-third-color);
-  font-size: 1.1rem;
+  font-size: 1.12rem;
   line-height: 1;
   cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hero-carousel__nav:hover {
+  color: var(--first-color);
+  border-color: color-mix(in srgb, var(--first-color) 32%, var(--border-soft-color));
+  box-shadow: 0 6px 16px color-mix(in srgb, black 46%, transparent);
+}
+
+.hero-carousel__nav:active {
+  transform: scale(0.95);
+}
+
+.hero-carousel__nav:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--focus-ring-color),
+    0 8px 20px color-mix(in srgb, black 40%, transparent);
+}
+
+.hero-carousel__viewport::before,
+.hero-carousel__viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2.4rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-carousel__viewport::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--background-color), transparent);
+}
+
+.hero-carousel__viewport::after {
+  right: 0;
+  background: linear-gradient(-90deg, var(--background-color), transparent);
 }
 
 .hero-carousel__viewport {
+  position: relative;
   overflow: hidden;
   cursor: grab;
   user-select: none;
-  padding: 0.25rem 1rem;
+  touch-action: pan-y;
+  padding: 0.5rem 0.6rem;
 }
 
 .hero-carousel__viewport--dragging {
@@ -389,7 +493,26 @@ onBeforeUnmount(() => {
 
 @media (max-width: 767px) {
   .hero-carousel {
-    padding-top: 0.9rem;
+    padding-top: 0.8rem;
+  }
+
+  .hero-carousel__header {
+    padding-bottom: 0.55rem;
+  }
+
+  .hero-carousel__nav {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+
+  .hero-carousel__viewport::before,
+  .hero-carousel__viewport::after {
+    width: 1.4rem;
+  }
+
+  .hero-carousel__viewport {
+    padding: 0.42rem 0.15rem;
   }
 }
 </style>

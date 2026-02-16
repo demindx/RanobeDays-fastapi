@@ -1,5 +1,6 @@
 <script setup>
 import StatePanel from '@/components/common/StatePanel.vue'
+import SectionAccentTitle from '@/components/common/SectionAccentTitle.vue'
 
 const props = defineProps({
   slug: {
@@ -11,9 +12,12 @@ const props = defineProps({
 
 <template>
   <section class="container mx-auto px-4 py-8 text-white">
-    <h1 class="text-2xl font-semibold mb-3">
+    <SectionAccentTitle
+      as="h1"
+      class="mb-3"
+    >
       Карточка ранобэ
-    </h1>
+    </SectionAccentTitle>
     <StatePanel
       title="Детальная страница в разработке"
       :description="`Slug: ${props.slug}`"

@@ -1,8 +1,15 @@
+<script setup>
+import SectionAccentTitle from '@/components/common/SectionAccentTitle.vue'
+</script>
+
 <template>
   <section class="container mx-auto px-4 py-8 text-white">
-    <h1 class="text-2xl font-semibold mb-3">
+    <SectionAccentTitle
+      as="h1"
+      class="mb-3"
+    >
       404
-    </h1>
+    </SectionAccentTitle>
     <p class="text-gray-300 mb-4">
       Страница не найдена.
     </p>

@@ -1,8 +1,9 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import NovelCardComponent from '@/components/novel/NovelCardComponent.vue'
+import NovelPosterCard from '@/components/novel/NovelPosterCard.vue'
 import StatePanel from '@/components/common/StatePanel.vue'
+import SectionAccentTitle from '@/components/common/SectionAccentTitle.vue'
 import { fetchCatalogNovels } from '@/services/novels'
 
 const route = useRoute()
@@ -38,9 +39,9 @@ watch(
 <template>
   <section class="container mx-auto px-4 py-8 text-white">
     <div class="flex items-center justify-between gap-3 mb-4">
-      <h1 class="text-2xl font-semibold">
+      <SectionAccentTitle as="h1">
         Каталог
-      </h1>
+      </SectionAccentTitle>
       <p
         v-if="searchQuery"
         class="text-sm text-rd-text-muted"
@@ -87,7 +88,7 @@ watch(
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-rd-4"
         aria-live="polite"
       >
-        <NovelCardComponent
+        <NovelPosterCard
           v-for="novel in novels"
           :key="novel.slug"
           :title="novel.title"

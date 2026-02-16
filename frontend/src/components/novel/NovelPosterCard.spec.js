@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
-import NovelCardComponent from './NovelCardComponent.vue'
+import NovelPosterCard from './NovelPosterCard.vue'
 
-describe('NovelCardComponent', () => {
+describe('NovelPosterCard', () => {
   const baseProps = {
     title: 'Solo Leveling',
     country: 'KR',
@@ -11,7 +11,7 @@ describe('NovelCardComponent', () => {
   }
 
   it('renders link to novel detail page', () => {
-    const wrapper = mount(NovelCardComponent, {
+    const wrapper = mount(NovelPosterCard, {
       props: baseProps,
       global: {
         stubs: {
@@ -26,7 +26,7 @@ describe('NovelCardComponent', () => {
   })
 
   it('removes skeleton and marks image as loaded on load event', async () => {
-    const wrapper = mount(NovelCardComponent, {
+    const wrapper = mount(NovelPosterCard, {
       props: baseProps,
       global: {
         stubs: {
@@ -45,7 +45,7 @@ describe('NovelCardComponent', () => {
   })
 
   it('falls back to placeholder image on error', async () => {
-    const wrapper = mount(NovelCardComponent, {
+    const wrapper = mount(NovelPosterCard, {
       props: baseProps,
       global: {
         stubs: {
@@ -62,7 +62,7 @@ describe('NovelCardComponent', () => {
   })
 
   it('renders bookmark status badge when status provided', () => {
-    const wrapper = mount(NovelCardComponent, {
+    const wrapper = mount(NovelPosterCard, {
       props: {
         ...baseProps,
         bookmarkStatus: 'Читаю',
