@@ -114,7 +114,7 @@ onBeforeUnmount(() => {
     ref="rootRef"
     class="rd-select"
     :class="{ 'rd-select--open': isOpen }"
-    :style="{ width: typeof width === 'number' ? `${width}px` : width }"
+    :style="{ '--rd-select-width': typeof width === 'number' ? `${width}px` : width }"
   >
     <input
       v-if="name"
@@ -192,6 +192,8 @@ onBeforeUnmount(() => {
 .rd-select {
   position: relative;
   display: inline-flex;
+  width: min(100%, var(--rd-select-width));
+  max-width: 100%;
   align-items: center;
   height: 34px;
   border-radius: 4px;
@@ -212,6 +214,7 @@ onBeforeUnmount(() => {
 
 .rd-select__trigger {
   width: 100%;
+  min-width: 0;
   height: 100%;
   border: none;
   background: transparent;
@@ -293,6 +296,9 @@ onBeforeUnmount(() => {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rd-select__option:hover {
@@ -319,5 +325,11 @@ onBeforeUnmount(() => {
 .rd-select-fade-leave-to {
   opacity: 0;
   transform: translateY(-6px);
+}
+
+@media (max-width: 767px) {
+  .rd-select {
+    width: 100%;
+  }
 }
 </style>

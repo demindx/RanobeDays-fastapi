@@ -54,7 +54,7 @@ const handleKeydown = (event) => {
 <template>
   <div
     class="rd-field"
-    :style="{ width: typeof width === 'number' ? `${width}px` : width }"
+    :style="{ '--rd-field-width': typeof width === 'number' ? `${width}px` : width }"
   >
     <input
       :id="id || undefined"
@@ -77,6 +77,8 @@ const handleKeydown = (event) => {
 <style scoped>
 .rd-field {
   display: inline-flex;
+  width: min(100%, var(--rd-field-width));
+  max-width: 100%;
   align-items: center;
   height: 34px;
   border-radius: 4px;
@@ -118,5 +120,11 @@ const handleKeydown = (event) => {
 .rd-field__input:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+@media (max-width: 767px) {
+  .rd-field {
+    width: 100%;
+  }
 }
 </style>

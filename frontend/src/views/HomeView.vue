@@ -129,7 +129,7 @@ const tagOptions = [
       <h2 class="text-white text-xl mb-4">
         Пример полей
       </h2>
-      <div class="flex flex-wrap items-center gap-rd-4">
+      <div class="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-rd-4">
         <TextInputField
           v-model="demoInput"
           aria-label="Пример текстового поля"

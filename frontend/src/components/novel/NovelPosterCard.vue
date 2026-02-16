@@ -116,7 +116,7 @@ const bookmarkBadgeClass = computed(() => {
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  width: 160px;
+  width: var(--novel-poster-card-width);
   border-radius: 4px;
 }
 
@@ -128,7 +128,7 @@ const bookmarkBadgeClass = computed(() => {
 .novel-card__image-wrapper {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: var(--novel-poster-card-image-height);
   border-radius: 4px;
   overflow: visible;
   box-shadow: var(--shadow-soft);
@@ -195,7 +195,7 @@ const bookmarkBadgeClass = computed(() => {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  max-width: calc(100% - 16px);
+  max-width: calc(100% - 8px);
   padding: 4px 8px;
   border-radius: 6px;
   color: #fff;
@@ -239,7 +239,7 @@ const bookmarkBadgeClass = computed(() => {
 .novel-card__title {
   margin-top: 0.75rem;
   color: var(--foreground-third-color);
-  font-size: 0.875rem;
+  font-size: var(--novel-poster-card-title-size);
   font-weight: 600;
   line-height: 1.3;
   overflow: hidden;

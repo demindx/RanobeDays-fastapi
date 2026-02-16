@@ -14,7 +14,7 @@ import Header from './components/layout/Header.vue'
     <Header />
     <main
       id="main-content"
-      class="flex-grow md:pt-0 pt-[60px] pb-[70px] md:pb-0"
+      class="flex-grow pt-[calc(60px+env(safe-area-inset-top))] pb-[calc(70px+env(safe-area-inset-bottom))] md:pt-0 md:pb-0"
       tabindex="-1"
     >
       <RouterView />

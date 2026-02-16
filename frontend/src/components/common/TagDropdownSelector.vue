@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
     ref="rootRef"
     class="rd-tag-select"
     :class="{ 'rd-tag-select--open': isOpen }"
-    :style="{ width: typeof width === 'number' ? `${width}px` : width }"
+    :style="{ '--rd-tag-select-width': typeof width === 'number' ? `${width}px` : width }"
   >
     <button
       :id="baseId"
@@ -193,6 +193,8 @@ onBeforeUnmount(() => {
 .rd-tag-select {
   position: relative;
   display: inline-flex;
+  width: min(100%, var(--rd-tag-select-width));
+  max-width: 100%;
   align-items: center;
   height: 34px;
   border-radius: 4px;
@@ -213,6 +215,7 @@ onBeforeUnmount(() => {
 
 .rd-tag-select__trigger {
   width: 100%;
+  min-width: 0;
   height: 100%;
   border: none;
   background: transparent;
@@ -253,6 +256,9 @@ onBeforeUnmount(() => {
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  max-width: 88px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rd-tag-select__chip--more {
@@ -323,6 +329,14 @@ onBeforeUnmount(() => {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  overflow: hidden;
+}
+
+.rd-tag-select__option > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rd-tag-select__option:hover {
@@ -348,5 +362,11 @@ onBeforeUnmount(() => {
 .rd-tag-select-fade-leave-to {
   opacity: 0;
   transform: translateY(-6px);
+}
+
+@media (max-width: 767px) {
+  .rd-tag-select {
+    width: 100%;
+  }
 }
 </style>

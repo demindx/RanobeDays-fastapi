@@ -38,13 +38,13 @@ watch(
 
 <template>
   <section class="container mx-auto px-4 py-8 text-white">
-    <div class="flex items-center justify-between gap-3 mb-4">
+    <div class="mb-4 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <SectionAccentTitle as="h1">
         Каталог
       </SectionAccentTitle>
       <p
         v-if="searchQuery"
-        class="text-sm text-rd-text-muted"
+        class="max-w-full break-words text-sm text-rd-text-muted sm:max-w-[60%] sm:text-right"
       >
         Поиск: "{{ searchQuery }}"
       </p>

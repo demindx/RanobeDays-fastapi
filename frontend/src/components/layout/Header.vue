@@ -2,7 +2,7 @@
   <header class="w-full relative md:relative">
     <!-- Mobile sticky header -->
     <div
-      class="md:hidden fixed top-0 left-0 right-0 z-50 bg-rd-surface shadow-md transition-transform duration-300"
+      class="md:hidden fixed top-0 left-0 right-0 z-50 bg-rd-surface pt-[env(safe-area-inset-top)] shadow-md transition-transform duration-300"
       :class="{ '-translate-y-full': hideOnScroll && isScrollingDown }"
     >
       <div class="flex items-center justify-between h-[60px] px-4">

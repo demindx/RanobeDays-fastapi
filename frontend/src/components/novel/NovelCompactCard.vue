@@ -123,7 +123,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-compact-card__link {
   display: flex;
-  min-height: 136px;
+  min-height: var(--novel-compact-card-height);
   text-decoration: none;
 }
 
@@ -137,7 +137,7 @@ const bookmarkBadgeClass = computed(() => {
 }
 
 .novel-compact-card__image-wrapper {
-  width: 96px;
+  width: var(--novel-compact-card-media-width);
   flex-shrink: 0;
   background: var(--surface-elevated-color);
 }
@@ -170,7 +170,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-compact-card__image {
   width: 100%;
-  height: 136px;
+  height: var(--novel-compact-card-height);
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -185,7 +185,7 @@ const bookmarkBadgeClass = computed(() => {
   top: 6px;
   right: 6px;
   z-index: 2;
-  max-width: 100%;
+  max-width: calc(100% - 12px);
   padding: 3px 6px;
   border-radius: 999px;
   color: #fff;
@@ -222,13 +222,13 @@ const bookmarkBadgeClass = computed(() => {
   min-width: 0;
   flex-direction: column;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0.56rem 0.66rem;
+  gap: var(--novel-compact-card-content-gap);
+  padding: var(--novel-compact-card-content-padding-y) var(--novel-compact-card-content-padding-x);
 }
 
 .novel-compact-card__title {
   color: var(--foreground-third-color);
-  font-size: 0.82rem;
+  font-size: var(--novel-compact-card-title-size);
   font-weight: 700;
   line-height: 1.3;
   transition: color 0.2s ease;
@@ -244,7 +244,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-compact-card__description {
   color: var(--foreground-secondary-color);
-  font-size: 0.72rem;
+  font-size: var(--novel-compact-card-description-size);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -254,15 +254,15 @@ const bookmarkBadgeClass = computed(() => {
 
 @media (max-width: 767px) {
   .novel-compact-card__image-wrapper {
-    width: 88px;
+    width: var(--novel-compact-card-media-width-mobile);
   }
 
   .novel-compact-card__image {
-    height: 124px;
+    height: var(--novel-compact-card-height-mobile);
   }
 
   .novel-compact-card__link {
-    min-height: 124px;
+    min-height: var(--novel-compact-card-height-mobile);
   }
 }
 </style>

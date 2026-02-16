@@ -96,3 +96,9 @@
 1. Этап 1 полностью.
 2. Этап 2 (после визуальной проверки Этапа 1).
 3. Этап 3 + фиксация результатов (скриншоты/чек-лист).
+
+## Статус выполнения
+1. Этап 1: выполнен.
+2. Этап 2: выполнен.
+3. Этап 3: чек-лист создан в `frontend/adapt-checklist.md`.
+4. Автопроверки: `bun run lint` (целевые файлы) и `bun run test -- src/components/novel/NovelPosterCard.spec.js src/components/novel/NovelDetailCard.spec.js` пройдены.

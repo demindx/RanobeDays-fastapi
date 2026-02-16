@@ -122,6 +122,8 @@ const bookmarkBadgeClass = computed(() => {
 
 <style scoped>
 .novel-detail-card {
+  width: min(100%, var(--novel-detail-card-width));
+  flex: 1 1 var(--novel-detail-card-width);
   background: color-mix(in srgb, var(--third-color) 82%, transparent);
   border-radius: 8px;
   border: 1px solid var(--border-soft-color);
@@ -141,7 +143,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-detail-card__link {
   display: flex;
-  min-height: 168px;
+  min-height: var(--novel-detail-card-height);
   text-decoration: none;
 }
 
@@ -155,7 +157,7 @@ const bookmarkBadgeClass = computed(() => {
 }
 
 .novel-detail-card__image-wrapper {
-  width: 120px;
+  width: var(--novel-detail-card-media-width);
   flex-shrink: 0;
   background: var(--surface-elevated-color);
 }
@@ -188,7 +190,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-detail-card__image {
   width: 100%;
-  height: 168px;
+  height: var(--novel-detail-card-height);
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -239,8 +241,8 @@ const bookmarkBadgeClass = computed(() => {
   min-width: 0;
   flex-direction: column;
   justify-content: center;
-  gap: 0.55rem;
-  padding: 0.75rem 0.85rem;
+  gap: var(--novel-detail-card-content-gap);
+  padding: var(--novel-detail-card-content-padding-y) var(--novel-detail-card-content-padding-x);
 }
 
 .novel-detail-card__tags {
@@ -249,9 +251,13 @@ const bookmarkBadgeClass = computed(() => {
   gap: 0.35rem;
 }
 
+.novel-detail-card__tags :deep(.tag) {
+  max-width: 100%;
+}
+
 .novel-detail-card__title {
   color: var(--foreground-third-color);
-  font-size: 0.92rem;
+  font-size: var(--novel-detail-card-title-size);
   font-weight: 700;
   line-height: 1.3;
   transition: color 0.2s ease;
@@ -267,7 +273,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-detail-card__description {
   color: var(--foreground-secondary-color);
-  font-size: 0.78rem;
+  font-size: var(--novel-detail-card-description-size);
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -276,16 +282,27 @@ const bookmarkBadgeClass = computed(() => {
 }
 
 @media (max-width: 767px) {
+  .novel-detail-card {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
   .novel-detail-card__image-wrapper {
-    width: 108px;
+    width: var(--novel-detail-card-media-width-mobile);
   }
 
   .novel-detail-card__image {
-    height: 154px;
+    height: var(--novel-detail-card-height-mobile);
   }
 
   .novel-detail-card__link {
-    min-height: 154px;
+    min-height: var(--novel-detail-card-height-mobile);
+  }
+
+  .novel-detail-card__tags :deep(.tag) {
+    min-height: 1.2rem !important;
+    padding: 0.08rem 0.4rem !important;
+    font-size: 0.62rem !important;
   }
 }
 </style>
