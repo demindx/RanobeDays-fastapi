@@ -122,8 +122,8 @@ const bookmarkBadgeClass = computed(() => {
 
 <style scoped>
 .novel-detail-card {
-  width: min(100%, var(--novel-detail-card-width));
-  flex: 1 1 var(--novel-detail-card-width);
+  width: 100%;
+  max-width: var(--novel-detail-card-width);
   background: color-mix(in srgb, var(--third-color) 82%, transparent);
   border-radius: 8px;
   border: 1px solid var(--border-soft-color);
@@ -143,7 +143,7 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-detail-card__link {
   display: flex;
-  min-height: var(--novel-detail-card-height);
+  height: var(--novel-detail-card-height);
   text-decoration: none;
 }
 
@@ -247,12 +247,15 @@ const bookmarkBadgeClass = computed(() => {
 
 .novel-detail-card__tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.35rem;
+  overflow: hidden;
+  min-height: 1.25rem;
 }
 
 .novel-detail-card__tags :deep(.tag) {
   max-width: 100%;
+  flex-shrink: 0;
 }
 
 .novel-detail-card__title {
@@ -284,7 +287,7 @@ const bookmarkBadgeClass = computed(() => {
 @media (max-width: 767px) {
   .novel-detail-card {
     width: 100%;
-    flex-basis: 100%;
+    max-width: 100%;
   }
 
   .novel-detail-card__image-wrapper {
@@ -296,7 +299,7 @@ const bookmarkBadgeClass = computed(() => {
   }
 
   .novel-detail-card__link {
-    min-height: var(--novel-detail-card-height-mobile);
+    height: var(--novel-detail-card-height-mobile);
   }
 
   .novel-detail-card__tags :deep(.tag) {

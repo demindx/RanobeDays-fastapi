@@ -93,7 +93,7 @@ const tagOptions = [
 
       <div
         v-else
-        class="flex flex-wrap gap-rd-4"
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-rd-4"
       >
         <NovelDetailCard
           v-for="novel in novelsWithTags"
