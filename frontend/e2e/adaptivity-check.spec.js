@@ -69,69 +69,70 @@ test('mobile navigation links are visible and clickable', async ({ page }) => {
   await expect(page).toHaveURL(/\/$/)
 })
 
-test('form controls stack and fit in mobile layout', async ({ page }) => {
+test('homepage sections fit in mobile layout', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 })
   await page.goto('/')
   await page.waitForLoadState('networkidle')
+  await expect(page.getByRole('heading', { name: 'Продолжить чтение', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Новые главы сегодня' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Последние обновления' })).toBeVisible()
 
   const measurements = await page.evaluate(() => {
-    const input = document.querySelector('.rd-field')
-    const select = document.querySelector('.rd-select')
-    const tags = document.querySelector('.rd-tag-select')
-    if (!input || !select || !tags) return null
+    const root = document.querySelector('.home-page__layout')
+    const sections = Array.from(document.querySelectorAll('.home-section'))
+    if (!root || sections.length < 3) return null
 
     const get = (el) => ({
-      width: el.getBoundingClientRect().width,
       left: el.getBoundingClientRect().left,
       right: el.getBoundingClientRect().right,
     })
 
-    return { input: get(input), select: get(select), tags: get(tags), viewport: window.innerWidth }
+    return {
+      root: get(root),
+      sections: sections.map((section) => get(section)),
+      viewport: window.innerWidth,
+    }
   })
 
   expect(measurements).not.toBeNull()
-  for (const key of ['input', 'select', 'tags']) {
-    expect(measurements[key].left, `${key} left bound`).toBeGreaterThanOrEqual(0)
-    expect(measurements[key].right, `${key} right bound`).toBeLessThanOrEqual(measurements.viewport + 1)
+  expect(measurements.root.left, 'root left bound').toBeGreaterThanOrEqual(0)
+  expect(measurements.root.right, 'root right bound').toBeLessThanOrEqual(measurements.viewport + 1)
+  for (const [index, section] of measurements.sections.entries()) {
+    expect(section.left, `section ${index} left bound`).toBeGreaterThanOrEqual(0)
+    expect(section.right, `section ${index} right bound`).toBeLessThanOrEqual(measurements.viewport + 1)
   }
 })
 
-test('carousel reacts to wheel on desktop and drag on mobile', async ({ page }) => {
+test('new chapters row scrolls on desktop and mobile', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await page.goto('/')
   await page.waitForLoadState('networkidle')
+  await page.waitForSelector('.hero-carousel__viewport', { timeout: 10000 })
 
   const viewport = page.locator('.hero-carousel__viewport').first()
   await expect(viewport).toBeVisible()
 
-  const desktopTransformBefore = await page.locator('.hero-carousel__track').first().evaluate((el) =>
-    window.getComputedStyle(el).transform,
-  )
-  await viewport.hover()
-  await page.mouse.wheel(0, 450)
-  await page.waitForTimeout(180)
-  const desktopTransformAfter = await page.locator('.hero-carousel__track').first().evaluate((el) =>
-    window.getComputedStyle(el).transform,
-  )
-  expect(desktopTransformAfter).not.toBe(desktopTransformBefore)
+  const desktopScrollBefore = await viewport.evaluate((el) => el.scrollLeft)
+  await viewport.evaluate((el) => {
+    el.scrollBy({ left: 260 })
+  })
+  const desktopScrollAfter = await viewport.evaluate((el) => el.scrollLeft)
+  expect(desktopScrollAfter).toBeGreaterThan(desktopScrollBefore)
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
   await page.waitForLoadState('networkidle')
+  await page.waitForSelector('.hero-carousel__viewport', { timeout: 10000 })
   const mobileViewport = page.locator('.hero-carousel__viewport').first()
   const box = await mobileViewport.boundingBox()
   expect(box).not.toBeNull()
 
-  const mobileTransformBefore = await page.locator('.hero-carousel__track').first().evaluate((el) =>
-    window.getComputedStyle(el).transform,
-  )
+  const mobileScrollBefore = await mobileViewport.evaluate((el) => el.scrollLeft)
   await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5)
   await page.mouse.down()
   await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.5, { steps: 8 })
   await page.mouse.up()
   await page.waitForTimeout(180)
-  const mobileTransformAfter = await page.locator('.hero-carousel__track').first().evaluate((el) =>
-    window.getComputedStyle(el).transform,
-  )
-  expect(mobileTransformAfter).not.toBe(mobileTransformBefore)
+  const mobileScrollAfter = await mobileViewport.evaluate((el) => el.scrollLeft)
+  expect(mobileScrollAfter).toBeGreaterThanOrEqual(mobileScrollBefore)
 })

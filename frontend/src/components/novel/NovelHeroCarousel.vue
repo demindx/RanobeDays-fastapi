@@ -31,7 +31,6 @@ const activePointerId = ref(null)
 
 const inertiaRaf = ref(null)
 const snapRaf = ref(null)
-const wheelSnapTimeout = ref(null)
 
 const sourceNovels = computed(() => props.novels || [])
 const loopedNovels = computed(() => [...sourceNovels.value, ...sourceNovels.value, ...sourceNovels.value])
@@ -47,13 +46,6 @@ const stopSnap = () => {
   if (snapRaf.value) {
     cancelAnimationFrame(snapRaf.value)
     snapRaf.value = null
-  }
-}
-
-const stopWheelSnapTimeout = () => {
-  if (wheelSnapTimeout.value) {
-    clearTimeout(wheelSnapTimeout.value)
-    wheelSnapTimeout.value = null
   }
 }
 
@@ -152,43 +144,10 @@ const scrollByPage = (direction) => {
   if (!viewportRef.value) return
   stopInertia()
   stopSnap()
-  stopWheelSnapTimeout()
   velocity.value = 0
   trackX.value += direction * -viewportRef.value.clientWidth * 0.82
   normalizeTrack()
   snapToNearest()
-}
-
-const scheduleWheelSnap = () => {
-  stopWheelSnapTimeout()
-  wheelSnapTimeout.value = setTimeout(() => {
-    wheelSnapTimeout.value = null
-    snapToNearest()
-  }, 140)
-}
-
-const onWheel = (event) => {
-  if (!viewportRef.value || sourceNovels.value.length === 0 || isDragging.value) return
-
-  const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportRef.value.clientWidth : 1
-  const absX = Math.abs(event.deltaX)
-  const absY = Math.abs(event.deltaY)
-  const dominantDelta = absX > absY ? event.deltaX : event.deltaY
-  const delta = dominantDelta * multiplier
-
-  if (Math.abs(delta) < 0.5) return
-
-  if (event.cancelable) {
-    event.preventDefault()
-  }
-
-  stopInertia()
-  stopSnap()
-  velocity.value = 0
-
-  trackX.value -= delta
-  normalizeTrack()
-  scheduleWheelSnap()
 }
 
 const onPointerDown = (event) => {
@@ -297,7 +256,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', measure)
   stopInertia()
   stopSnap()
-  stopWheelSnapTimeout()
 })
 </script>
 
@@ -340,7 +298,6 @@ onBeforeUnmount(() => {
       @pointerup="onPointerUp"
       @pointercancel="onPointerCancel"
       @click.capture="onClickCapture"
-      @wheel="onWheel"
     >
       <div
         ref="trackRef"
@@ -370,19 +327,6 @@ onBeforeUnmount(() => {
   position: relative;
   width: 100%;
   padding: 1rem 0 1.75rem;
-}
-
-.hero-carousel::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 210px;
-  background: radial-gradient(
-    70% 120% at 50% 0,
-    color-mix(in srgb, var(--first-color) 9%, transparent),
-    transparent 70%
-  );
-  pointer-events: none;
 }
 
 .hero-carousel__header {
