@@ -20,8 +20,8 @@ describe('TagDropdownSelector', () => {
       },
     })
 
-    expect(wrapper.findAll('.rd-tag-select__chip')).toHaveLength(5)
-    expect(wrapper.find('.rd-tag-select__chip--more').exists()).toBe(true)
+    expect(wrapper.findAll('.rd-tag-select__chips .rd-tag-select__chip')).toHaveLength(5)
+    expect(wrapper.find('.rd-tag-select__chips .rd-tag-select__chip--more').exists()).toBe(true)
   })
 
   it('opens menu and toggles tag value', async () => {

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -41,6 +41,8 @@ const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur'])
 const rootRef = ref(null)
 const triggerRef = ref(null)
 const isOpen = ref(false)
+const activeIndex = ref(-1)
+const optionRefs = ref([])
 
 const listboxId = computed(() => `${props.id || 'rd-select'}-listbox`)
 
@@ -49,27 +51,64 @@ const selectedOption = computed(() =>
 )
 
 const buttonLabel = computed(() => selectedOption.value?.label || props.placeholder)
+const enabledOptionIndexes = computed(() =>
+  props.options
+    .map((option, index) => ({ option, index }))
+    .filter(({ option }) => !option.disabled)
+    .map(({ index }) => index),
+)
 
-const openDropdown = () => {
-  if (props.disabled) return
-  isOpen.value = true
+const getInitialActiveIndex = () => {
+  const selectedIndex = props.options.findIndex(
+    (option) => !option.disabled && String(option.value) === String(props.modelValue),
+  )
+  if (selectedIndex >= 0) {
+    return selectedIndex
+  }
+  return enabledOptionIndexes.value[0] ?? -1
 }
 
-const closeDropdown = () => {
+const focusActiveOption = async () => {
+  await nextTick()
+  optionRefs.value[activeIndex.value]?.focus()
+}
+
+const setOptionRef = (index, element) => {
+  optionRefs.value[index] = element
+}
+
+const openDropdown = async ({ focusOption = true } = {}) => {
+  if (props.disabled) return
+  isOpen.value = true
+  activeIndex.value = getInitialActiveIndex()
+  if (focusOption && activeIndex.value >= 0) {
+    await focusActiveOption()
+  }
+}
+
+const closeDropdown = ({ focusTrigger = false } = {}) => {
   isOpen.value = false
+  activeIndex.value = -1
+  optionRefs.value = []
+  if (focusTrigger) {
+    triggerRef.value?.focus()
+  }
 }
 
 const toggleDropdown = () => {
   if (props.disabled) return
-  isOpen.value = !isOpen.value
+  if (isOpen.value) {
+    closeDropdown()
+    return
+  }
+  void openDropdown()
 }
 
 const selectOption = (option) => {
   if (option.disabled) return
   emit('update:modelValue', option.value)
   emit('change', option.value)
-  closeDropdown()
-  triggerRef.value?.focus()
+  closeDropdown({ focusTrigger: true })
 }
 
 const handleDocumentPointerDown = (event) => {
@@ -87,7 +126,93 @@ const handleTriggerKeydown = (event) => {
 
   if (!isOpen.value && (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown')) {
     event.preventDefault()
-    openDropdown()
+    void openDropdown()
+    return
+  }
+
+  if (!isOpen.value && event.key === 'ArrowUp') {
+    event.preventDefault()
+    void openDropdown()
+    nextTick(() => {
+      const lastIndex = enabledOptionIndexes.value.at(-1) ?? -1
+      if (lastIndex >= 0) {
+        activeIndex.value = lastIndex
+        void focusActiveOption()
+      }
+    })
+  }
+}
+
+const moveActive = (step) => {
+  const enabledIndexes = enabledOptionIndexes.value
+  if (!enabledIndexes.length) return
+
+  const currentPos = enabledIndexes.indexOf(activeIndex.value)
+  const basePos = currentPos >= 0 ? currentPos : 0
+  const nextPos = (basePos + step + enabledIndexes.length) % enabledIndexes.length
+  activeIndex.value = enabledIndexes[nextPos]
+  void focusActiveOption()
+}
+
+const moveToBoundary = (direction) => {
+  const enabledIndexes = enabledOptionIndexes.value
+  if (!enabledIndexes.length) return
+
+  activeIndex.value = direction === 'start' ? enabledIndexes[0] : enabledIndexes.at(-1)
+  void focusActiveOption()
+}
+
+const selectActiveOption = () => {
+  if (activeIndex.value < 0) return
+  const option = props.options[activeIndex.value]
+  if (!option || option.disabled) return
+  selectOption(option)
+}
+
+const handleOptionMouseMove = (index) => {
+  if (props.options[index]?.disabled) return
+  activeIndex.value = index
+}
+
+const handleOptionKeydown = (event) => {
+  if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    moveActive(1)
+    return
+  }
+
+  if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    moveActive(-1)
+    return
+  }
+
+  if (event.key === 'Home') {
+    event.preventDefault()
+    moveToBoundary('start')
+    return
+  }
+
+  if (event.key === 'End') {
+    event.preventDefault()
+    moveToBoundary('end')
+    return
+  }
+
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    selectActiveOption()
+    return
+  }
+
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeDropdown({ focusTrigger: true })
+    return
+  }
+
+  if (event.key === 'Tab') {
+    closeDropdown()
   }
 }
 
@@ -98,6 +223,15 @@ watch(
       closeDropdown()
     }
   },
+)
+
+watch(
+  [() => props.options, () => props.modelValue],
+  () => {
+    if (!isOpen.value) return
+    activeIndex.value = getInitialActiveIndex()
+  },
+  { deep: true },
 )
 
 onMounted(() => {
@@ -167,18 +301,24 @@ onBeforeUnmount(() => {
         class="rd-select__menu"
         role="listbox"
         :aria-label="ariaLabel"
+        @keydown="handleOptionKeydown"
       >
         <li
-          v-for="option in options"
+          v-for="(option, index) in options"
           :key="String(option.value)"
+          :ref="(element) => setOptionRef(index, element)"
           class="rd-select__option"
           :class="{
+            'rd-select__option--focused': activeIndex === index,
             'rd-select__option--active': String(modelValue) === String(option.value),
             'rd-select__option--disabled': Boolean(option.disabled),
           }"
           role="option"
+          :tabindex="activeIndex === index ? 0 : -1"
           :aria-selected="String(modelValue) === String(option.value) ? 'true' : 'false'"
           :aria-disabled="option.disabled ? 'true' : undefined"
+          @mousemove="handleOptionMouseMove(index)"
+          @focus="activeIndex = index"
           @click="selectOption(option)"
         >
           {{ option.label }}
@@ -304,6 +444,12 @@ onBeforeUnmount(() => {
 .rd-select__option:hover {
   background: var(--surface-strong-overlay-color);
   transform: translateX(2px);
+}
+
+.rd-select__option--focused,
+.rd-select__option:focus-visible {
+  outline: none;
+  background: var(--surface-strong-overlay-color);
 }
 
 .rd-select__option--active {

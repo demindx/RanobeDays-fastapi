@@ -36,7 +36,7 @@ const tagOptions = [
 </script>
 
 <template>
-  <main class="bg-[var(--background-color)] min-h-screen">
+  <section class="bg-[var(--background-color)] min-h-screen">
     <NovelHeroCarousel
       v-if="hasNovels"
       :novels="novels"
@@ -147,5 +147,5 @@ const tagOptions = [
         />
       </div>
     </div>
-  </main>
+  </section>
 </template>

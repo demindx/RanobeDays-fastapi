@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import SearchIcon from '../icons/SearchIcon.vue'
 
 const props = defineProps({
@@ -81,6 +81,12 @@ const handleKeydown = (event) => {
     handleClear()
   }
 }
+
+onBeforeUnmount(() => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+})
 </script>
 
 <template>

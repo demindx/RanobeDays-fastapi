@@ -2,14 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 
 const mockUseRouter = vi.fn()
+const mockUseRoute = vi.fn()
 
 vi.mock('vue-router', () => ({
   useRouter: () => mockUseRouter(),
+  useRoute: () => mockUseRoute(),
 }))
 
 describe('useSearch', () => {
   beforeEach(() => {
     mockUseRouter.mockReset()
+    mockUseRoute.mockReset()
   })
 
   it('navigates to catalog with trimmed query', async () => {
@@ -18,6 +21,7 @@ describe('useSearch', () => {
       currentRoute: ref({ path: '/', query: {} }),
       push,
     }
+    mockUseRoute.mockReturnValue({ query: {} })
     mockUseRouter.mockReturnValue(router)
 
     const { useSearch } = await import('./useSearch')
@@ -37,6 +41,7 @@ describe('useSearch', () => {
       currentRoute: ref({ path: '/', query: { q: 'old' } }),
       push,
     }
+    mockUseRoute.mockReturnValue({ query: { q: 'old' } })
     mockUseRouter.mockReturnValue(router)
 
     const { useSearch } = await import('./useSearch')
@@ -56,6 +61,7 @@ describe('useSearch', () => {
       currentRoute: ref({ path: '/catalog', query: { q: 'rezero' } }),
       push,
     }
+    mockUseRoute.mockReturnValue({ query: { q: 'rezero' } })
     mockUseRouter.mockReturnValue(router)
 
     const { useSearch } = await import('./useSearch')

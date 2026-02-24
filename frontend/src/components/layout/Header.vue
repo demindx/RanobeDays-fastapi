@@ -11,6 +11,7 @@
             v-model="searchQuery"
             placeholder="Поиск"
             @search="handleSearch"
+            @clear="handleClearSearch"
           />
         </div>
       </div>
@@ -41,6 +42,7 @@
               v-model="searchQuery"
               placeholder="Поиск"
               @search="handleSearch"
+              @clear="handleClearSearch"
             />
           </div>
 
@@ -119,6 +121,10 @@ const desktopNavItems = [navItems[0], navItems[1], navItems[3]]
 
 const handleSearch = (value) => {
   void search(value)
+}
+
+const handleClearSearch = () => {
+  void search('')
 }
 
 const handleLogin = () => {
