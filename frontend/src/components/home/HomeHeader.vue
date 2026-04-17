@@ -3,11 +3,20 @@
 	import { RouterLink } from 'vue-router'
 	import Icon from '../icons/Icon.vue'
 	import SearchIcon from '../icons/SearchIcon.vue'
+	import NotificationBellIcon from '../icons/NotificationBellIcon.vue'
 	import AuthModal from './AuthModal.vue'
 	import { useTheme } from '../../composables/useTheme'
 
 	const props = defineProps({
 		isAuthenticated: {
+			type: Boolean,
+			default: false
+		},
+		user: {
+			type: Object,
+			default: null
+		},
+		hasUnreadNotifications: {
 			type: Boolean,
 			default: false
 		}
@@ -17,8 +26,8 @@
 	const { isDark, toggleTheme } = useTheme()
 
 	const navLinks = [
-		{ label: 'Главная', href: '#' },
-		{ label: 'Каталог', href: '#' },
+		{ label: 'Главная', to: '/' },
+		{ label: 'Каталог', to: '/catalog' },
 		{ label: 'Закладки', href: '#' },
 		{ label: 'Коллекции', href: '#' }
 	]
@@ -43,14 +52,16 @@
 			</RouterLink>
 
 			<nav class="flex flex-wrap items-center gap-1.5 text-xs text-zinc-300 sm:gap-2 sm:text-sm">
-				<a
+				<component
 					v-for="link in navLinks"
 					:key="link.label"
+					:is="link.to ? RouterLink : 'a'"
+					:to="link.to"
 					:href="link.href"
-					class="rounded-md px-2 py-1 transition hover:bg-zinc-800 hover:text-white"
+					class="cursor-pointer select-none rounded-md px-2 py-1 transition hover:bg-zinc-800 hover:text-white"
 				>
 					{{ link.label }}
-				</a>
+				</component>
 			</nav>
 
 			<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 md:w-auto">
@@ -79,6 +90,29 @@
 				>
 					Войти
 				</button>
+
+				<div v-else class="flex items-center gap-2">
+					<button
+						type="button"
+						class="relative rounded-lg border border-zinc-700 bg-zinc-800 p-2 text-zinc-200 transition hover:bg-zinc-700 active:scale-95"
+						aria-label="Уведомления"
+					>
+						<NotificationBellIcon />
+						<span
+							v-if="props.hasUnreadNotifications"
+							class="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border border-zinc-900 bg-emerald-400"
+						/>
+					</button>
+
+					<button
+						type="button"
+						class="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-700 text-sm font-semibold text-white transition hover:opacity-90 active:scale-95"
+						:class="props.user?.avatarColorClass || 'bg-zinc-700'"
+						:aria-label="`Профиль ${props.user?.login || ''}`"
+					>
+						{{ (props.user?.login || 'U').slice(0, 1).toUpperCase() }}
+					</button>
+				</div>
 			</div>
 		</div>
 	</header>

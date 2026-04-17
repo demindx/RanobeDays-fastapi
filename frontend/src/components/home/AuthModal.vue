@@ -1,5 +1,6 @@
 <script setup>
 	import { reactive, ref, watch } from 'vue'
+	import { useAuth } from '../../composables/useAuth'
 
 	const props = defineProps({
 		open: {
@@ -11,6 +12,8 @@
 	const emit = defineEmits(['close'])
 
 	const mode = ref('login')
+	const loginError = ref('')
+	const { login, mockCredentials } = useAuth()
 
 	const loginForm = reactive({
 		login: '',
@@ -93,11 +96,24 @@
 		validateRegisterEmail({ strict: true })
 	}
 
+	const handleLoginSubmit = () => {
+		loginError.value = ''
+		const result = login(loginForm.login, loginForm.password)
+		if (!result.ok) {
+			loginError.value = result.error
+			return
+		}
+		loginForm.login = ''
+		loginForm.password = ''
+		emit('close')
+	}
+
 	watch(
 		() => props.open,
 		(next) => {
 			if (!next) {
 				mode.value = 'login'
+				loginError.value = ''
 				registerErrors.email = ''
 				isEmailFocused.value = false
 				isEmailTouched.value = false
@@ -126,19 +142,26 @@
 				</button>
 			</div>
 
-			<form v-if="mode === 'login'" class="space-y-3" @submit.prevent>
+			<form v-if="mode === 'login'" class="space-y-3" @submit.prevent="handleLoginSubmit">
+				<div class="rounded-lg border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs text-zinc-400">
+					Тестовый вход: <span class="font-semibold text-zinc-200">{{ mockCredentials.login }}</span> /
+					<span class="font-semibold text-zinc-200">{{ mockCredentials.password }}</span>
+				</div>
 				<input
 					v-model="loginForm.login"
 					type="text"
 					placeholder="Логин"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+					@input="loginError = ''"
 				/>
 				<input
 					v-model="loginForm.password"
 					type="password"
 					placeholder="Пароль"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+					@input="loginError = ''"
 				/>
+				<p v-if="loginError" class="text-xs text-red-400">{{ loginError }}</p>
 				<button
 					type="submit"
 					class="w-full rounded-lg bg-lime-300 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95"

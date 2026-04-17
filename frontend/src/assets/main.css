@@ -34,6 +34,47 @@ body {
 	background: var(--app-bg);
 	color: var(--app-text);
 	transition: background-color 0.2s ease, color 0.2s ease;
+	scrollbar-width: thin;
+	scrollbar-color: #84cc16 #27272a;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #84cc16 #27272a;
+}
+
+*::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #27272a;
+	border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: linear-gradient(180deg, #bef264 0%, #84cc16 100%);
+	border-radius: 9999px;
+	border: 3px solid #27272a;
+	background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background: linear-gradient(180deg, #d9f99d 0%, #a3e635 100%);
+}
+
+:root[data-theme='light'] *::-webkit-scrollbar-track {
+	background: #e4e4e7;
+}
+
+:root[data-theme='light'] *::-webkit-scrollbar-thumb {
+	background: linear-gradient(180deg, #84cc16 0%, #65a30d 100%);
+	border-color: #e4e4e7;
+}
+
+:root[data-theme='light'] * {
+	scrollbar-color: #84cc16 #e4e4e7;
 }
 
 :root[data-theme='light'] [class*='bg-zinc-950'] {
@@ -71,4 +112,15 @@ body {
 
 :root[data-theme='light'] [class*='hover:bg-lime-200']:hover {
 	background-color: var(--app-accent-hover) !important;
+}
+
+.carousel-track {
+	scrollbar-width: none !important;
+	-ms-overflow-style: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+	width: 0 !important;
+	height: 0 !important;
+	display: none !important;
 }

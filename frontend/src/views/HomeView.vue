@@ -6,15 +6,20 @@
 	import ContinueReadingSection from '../components/home/ContinueReadingSection.vue'
 	import YouMayLikeSection from '../components/home/YouMayLikeSection.vue'
 	import DefaultFooter from '../components/home/DefaultFooter.vue'
+	import { useAuth } from '../composables/useAuth'
 	import { featuredNovels, latestUpdates, continueReading, youMayLike } from '../mocks/homePageData'
 
-	const isAuthenticated = false
+	const { isAuthenticated, user, hasUnreadNotifications } = useAuth()
 </script>
 
 <template>
 	<main class="min-h-screen bg-zinc-950 text-white">
 		<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-8 md:px-6 md:py-8 md:pb-8">
-			<HomeHeader :is-authenticated="isAuthenticated" />
+			<HomeHeader
+				:is-authenticated="isAuthenticated"
+				:user="user"
+				:has-unread-notifications="hasUnreadNotifications"
+			/>
 			<NovelCarouselSection :novels="featuredNovels" />
 			<ContinueReadingSection :items="continueReading" />
 
@@ -30,6 +35,10 @@
 			<DefaultFooter />
 		</div>
 
-		<MobileBottomNav :is-authenticated="isAuthenticated" />
+		<MobileBottomNav
+			:is-authenticated="isAuthenticated"
+			:user="user"
+			:has-unread-notifications="hasUnreadNotifications"
+		/>
 	</main>
 </template>

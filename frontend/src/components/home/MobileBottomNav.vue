@@ -10,11 +10,21 @@
 	import NavMenuIcon from '../icons/NavMenuIcon.vue'
 	import CloseIcon from '../icons/CloseIcon.vue'
 	import ChevronRightIcon from '../icons/ChevronRightIcon.vue'
+	import NotificationBellIcon from '../icons/NotificationBellIcon.vue'
 	import AuthModal from './AuthModal.vue'
 	import { useTheme } from '../../composables/useTheme'
+	import { useAuth } from '../../composables/useAuth'
 
 	const props = defineProps({
 		isAuthenticated: {
+			type: Boolean,
+			default: false
+		},
+		user: {
+			type: Object,
+			default: null
+		},
+		hasUnreadNotifications: {
 			type: Boolean,
 			default: false
 		}
@@ -23,16 +33,17 @@
 	const isMenuOpen = ref(false)
 	const isAuthModalOpen = ref(false)
 	const { isDark, toggleTheme } = useTheme()
+	const { logout } = useAuth()
 
 	const mainLinks = [
-		{ label: 'Главная', href: '#', icon: NavHomeIcon },
-		{ label: 'Каталог', href: '#', icon: NavCatalogIcon },
+		{ label: 'Главная', to: '/', icon: NavHomeIcon },
+		{ label: 'Каталог', to: '/catalog', icon: NavCatalogIcon },
 		{ label: 'Закладки', href: '#', icon: NavBookmarkIcon }
 	]
 
 	const fullMenuLinks = [
-		{ label: 'Главная', href: '#', icon: NavHomeIcon },
-		{ label: 'Каталог', href: '#', icon: NavCatalogIcon },
+		{ label: 'Главная', to: '/', icon: NavHomeIcon },
+		{ label: 'Каталог', to: '/catalog', icon: NavCatalogIcon },
 		{ label: 'Закладки', href: '#', icon: NavBookmarkIcon },
 		{ label: 'Коллекции', href: '#', icon: NavCollectionIcon }
 	]
@@ -41,38 +52,49 @@
 		isMenuOpen.value = false
 		isAuthModalOpen.value = true
 	}
+
+	const handleLogout = () => {
+		logout()
+		isMenuOpen.value = false
+	}
 </script>
 
 <template>
 	<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-700/80 bg-zinc-900/95 backdrop-blur md:hidden">
 		<div class="mx-auto w-full max-w-6xl px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2">
 			<div class="grid grid-cols-5 items-end gap-1 text-zinc-300">
-				<a
+				<component
+					:is="mainLinks[0].to ? RouterLink : 'a'"
+					:to="mainLinks[0].to"
 					:href="mainLinks[0].href"
-					class="flex flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
+					class="flex cursor-pointer select-none flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
 				>
 					<component :is="mainLinks[0].icon" />
 					<span>{{ mainLinks[0].label }}</span>
-				</a>
-				<a
+				</component>
+				<component
+					:is="mainLinks[1].to ? RouterLink : 'a'"
+					:to="mainLinks[1].to"
 					:href="mainLinks[1].href"
-					class="flex flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
+					class="flex cursor-pointer select-none flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
 				>
 					<component :is="mainLinks[1].icon" />
 					<span>{{ mainLinks[1].label }}</span>
-				</a>
+				</component>
 
 				<RouterLink to="/" class="mx-auto -mt-6 rounded-full border border-zinc-700/80 bg-zinc-950 p-2.5 shadow-lg transition hover:opacity-90 active:scale-95">
 					<Icon class="h-7 w-auto" />
 				</RouterLink>
 
-				<a
+				<component
+					:is="mainLinks[2].to ? RouterLink : 'a'"
+					:to="mainLinks[2].to"
 					:href="mainLinks[2].href"
-					class="flex flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
+					class="flex cursor-pointer select-none flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
 				>
 					<component :is="mainLinks[2].icon" />
 					<span>{{ mainLinks[2].label }}</span>
-				</a>
+				</component>
 				<button
 					type="button"
 					class="flex cursor-pointer flex-col items-center gap-1 rounded-md px-1 py-2 text-[11px] transition hover:bg-zinc-800 active:scale-95"
@@ -129,11 +151,13 @@
 			</div>
 
 			<div class="space-y-2">
-				<a
+				<component
 					v-for="link in fullMenuLinks"
 					:key="link.label"
+					:is="link.to ? RouterLink : 'a'"
+					:to="link.to"
 					:href="link.href"
-					class="flex items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-200 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99]"
+					class="flex cursor-pointer select-none items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-200 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99]"
 					@click="isMenuOpen = false"
 				>
 					<div class="flex items-center gap-2.5">
@@ -141,7 +165,33 @@
 						{{ link.label }}
 					</div>
 					<ChevronRightIcon class="text-zinc-500" />
-				</a>
+				</component>
+			</div>
+
+			<div
+				v-if="props.isAuthenticated"
+				class="mt-4 flex items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5"
+			>
+				<div class="flex items-center gap-2.5">
+					<div
+						class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white"
+						:class="props.user?.avatarColorClass || 'bg-zinc-700'"
+					>
+						{{ (props.user?.login || 'U').slice(0, 1).toUpperCase() }}
+					</div>
+					<div>
+						<p class="text-sm font-medium text-zinc-200">{{ props.user?.login || 'Профиль' }}</p>
+						<p class="text-xs text-zinc-500">Авторизован</p>
+					</div>
+				</div>
+
+				<div class="relative rounded-md border border-zinc-700 bg-zinc-800 p-2 text-zinc-200">
+					<NotificationBellIcon />
+					<span
+						v-if="props.hasUnreadNotifications"
+						class="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border border-zinc-900 bg-emerald-400"
+					/>
+				</div>
 			</div>
 
 			<button
@@ -160,6 +210,14 @@
 				@click="openAuthFromMenu"
 			>
 				Войти
+			</button>
+			<button
+				v-else
+				type="button"
+				class="mt-5 w-full cursor-pointer rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:bg-zinc-700 active:scale-95"
+				@click="handleLogout"
+			>
+				Выйти
 			</button>
 		</aside>
 	</div>

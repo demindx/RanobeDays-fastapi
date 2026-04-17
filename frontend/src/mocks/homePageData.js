@@ -43,6 +43,36 @@ export const featuredNovels = [
 		rating: 4.5,
 		coverStyle: 'from-rose-300 to-pink-600',
 		href: '#'
+	},
+	{
+		id: 6,
+		title: 'Я Сам Решаю Судьбу',
+		genre: 'Боевые искусства',
+		chapter: 'Глава 21',
+		rating: 4.7,
+		coverUrl: 'https://tl.rulate.ru/i/book/26/3/29296-100100.jpg',
+		coverStyle: 'from-lime-300 to-green-500',
+		href: '#'
+	},
+	{
+		id: 7,
+		title: 'Император Пути Пилюль и Боевых Искусств',
+		genre: 'Уся',
+		chapter: 'Глава 11',
+		rating: 4.6,
+		coverUrl: 'https://tl.rulate.ru/i/book/26/4/22438-100100.jpg',
+		coverStyle: 'from-amber-300 to-orange-600',
+		href: '#'
+	},
+	{
+		id: 8,
+		title: 'Грибной господин',
+		genre: 'Фэнтези',
+		chapter: 'Глава 9',
+		rating: 4.5,
+		coverUrl: 'https://tl.rulate.ru/i/book/26/4/24333-100100.jpg',
+		coverStyle: 'from-green-300 to-emerald-600',
+		href: '#'
 	}
 ]
 
@@ -116,6 +146,41 @@ export const latestUpdates = [
 		chapter: 'Глава 61',
 		timeAgo: '4 дня назад',
 		href: '#'
+	},
+	{
+		id: 11,
+		novelTitle: 'Я Сам Решаю Судьбу',
+		chapter: 'Глава 21',
+		timeAgo: '5 минут назад',
+		href: '#'
+	},
+	{
+		id: 12,
+		novelTitle: 'Император Пути Пилюль и Боевых Искусств',
+		chapter: 'Глава 11',
+		timeAgo: '18 минут назад',
+		href: '#'
+	},
+	{
+		id: 13,
+		novelTitle: 'Грибной господин',
+		chapter: 'Глава 9',
+		timeAgo: '43 минуты назад',
+		href: '#'
+	},
+	{
+		id: 14,
+		novelTitle: 'Меч Великой Тан',
+		chapter: 'Глава 47',
+		timeAgo: '1 час назад',
+		href: '#'
+	},
+	{
+		id: 15,
+		novelTitle: 'ОЗВ в Мире Хонкая',
+		chapter: 'Глава 32',
+		timeAgo: '2 часа назад',
+		href: '#'
 	}
 ]
 
@@ -170,6 +235,22 @@ export const youMayLike = [
 		title: 'Архив забытых клятв',
 		genre: 'Мистика',
 		rating: 4.5,
+		href: '#'
+	},
+	{
+		id: 5,
+		title: 'Марвел: Начиная со способности копировать таланты сверхлюдей',
+		genre: 'Фантастика',
+		rating: 4.8,
+		coverUrl: 'https://tl.rulate.ru/i/book/24/9/4360-100100.jpg',
+		href: '#'
+	},
+	{
+		id: 6,
+		title: 'Arknights: Песнь Страдания и Спасения',
+		genre: 'Драма',
+		rating: 4.6,
+		coverUrl: 'https://tl.rulate.ru/i/book/26/1/27242-100100.jpg',
 		href: '#'
 	}
 ]

@@ -10,9 +10,17 @@
 <template>
 	<a
 		:href="props.novel.href || '#'"
-		class="block w-[72vw] max-w-56 shrink-0 snap-start cursor-pointer rounded-2xl border border-zinc-700/70 bg-zinc-900/70 p-2.5 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99] sm:w-56 sm:p-3"
+		class="block w-[58vw] max-w-44 shrink-0 snap-start cursor-pointer rounded-2xl border border-zinc-700/70 bg-zinc-900/70 p-2.5 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99] sm:w-56 sm:max-w-56 sm:p-3"
 	>
-		<div :class="['h-28 rounded-xl bg-gradient-to-br sm:h-32', props.novel.coverStyle]" />
+		<div :class="['relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-gradient-to-br', props.novel.coverStyle]">
+			<img
+				v-if="props.novel.coverUrl"
+				:src="props.novel.coverUrl"
+				:alt="props.novel.title"
+				class="absolute inset-0 h-full w-full object-cover"
+				loading="lazy"
+			/>
+		</div>
 
 		<div class="mt-3">
 			<h3 class="line-clamp-2 text-sm font-semibold text-white">{{ props.novel.title }}</h3>
