@@ -1,15 +1,26 @@
 <script setup>
+	import { computed } from 'vue'
+	import { RouterLink } from 'vue-router'
+
 	const props = defineProps({
 		novel: {
 			type: Object,
 			required: true
 		}
 	})
+
+	const novelHref = computed(() =>
+		props.novel.href && props.novel.href !== '#' ? props.novel.href : `/novel/${props.novel.id}`
+	)
+
+	const isInternalLink = computed(() => novelHref.value.startsWith('/'))
 </script>
 
 <template>
-	<a
-		:href="props.novel.href || '#'"
+	<component
+		:is="isInternalLink ? RouterLink : 'a'"
+		:to="isInternalLink ? novelHref : undefined"
+		:href="isInternalLink ? undefined : novelHref"
 		class="block w-[58vw] max-w-44 shrink-0 snap-start cursor-pointer rounded-2xl border border-zinc-700/70 bg-zinc-900/70 p-2.5 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99] sm:w-56 sm:max-w-56 sm:p-3"
 	>
 		<div :class="['relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-gradient-to-br', props.novel.coverStyle]">
@@ -31,5 +42,5 @@
 			<span>{{ props.novel.chapter }}</span>
 			<span>★ {{ props.novel.rating }}</span>
 		</div>
-	</a>
+	</component>
 </template>

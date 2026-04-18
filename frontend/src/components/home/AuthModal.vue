@@ -4,6 +4,7 @@
 	import AppButton from '../shared/AppButton.vue'
 	import AppInput from '../shared/AppInput.vue'
 	import AppModal from '../shared/AppModal.vue'
+	import AppSectionSwitchTransition from '../shared/AppSectionSwitchTransition.vue'
 
 	const props = defineProps({
 		open: {
@@ -136,74 +137,76 @@
 				</AppButton>
 			</div>
 
-			<form v-if="mode === 'login'" class="space-y-3" @submit.prevent="handleLoginSubmit">
-				<div class="rounded-lg border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs text-zinc-400">
-					Тестовый вход: <span class="font-semibold text-zinc-200">{{ mockCredentials.login }}</span> /
-					<span class="font-semibold text-zinc-200">{{ mockCredentials.password }}</span>
-				</div>
-				<AppInput
-					v-model="loginForm.login"
-					type="text"
-					placeholder="Логин"
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
-					@input="loginError = ''"
-				/>
-				<AppInput
-					v-model="loginForm.password"
-					type="password"
-					placeholder="Пароль"
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
-					@input="loginError = ''"
-				/>
-				<p v-if="loginError" class="text-xs text-red-400">{{ loginError }}</p>
-				<AppButton type="submit" variant="primary" block class="font-semibold">
-					Войти
-				</AppButton>
-			</form>
-
-			<form v-else novalidate class="space-y-3" @submit.prevent="handleRegisterSubmit">
-				<AppInput
-					v-model="registerForm.login"
-					type="text"
-					placeholder="Логин"
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
-				/>
-				<div class="relative">
-					<AppInput
-						v-model="registerForm.email"
-						type="text"
-						placeholder="Почта"
-						:class="[
-							'w-full rounded-lg border bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition',
-							registerErrors.email ? 'border-red-400 focus:border-red-400' : 'border-zinc-700 focus:border-lime-300'
-						]"
-						@focus="isEmailFocused = true"
-						@blur="handleRegisterEmailBlur"
-						@input="handleRegisterEmailInput"
-					/>
-					<div
-						v-if="registerErrors.email && (isEmailFocused || isEmailTouched)"
-						class="pointer-events-none absolute left-0 top-full z-10 mt-1 max-w-full rounded-md border border-red-300/60 bg-red-500/95 px-2 py-1 text-xs text-white shadow-lg"
-					>
-						{{ registerErrors.email }}
+			<AppSectionSwitchTransition>
+				<form v-if="mode === 'login'" key="login" class="space-y-3" @submit.prevent="handleLoginSubmit">
+					<div class="rounded-lg border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs text-zinc-400">
+						Тестовый вход: <span class="font-semibold text-zinc-200">{{ mockCredentials.login }}</span> /
+						<span class="font-semibold text-zinc-200">{{ mockCredentials.password }}</span>
 					</div>
-				</div>
-				<AppInput
-					v-model="registerForm.password"
-					type="password"
-					placeholder="Пароль"
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
-				/>
-				<AppInput
-					v-model="registerForm.confirmPassword"
-					type="password"
-					placeholder="Повторите пароль"
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
-				/>
-				<AppButton type="submit" variant="primary" block class="font-semibold">
-					Зарегистрироваться
-				</AppButton>
-			</form>
+					<AppInput
+						v-model="loginForm.login"
+						type="text"
+						placeholder="Логин"
+						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+						@input="loginError = ''"
+					/>
+					<AppInput
+						v-model="loginForm.password"
+						type="password"
+						placeholder="Пароль"
+						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+						@input="loginError = ''"
+					/>
+					<p v-if="loginError" class="text-xs text-red-400">{{ loginError }}</p>
+					<AppButton type="submit" variant="primary" block class="font-semibold">
+						Войти
+					</AppButton>
+				</form>
+
+				<form v-else key="register" novalidate class="space-y-3" @submit.prevent="handleRegisterSubmit">
+					<AppInput
+						v-model="registerForm.login"
+						type="text"
+						placeholder="Логин"
+						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+					/>
+					<div class="relative">
+						<AppInput
+							v-model="registerForm.email"
+							type="text"
+							placeholder="Почта"
+							:class="[
+								'w-full rounded-lg border bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition',
+								registerErrors.email ? 'border-red-400 focus:border-red-400' : 'border-zinc-700 focus:border-lime-300'
+							]"
+							@focus="isEmailFocused = true"
+							@blur="handleRegisterEmailBlur"
+							@input="handleRegisterEmailInput"
+						/>
+						<div
+							v-if="registerErrors.email && (isEmailFocused || isEmailTouched)"
+							class="pointer-events-none absolute left-0 top-full z-10 mt-1 max-w-full rounded-md border border-red-300/60 bg-red-500/95 px-2 py-1 text-xs text-white shadow-lg"
+						>
+							{{ registerErrors.email }}
+						</div>
+					</div>
+					<AppInput
+						v-model="registerForm.password"
+						type="password"
+						placeholder="Пароль"
+						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+					/>
+					<AppInput
+						v-model="registerForm.confirmPassword"
+						type="password"
+						placeholder="Повторите пароль"
+						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
+					/>
+					<AppButton type="submit" variant="primary" block class="font-semibold">
+						Зарегистрироваться
+					</AppButton>
+				</form>
+			</AppSectionSwitchTransition>
 
 			<div class="mt-4 border-t border-zinc-800 pt-4 text-center">
 				<AppButton variant="neutral" class="text-sm text-zinc-300" @click="mode = mode === 'login' ? 'register' : 'login'">

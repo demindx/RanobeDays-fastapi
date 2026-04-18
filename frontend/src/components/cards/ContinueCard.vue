@@ -1,10 +1,15 @@
 <script setup>
+	import { computed } from 'vue'
+	import { RouterLink } from 'vue-router'
+
 	const props = defineProps({
 		item: {
 			type: Object,
 			required: true
 		}
 	})
+
+	const novelHref = computed(() => `/novel/${props.item.novelId || props.item.id}`)
 </script>
 
 <template>
@@ -18,9 +23,12 @@
 
 		<div class="mt-3 flex items-center justify-between gap-2">
 			<span class="text-xs text-zinc-400">{{ props.item.progress }}%</span>
-			<button class="cursor-pointer rounded-lg bg-gradient-to-r from-lime-400 to-emerald-400 px-3 py-1 text-xs font-semibold text-zinc-900 transition hover:from-lime-300 hover:to-emerald-300 active:scale-95">
+			<RouterLink
+				:to="novelHref"
+				class="cursor-pointer rounded-lg bg-gradient-to-r from-lime-400 to-emerald-400 px-3 py-1 text-xs font-semibold text-zinc-900 transition hover:from-lime-300 hover:to-emerald-300 active:scale-95"
+			>
 				Читать
-			</button>
+			</RouterLink>
 		</div>
 	</article>
 </template>

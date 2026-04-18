@@ -17,8 +17,14 @@
 		block: {
 			type: Boolean,
 			default: false
+		},
+		href: {
+			type: String,
+			default: ''
 		}
 	})
+
+	const tagName = computed(() => (props.href ? 'a' : 'button'))
 
 	const variantClass = computed(() => {
 		switch (props.variant) {
@@ -48,8 +54,10 @@
 </script>
 
 <template>
-	<button
-		:type="props.type"
+	<component
+		:is="tagName"
+		:type="tagName === 'button' ? props.type : undefined"
+		:href="tagName === 'a' ? props.href : undefined"
 		:class="[
 			'inline-flex cursor-pointer items-center justify-center rounded-lg font-medium transition active:scale-95',
 			variantClass,
@@ -58,5 +66,5 @@
 		]"
 	>
 		<slot />
-	</button>
+	</component>
 </template>
