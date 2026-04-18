@@ -1,6 +1,9 @@
 <script setup>
 	import { reactive, ref, watch } from 'vue'
 	import { useAuth } from '../../composables/useAuth'
+	import AppButton from '../shared/AppButton.vue'
+	import AppInput from '../shared/AppInput.vue'
+	import AppModal from '../shared/AppModal.vue'
 
 	const props = defineProps({
 		open: {
@@ -123,23 +126,14 @@
 </script>
 
 <template>
-	<div
-		v-if="props.open"
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-3 py-4 sm:px-4 sm:py-6"
-		@click.self="emit('close')"
-	>
-		<div class="w-full max-w-md rounded-2xl border border-zinc-700 bg-zinc-900 p-4 shadow-2xl sm:p-5">
+	<AppModal :open="props.open" @close="emit('close')">
 			<div class="mb-4 flex items-center justify-between gap-3">
 				<h3 class="text-base font-semibold text-white sm:text-lg">
 					{{ mode === 'login' ? 'Войти в аккаунт' : 'Регистрация' }}
 				</h3>
-				<button
-					type="button"
-					class="shrink-0 rounded-md px-2 py-1 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white active:scale-95 sm:text-sm"
-					@click="emit('close')"
-				>
+				<AppButton variant="neutral" size="sm" class="shrink-0 text-zinc-300" @click="emit('close')">
 					Закрыть
-				</button>
+				</AppButton>
 			</div>
 
 			<form v-if="mode === 'login'" class="space-y-3" @submit.prevent="handleLoginSubmit">
@@ -147,14 +141,14 @@
 					Тестовый вход: <span class="font-semibold text-zinc-200">{{ mockCredentials.login }}</span> /
 					<span class="font-semibold text-zinc-200">{{ mockCredentials.password }}</span>
 				</div>
-				<input
+				<AppInput
 					v-model="loginForm.login"
 					type="text"
 					placeholder="Логин"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
 					@input="loginError = ''"
 				/>
-				<input
+				<AppInput
 					v-model="loginForm.password"
 					type="password"
 					placeholder="Пароль"
@@ -162,23 +156,20 @@
 					@input="loginError = ''"
 				/>
 				<p v-if="loginError" class="text-xs text-red-400">{{ loginError }}</p>
-				<button
-					type="submit"
-					class="w-full rounded-lg bg-lime-300 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95"
-				>
+				<AppButton type="submit" variant="primary" block class="font-semibold">
 					Войти
-				</button>
+				</AppButton>
 			</form>
 
 			<form v-else novalidate class="space-y-3" @submit.prevent="handleRegisterSubmit">
-				<input
+				<AppInput
 					v-model="registerForm.login"
 					type="text"
 					placeholder="Логин"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
 				/>
 				<div class="relative">
-					<input
+					<AppInput
 						v-model="registerForm.email"
 						type="text"
 						placeholder="Почта"
@@ -197,35 +188,27 @@
 						{{ registerErrors.email }}
 					</div>
 				</div>
-				<input
+				<AppInput
 					v-model="registerForm.password"
 					type="password"
 					placeholder="Пароль"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
 				/>
-				<input
+				<AppInput
 					v-model="registerForm.confirmPassword"
 					type="password"
 					placeholder="Повторите пароль"
 					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition focus:border-lime-300"
 				/>
-				<button
-					type="submit"
-					class="w-full rounded-lg bg-lime-300 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95"
-				>
+				<AppButton type="submit" variant="primary" block class="font-semibold">
 					Зарегистрироваться
-				</button>
+				</AppButton>
 			</form>
 
 			<div class="mt-4 border-t border-zinc-800 pt-4 text-center">
-				<button
-					type="button"
-					class="text-sm text-zinc-300 transition hover:text-white active:scale-95"
-					@click="mode = mode === 'login' ? 'register' : 'login'"
-				>
+				<AppButton variant="neutral" class="text-sm text-zinc-300" @click="mode = mode === 'login' ? 'register' : 'login'">
 					{{ mode === 'login' ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти' }}
-				</button>
+				</AppButton>
 			</div>
-		</div>
-	</div>
+	</AppModal>
 </template>

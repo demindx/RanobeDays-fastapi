@@ -13,12 +13,12 @@
 		<p class="mt-1 text-xs text-zinc-400">Глава {{ props.item.currentChapter }} из {{ props.item.totalChapters }}</p>
 
 		<div class="mt-4 h-2 overflow-hidden rounded-full bg-zinc-700">
-			<div class="h-full rounded-full bg-lime-300" :style="{ width: `${props.item.progress}%` }" />
+			<div class="h-full rounded-full bg-gradient-to-r from-lime-400 via-emerald-400 to-green-500" :style="{ width: `${props.item.progress}%` }" />
 		</div>
 
 		<div class="mt-3 flex items-center justify-between gap-2">
 			<span class="text-xs text-zinc-400">{{ props.item.progress }}%</span>
-			<button class="cursor-pointer rounded-lg bg-lime-300 px-3 py-1 text-xs font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95">
+			<button class="cursor-pointer rounded-lg bg-gradient-to-r from-lime-400 to-emerald-400 px-3 py-1 text-xs font-semibold text-zinc-900 transition hover:from-lime-300 hover:to-emerald-300 active:scale-95">
 				Читать
 			</button>
 		</div>

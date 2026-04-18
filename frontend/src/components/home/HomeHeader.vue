@@ -2,9 +2,10 @@
 	import { ref } from 'vue'
 	import { RouterLink } from 'vue-router'
 	import Icon from '../icons/Icon.vue'
-	import SearchIcon from '../icons/SearchIcon.vue'
 	import NotificationBellIcon from '../icons/NotificationBellIcon.vue'
 	import AuthModal from './AuthModal.vue'
+	import AppButton from '../shared/AppButton.vue'
+	import AppSearchInput from '../shared/AppSearchInput.vue'
 	import { useTheme } from '../../composables/useTheme'
 
 	const props = defineProps({
@@ -28,21 +29,13 @@
 	const navLinks = [
 		{ label: 'Главная', to: '/' },
 		{ label: 'Каталог', to: '/catalog' },
-		{ label: 'Закладки', href: '#' },
-		{ label: 'Коллекции', href: '#' }
+		{ label: 'Закладки', to: '/bookmarks' }
 	]
 </script>
 
 <template>
 	<header class="rounded-2xl border border-zinc-700/70 bg-zinc-900/80 px-3 py-3 sm:px-4 sm:py-4 md:hidden">
-		<div class="relative w-full">
-			<input
-				type="text"
-				placeholder="Поиск новел..."
-				class="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2 pl-3 pr-10 text-sm text-white outline-none transition focus:border-lime-300"
-			/>
-			<SearchIcon class="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-300 [&>svg>path]:fill-current" />
-		</div>
+		<AppSearchInput />
 	</header>
 
 	<header class="hidden rounded-2xl border border-zinc-700/70 bg-zinc-900/80 px-3 py-3 sm:px-4 sm:py-4 md:block">
@@ -66,30 +59,21 @@
 
 			<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 md:w-auto">
 				<div class="relative w-full sm:flex-1 md:w-72 md:min-w-72 md:flex-none">
-					<input
-						type="text"
-						placeholder="Поиск новел..."
-						class="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2 pl-3 pr-10 text-sm text-white outline-none transition focus:border-lime-300"
-					/>
-					<SearchIcon class="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-300 [&>svg>path]:fill-current" />
+					<AppSearchInput />
 				</div>
 
-				<button
-					type="button"
-					class="shrink-0 cursor-pointer rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 active:scale-95"
-					@click="toggleTheme"
-				>
+				<AppButton variant="neutral" class="shrink-0" @click="toggleTheme">
 					{{ isDark ? 'Светлая' : 'Тёмная' }}
-				</button>
+				</AppButton>
 
-				<button
+				<AppButton
 					v-if="!props.isAuthenticated"
-					type="button"
-					class="shrink-0 cursor-pointer rounded-lg bg-lime-300 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95"
+					variant="primary-gradient"
+					class="shrink-0 font-semibold"
 					@click="isAuthModalOpen = true"
 				>
 					Войти
-				</button>
+				</AppButton>
 
 				<div v-else class="flex items-center gap-2">
 					<button

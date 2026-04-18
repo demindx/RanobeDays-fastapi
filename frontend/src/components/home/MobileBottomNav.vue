@@ -2,16 +2,16 @@
 	import { ref } from 'vue'
 	import { RouterLink } from 'vue-router'
 	import Icon from '../icons/Icon.vue'
-	import SearchIcon from '../icons/SearchIcon.vue'
 	import NavHomeIcon from '../icons/NavHomeIcon.vue'
 	import NavCatalogIcon from '../icons/NavCatalogIcon.vue'
 	import NavBookmarkIcon from '../icons/NavBookmarkIcon.vue'
-	import NavCollectionIcon from '../icons/NavCollectionIcon.vue'
 	import NavMenuIcon from '../icons/NavMenuIcon.vue'
 	import CloseIcon from '../icons/CloseIcon.vue'
 	import ChevronRightIcon from '../icons/ChevronRightIcon.vue'
 	import NotificationBellIcon from '../icons/NotificationBellIcon.vue'
 	import AuthModal from './AuthModal.vue'
+	import AppButton from '../shared/AppButton.vue'
+	import AppSearchInput from '../shared/AppSearchInput.vue'
 	import { useTheme } from '../../composables/useTheme'
 	import { useAuth } from '../../composables/useAuth'
 
@@ -38,14 +38,13 @@
 	const mainLinks = [
 		{ label: 'Главная', to: '/', icon: NavHomeIcon },
 		{ label: 'Каталог', to: '/catalog', icon: NavCatalogIcon },
-		{ label: 'Закладки', href: '#', icon: NavBookmarkIcon }
+		{ label: 'Закладки', to: '/bookmarks', icon: NavBookmarkIcon }
 	]
 
 	const fullMenuLinks = [
 		{ label: 'Главная', to: '/', icon: NavHomeIcon },
 		{ label: 'Каталог', to: '/catalog', icon: NavCatalogIcon },
-		{ label: 'Закладки', href: '#', icon: NavBookmarkIcon },
-		{ label: 'Коллекции', href: '#', icon: NavCollectionIcon }
+		{ label: 'Закладки', to: '/bookmarks', icon: NavBookmarkIcon }
 	]
 
 	const openAuthFromMenu = () => {
@@ -141,13 +140,8 @@
 				</button>
 			</div>
 
-			<div class="relative mb-4">
-				<input
-					type="text"
-					placeholder="Поиск новел..."
-					class="w-full rounded-lg border border-zinc-700 bg-zinc-800 py-2 pl-3 pr-10 text-sm text-white outline-none transition focus:border-lime-300"
-				/>
-				<SearchIcon class="pointer-events-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-300 [&>svg>path]:fill-current" />
+			<div class="mb-4">
+				<AppSearchInput />
 			</div>
 
 			<div class="space-y-2">
@@ -157,7 +151,7 @@
 					:is="link.to ? RouterLink : 'a'"
 					:to="link.to"
 					:href="link.href"
-					class="flex cursor-pointer select-none items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-200 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99]"
+					class="flex cursor-pointer select-none items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-200 transition odd:hover:border-emerald-300/60 even:hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99]"
 					@click="isMenuOpen = false"
 				>
 					<div class="flex items-center gap-2.5">
@@ -194,31 +188,34 @@
 				</div>
 			</div>
 
-			<button
-				type="button"
-				class="mt-4 flex w-full cursor-pointer items-center justify-between rounded-lg border border-zinc-700/70 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-200 transition hover:border-lime-300/60 hover:bg-zinc-800/70 active:scale-[0.99]"
+			<AppButton
+				variant="neutral"
+				block
+				class="mt-4 !flex w-full items-center justify-between border-zinc-700/70 bg-zinc-900/70 text-sm"
 				@click="toggleTheme"
 			>
 				<span>Тема: {{ isDark ? 'Тёмная' : 'Светлая' }}</span>
 				<ChevronRightIcon class="text-zinc-500" />
-			</button>
+			</AppButton>
 
-			<button
+			<AppButton
 				v-if="!props.isAuthenticated"
-				type="button"
-				class="mt-5 w-full cursor-pointer rounded-lg bg-lime-300 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-lime-200 active:scale-95"
+				variant="primary-gradient"
+				block
+				class="mt-5 font-semibold"
 				@click="openAuthFromMenu"
 			>
 				Войти
-			</button>
-			<button
+			</AppButton>
+			<AppButton
 				v-else
-				type="button"
-				class="mt-5 w-full cursor-pointer rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:bg-zinc-700 active:scale-95"
+				variant="neutral"
+				block
+				class="mt-5 font-semibold"
 				@click="handleLogout"
 			>
 				Выйти
-			</button>
+			</AppButton>
 		</aside>
 	</div>
 

@@ -124,3 +124,42 @@ body {
 	height: 0 !important;
 	display: none !important;
 }
+
+.year-number-input {
+	color-scheme: dark;
+}
+
+.year-number-input::-webkit-outer-spin-button,
+.year-number-input::-webkit-inner-spin-button {
+	margin: 0;
+	opacity: 0;
+	cursor: pointer;
+	transition: opacity 0.15s ease;
+	border-left: 1px solid #3f3f46;
+	background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
+	filter: hue-rotate(26deg) saturate(1.2);
+}
+
+.year-number-input:hover::-webkit-inner-spin-button,
+.year-number-input:hover::-webkit-outer-spin-button,
+.year-number-input:focus::-webkit-inner-spin-button,
+.year-number-input:focus::-webkit-outer-spin-button {
+	opacity: 1;
+	background: linear-gradient(180deg, #3f3f46 0%, #27272a 100%);
+}
+
+:root[data-theme='light'] .year-number-input {
+	color-scheme: light;
+}
+
+:root[data-theme='light'] .year-number-input::-webkit-outer-spin-button,
+:root[data-theme='light'] .year-number-input::-webkit-inner-spin-button {
+	border-left-color: #d4d4d8;
+	background: linear-gradient(180deg, #f4f4f5 0%, #e4e4e7 100%);
+	filter: hue-rotate(16deg) saturate(1.1);
+}
+
+:root[data-theme='light'] .year-number-input:hover::-webkit-inner-spin-button,
+:root[data-theme='light'] .year-number-input:hover::-webkit-outer-spin-button {
+	background: linear-gradient(180deg, #e4e4e7 0%, #d4d4d8 100%);
+}

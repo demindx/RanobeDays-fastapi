@@ -8,6 +8,7 @@
 	import CatalogFiltersPanel from '../components/catalog/CatalogFiltersPanel.vue'
 	import CatalogGrid from '../components/catalog/CatalogGrid.vue'
 	import CatalogList from '../components/catalog/CatalogList.vue'
+	import AppEmptyState from '../components/shared/AppEmptyState.vue'
 	import { useAuth } from '../composables/useAuth'
 	import { useCatalogFilters } from '../composables/useCatalogFilters'
 	import { catalogNovels, catalogFilterOptions } from '../mocks/catalogData'
@@ -17,7 +18,7 @@
 	const mobileFiltersOpen = ref(false)
 
 	const novelsRef = computed(() => catalogNovels)
-	const { filters, filteredNovels, activeFiltersCount, toggleValue, resetFilters } = useCatalogFilters(novelsRef)
+	const { filters, filteredNovels, activeFiltersCount, setReleaseYearRange, toggleValue, resetFilters } = useCatalogFilters(novelsRef)
 
 	const setViewMode = (mode) => {
 		viewMode.value = mode
@@ -33,8 +34,8 @@
 </script>
 
 <template>
-	<main class="min-h-screen bg-zinc-950 text-white">
-		<div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-6 md:px-6 md:py-8 md:pb-8">
+	<main class="min-h-screen bg-zinc-950 text-white flex flex-col">
+		<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-6 md:px-6 md:py-8 md:pb-8">
 			<HomeHeader
 				:is-authenticated="isAuthenticated"
 				:user="user"
@@ -52,12 +53,9 @@
 							@open-filters="mobileFiltersOpen = true"
 						/>
 
-						<p
-							v-if="!filteredNovels.length"
-							class="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 px-4 py-8 text-sm text-zinc-400"
-						>
+						<AppEmptyState v-if="!filteredNovels.length">
 							Ничего не найдено. Попробуйте ослабить фильтры или сбросить их.
-						</p>
+						</AppEmptyState>
 						<CatalogGrid v-else-if="viewMode === 'grid'" :novels="filteredNovels" />
 						<CatalogList v-else :novels="filteredNovels" />
 					</div>
@@ -68,12 +66,15 @@
 						:filters="filters"
 						:options="catalogFilterOptions"
 						@toggle="(filterKey, mode, value) => toggleValue(filterKey, mode, value)"
+						@set-year-range="(bound, value) => setReleaseYearRange(bound, value)"
 						@reset="handleResetFilters"
 					/>
 				</template>
 			</CatalogLayout>
 
-			<DefaultFooter />
+			<div class="mt-auto">
+				<DefaultFooter />
+			</div>
 		</div>
 
 		<MobileBottomNav

@@ -1,5 +1,5 @@
 <script setup>
-	import NovelGridCard from './NovelGridCard.vue'
+	import NovelGridCard from '../cards/NovelGridCard.vue'
 
 	const props = defineProps({
 		novels: {

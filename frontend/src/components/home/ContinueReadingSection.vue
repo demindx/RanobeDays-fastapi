@@ -1,7 +1,8 @@
 <script setup>
 	import { onBeforeUnmount, ref } from 'vue'
 	import SectionTitle from '../ui/SectionTitle.vue'
-	import ContinueCard from '../ui/ContinueCard.vue'
+	import ContinueCard from '../cards/ContinueCard.vue'
+	import AppEmptyState from '../shared/AppEmptyState.vue'
 
 	const props = defineProps({
 		items: {
@@ -112,9 +113,9 @@
 	<section class="space-y-4">
 		<SectionTitle title="Продолжить чтение" subtitle="Ваш текущий прогресс" />
 
-		<p v-if="!props.items.length" class="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 px-4 py-6 text-sm text-zinc-400">
+		<AppEmptyState v-if="!props.items.length" compact>
 			Добавьте новелы в библиотеку, чтобы отслеживать прогресс.
-		</p>
+		</AppEmptyState>
 
 		<div
 			v-else

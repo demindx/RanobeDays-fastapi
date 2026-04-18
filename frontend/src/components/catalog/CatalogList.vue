@@ -1,5 +1,5 @@
 <script setup>
-	import NovelListCard from './NovelListCard.vue'
+	import NovelListCard from '../cards/NovelListCard.vue'
 
 	const props = defineProps({
 		novels: {

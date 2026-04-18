@@ -13,8 +13,8 @@
 </script>
 
 <template>
-	<main class="min-h-screen bg-zinc-950 text-white">
-		<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-8 md:px-6 md:py-8 md:pb-8">
+	<main class="min-h-screen bg-zinc-950 text-white flex flex-col">
+		<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-8 md:px-6 md:py-8 md:pb-8">
 			<HomeHeader
 				:is-authenticated="isAuthenticated"
 				:user="user"
@@ -32,7 +32,9 @@
 				</div>
 			</div>
 
-			<DefaultFooter />
+			<div class="mt-auto">
+				<DefaultFooter />
+			</div>
 		</div>
 
 		<MobileBottomNav

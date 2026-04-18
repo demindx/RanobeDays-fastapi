@@ -1,7 +1,8 @@
 <script setup>
 	import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 	import SectionTitle from '../ui/SectionTitle.vue'
-	import NovelCard from '../ui/NovelCard.vue'
+	import NovelCard from '../cards/NovelCard.vue'
+	import AppEmptyState from '../shared/AppEmptyState.vue'
 
 	const props = defineProps({
 		novels: {
@@ -159,9 +160,9 @@
 	<section class="space-y-4">
 		<SectionTitle title="Популярное" subtitle="Популярное прямо сейчас" />
 
-		<p v-if="!props.novels.length" class="rounded-xl border border-dashed border-zinc-700 bg-zinc-900/50 px-4 py-6 text-sm text-zinc-400">
+		<AppEmptyState v-if="!props.novels.length" compact>
 			Новелы пока не найдены.
-		</p>
+		</AppEmptyState>
 
 		<div
 			v-else
