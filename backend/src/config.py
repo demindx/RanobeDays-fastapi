@@ -10,6 +10,7 @@ class Config(BaseSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_URL: str = ""
     SECRET_KEY: str = "qewdfqwefqwef"
+    DEFAULT_PAGINATION_LIMIT: int = 50
 
     model_config = SettingsConfigDict(env_file=".env")
 
