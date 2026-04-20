@@ -2,6 +2,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import config
 from src.core.exceptions import AlreadyExists
 from src.core.repository import PostgresRepository
 from src.novel.models import Novel
@@ -68,8 +69,10 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
         await self.session.execute(stmt)
         await self.session.flush()
 
-    async def get_novels(self, id: int) -> list[Novel]:
+    async def get_novels(
+        self, id: int, limit: int = config.DEFAULT_PAGINATION_LIMIT, offset: int = 0
+    ) -> list[Novel]:
         team = await self.get_by_id(id)
         await self.session.run_sync(lambda sess: team.novels)
 
-        return team.novels
+        return team.novels[offset:limit:]
