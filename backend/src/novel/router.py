@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from src.core.schemas import GenericResponse
+from src.config import config
+from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.novel.dependencies import NovelServiceDep
 from src.novel.schemas import NovelCreate, NovelResponse, NovelUpdate
 
@@ -8,12 +9,18 @@ router = APIRouter(prefix="/novel", tags=["novel"])
 
 
 @router.get("/")
-async def get_novels(service: NovelServiceDep) -> GenericResponse[list[NovelResponse]]:
-    novels = await service.get_all()
+async def get_novels(
+    service: NovelServiceDep,
+    limit: int = config.DEFAULT_PAGINATION_LIMIT,
+    offset: int = 0,
+) -> GenericPaginationResponse[NovelResponse]:
+    novels = await service.get_all(limit=limit, offset=offset)
 
     novels = [NovelResponse.model_validate(novel) for novel in novels]
 
-    return GenericResponse[list[NovelResponse]](data=novels)
+    return GenericPaginationResponse[NovelResponse](
+        data=novels, limit=limit, offset=offset
+    )
 
 
 @router.get("/{id}")

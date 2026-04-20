@@ -12,16 +12,21 @@
 
 
 <template>
-	<div>header</div>
-	<SearchBar placeholder="Поиск"/>
-	<Button :callback="test">btn</Button>
+	<div class="header">
+		<SearchBar placeholder="Поиск"/>
+		<Button :callback="test">btn</Button>
 
-	<NavBar>
-		<NavItem v-for="n in 10">{{ n }}</NavItem>
-	</NavBar>
+		<NavBar>
+			<NavItem v-for="n in 10">{{ n }}</NavItem>
+		</NavBar>
 
+	</div>
 </template>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
+.header {
+  width: 100%;
+  // Any additional header-specific styles
+}
 </style>

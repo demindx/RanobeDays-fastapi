@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from src.core.schemas import GenericResponse
+from src.config import config
+from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.country.dependencies import CountryServiceDep
 from src.country.schemas import CountryCreate, CountryResponse, CountryUpdate
 
@@ -10,12 +11,16 @@ router = APIRouter(prefix="/country", tags=["country"])
 @router.get("/")
 async def get_languages(
     service: CountryServiceDep,
-) -> GenericResponse[list[CountryResponse]]:
-    languages = await service.get_all()
+    limit: int = config.DEFAULT_PAGINATION_LIMIT,
+    offset: int = 0,
+) -> GenericPaginationResponse[CountryResponse]:
+    languages = await service.get_all(limit=limit, offset=offset)
 
     languages = [CountryResponse.model_validate(language) for language in languages]
 
-    return GenericResponse[list[CountryResponse]](data=languages)
+    return GenericPaginationResponse[CountryResponse](
+        data=languages, limit=limit, offset=offset
+    )
 
 
 @router.post("/")
