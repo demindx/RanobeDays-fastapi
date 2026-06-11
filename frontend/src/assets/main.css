@@ -1,165 +1,300 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-	--app-bg: #09090b;
-	--app-surface: #18181b;
-	--app-surface-soft: #27272a;
-	--app-border: #3f3f46;
-	--app-text: #f4f4f5;
-	--app-muted: #a1a1aa;
-	--app-accent: #bef264;
-	--app-accent-hover: #d9f99d;
-	--app-accent-text: #18181b;
+  --app-bg: #09090b;
+  --app-surface: #18181b;
+  --app-surface-soft: #27272a;
+  --app-border: #3f3f46;
+  --app-text: #f4f4f5;
+  --app-muted: #a1a1aa;
+  --app-accent: #bef264;
+  --app-accent-hover: #d9f99d;
+  --app-accent-text: #18181b;
 }
 
 :root[data-theme='light'] {
-	--app-bg: #f4f6fb;
-	--app-surface: #ffffff;
-	--app-surface-soft: #f4f4f5;
-	--app-border: #d4d4d8;
-	--app-text: #18181b;
-	--app-muted: #52525b;
-	--app-accent: #84cc16;
-	--app-accent-hover: #a3e635;
-	--app-accent-text: #18181b;
+  --app-bg: #f4f6fb;
+  --app-surface: #ffffff;
+  --app-surface-soft: #f4f4f5;
+  --app-border: #d4d4d8;
+  --app-text: #18181b;
+  --app-muted: #52525b;
+  --app-accent: #84cc16;
+  --app-accent-hover: #a3e635;
+  --app-accent-text: #18181b;
 }
 
 html,
 body,
 #app {
-	min-height: 100%;
+  min-height: 100%;
 }
 
 body {
-	background: var(--app-bg);
-	color: var(--app-text);
-	transition: background-color 0.2s ease, color 0.2s ease;
-	scrollbar-width: thin;
-	scrollbar-color: #84cc16 #27272a;
+  background: var(--app-bg);
+  color: var(--app-text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  scrollbar-width: thin;
+  scrollbar-color: #84cc16 #27272a;
 }
 
 * {
-	scrollbar-width: thin;
-	scrollbar-color: #84cc16 #27272a;
+  scrollbar-width: thin;
+  scrollbar-color: #84cc16 #27272a;
 }
 
 *::-webkit-scrollbar {
-	width: 12px;
-	height: 12px;
+  width: 12px;
+  height: 12px;
 }
 
 *::-webkit-scrollbar-track {
-	background: #27272a;
-	border-radius: 9999px;
+  background: #27272a;
+  border-radius: 9999px;
 }
 
 *::-webkit-scrollbar-thumb {
-	background: linear-gradient(180deg, #bef264 0%, #84cc16 100%);
-	border-radius: 9999px;
-	border: 3px solid #27272a;
-	background-clip: padding-box;
+  background: linear-gradient(180deg, #bef264 0%, #84cc16 100%);
+  border-radius: 9999px;
+  border: 3px solid #27272a;
+  background-clip: padding-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-	background: linear-gradient(180deg, #d9f99d 0%, #a3e635 100%);
+  background: linear-gradient(180deg, #d9f99d 0%, #a3e635 100%);
 }
 
 :root[data-theme='light'] *::-webkit-scrollbar-track {
-	background: #e4e4e7;
+  background: #e4e4e7;
 }
 
 :root[data-theme='light'] *::-webkit-scrollbar-thumb {
-	background: linear-gradient(180deg, #84cc16 0%, #65a30d 100%);
-	border-color: #e4e4e7;
+  background: linear-gradient(180deg, #84cc16 0%, #65a30d 100%);
+  border-color: #e4e4e7;
 }
 
 :root[data-theme='light'] * {
-	scrollbar-color: #84cc16 #e4e4e7;
+  scrollbar-color: #84cc16 #e4e4e7;
+}
+
+:root[data-theme='light'] .card-interactive:hover {
+  background-color: #f4f4f5;
 }
 
 :root[data-theme='light'] [class*='bg-zinc-950'] {
-	background-color: var(--app-bg) !important;
+  background-color: var(--app-bg) !important;
 }
 
 :root[data-theme='light'] [class*='bg-zinc-900'] {
-	background-color: var(--app-surface) !important;
+  background-color: var(--app-surface) !important;
 }
 
 :root[data-theme='light'] [class*='bg-zinc-800'] {
-	background-color: var(--app-surface-soft) !important;
+  background-color: var(--app-surface-soft) !important;
 }
 
 :root[data-theme='light'] [class*='border-zinc-700'],
 :root[data-theme='light'] [class*='border-zinc-800'] {
-	border-color: var(--app-border) !important;
+  border-color: var(--app-border) !important;
 }
 
 :root[data-theme='light'] [class*='text-white'] {
-	color: var(--app-text) !important;
+  color: var(--app-text) !important;
 }
 
+:root[data-theme='light'] [class*='text-zinc-100'],
 :root[data-theme='light'] [class*='text-zinc-200'],
-:root[data-theme='light'] [class*='text-zinc-300'],
+:root[data-theme='light'] [class*='text-zinc-300'] {
+  color: #18181b !important;
+}
+
 :root[data-theme='light'] [class*='text-zinc-400'],
-:root[data-theme='light'] [class*='text-zinc-500'] {
-	color: var(--app-muted) !important;
+:root[data-theme='light'] [class*='text-zinc-500'],
+:root[data-theme='light'] [class*='text-zinc-600'] {
+  color: #52525b !important;
 }
 
 :root[data-theme='light'] [class*='bg-lime-300'] {
-	background-color: var(--app-accent) !important;
-	color: var(--app-accent-text) !important;
+  background-color: var(--app-accent) !important;
+  color: var(--app-accent-text) !important;
 }
 
 :root[data-theme='light'] [class*='hover:bg-lime-200']:hover {
-	background-color: var(--app-accent-hover) !important;
+  background-color: var(--app-accent-hover) !important;
+}
+
+:root[data-theme='light'] [class*='text-lime-200'],
+:root[data-theme='light'] [class*='text-lime-300'],
+:root[data-theme='light'] [class*='text-lime-400'] {
+  color: #3f6212 !important;
+}
+
+:root[data-theme='light'] [class*='bg-lime-400/15'] {
+  background-color: rgb(163 230 53 / 0.3) !important;
+}
+
+:root[data-theme='light'] [class*='border-lime-300'] {
+  border-color: #84cc16 !important;
+}
+
+:root[data-theme='light'] [class*='border-lime-300/40'] {
+  border-color: rgb(132 204 22 / 0.6) !important;
+}
+
+:root[data-theme='light'] [class*='ring-lime-300'] {
+  --tw-ring-color: #84cc16 !important;
+}
+
+:root[data-theme='light'] [class*='text-emerald-100'],
+:root[data-theme='light'] [class*='text-emerald-200'],
+:root[data-theme='light'] [class*='text-emerald-300'] {
+  color: #065f46 !important;
+}
+
+:root[data-theme='light'] [class*='border-emerald-300'] {
+  border-color: #10b981 !important;
+}
+
+:root[data-theme='light'] [class*='bg-emerald-300/20'] {
+  background-color: rgb(16 185 129 / 0.2) !important;
+}
+
+:root[data-theme='light'] [class*='bg-emerald-400/15'],
+:root[data-theme='light'] [class*='bg-emerald-400/20'] {
+  background-color: rgb(52 211 153 / 0.2) !important;
+}
+
+:root[data-theme='light'] [class*='bg-emerald-500/15'] {
+  background-color: rgb(16 185 129 / 0.15) !important;
+}
+
+:root[data-theme='light'] [class*='hover:bg-emerald-400/20']:hover {
+  background-color: rgb(52 211 153 / 0.35) !important;
+}
+
+:root[data-theme='light'] [class*='hover:text-emerald-100']:hover {
+  color: #065f46 !important;
+}
+
+:root[data-theme='light'] [class*='bg-lime-300/15'] {
+  background-color: #84cc16 !important;
+  color: #3f6212 !important;
+}
+
+:root[data-theme='light'] [class*='bg-zinc-700'] {
+  background-color: #e4e4e7 !important;
+}
+
+:root[data-theme='light'] [class*='hover:bg-zinc-700']:hover {
+  background-color: #e4e4e7 !important;
+}
+
+:root[data-theme='light'] [class*='border-zinc-500'] {
+  border-color: #a1a1aa !important;
+}
+
+:root[data-theme='light'] [class*='hover:border-zinc-600']:hover {
+  border-color: #a1a1aa !important;
+}
+
+:root[data-theme='light'] [class*='text-rose-200'],
+:root[data-theme='light'] [class*='text-rose-300'] {
+  color: #be123c !important;
+}
+
+:root[data-theme='light'] [class*='text-red-400'] {
+  color: #dc2626 !important;
+}
+
+:root[data-theme='light'] [class*='border-rose-300'] {
+  border-color: #e11d48 !important;
+}
+
+:root[data-theme='light'] [class*='border-rose-400'] {
+  border-color: #fb7185 !important;
+}
+
+:root[data-theme='light'] [class*='bg-rose-400/15'],
+:root[data-theme='light'] [class*='bg-rose-400/20'] {
+  background-color: rgb(251 113 133 / 0.2) !important;
+}
+
+:root[data-theme='light'] [class*='bg-rose-500/15'] {
+  background-color: rgb(244 63 94 / 0.2) !important;
+}
+
+:root[data-theme='light'] [class*='hover:bg-rose-500/15']:hover {
+  background-color: rgb(244 63 94 / 0.3) !important;
+}
+
+:root[data-theme='light'] [class*='hover:bg-rose-400/25']:hover {
+  background-color: rgb(251 113 133 / 0.25) !important;
+}
+
+:root[data-theme='light'] [class*='hover:border-lime-300/70']:hover {
+  border-color: rgb(132 204 22 / 0.7) !important;
+}
+
+:root[data-theme='light'] [class*='focus-visible:ring-lime-300'] {
+  --tw-ring-color: #84cc16 !important;
+}
+
+:root[data-theme='light'] [class*='focus:border-lime-300']:focus {
+  border-color: #65a30d !important;
+}
+
+:root[data-theme='light'] [class*='hover:border-lime-300']:hover {
+  border-color: rgb(132 204 22 / 0.6) !important;
 }
 
 .carousel-track {
-	scrollbar-width: none !important;
-	-ms-overflow-style: none;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
 }
 
 .carousel-track::-webkit-scrollbar {
-	width: 0 !important;
-	height: 0 !important;
-	display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
 }
 
 .year-number-input {
-	color-scheme: dark;
+  color-scheme: dark;
 }
 
 .year-number-input::-webkit-outer-spin-button,
 .year-number-input::-webkit-inner-spin-button {
-	margin: 0;
-	opacity: 0;
-	cursor: pointer;
-	transition: opacity 0.15s ease;
-	border-left: 1px solid #3f3f46;
-	background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
-	filter: hue-rotate(26deg) saturate(1.2);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  border-left: 1px solid #3f3f46;
+  background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
+  filter: hue-rotate(26deg) saturate(1.2);
 }
 
 .year-number-input:hover::-webkit-inner-spin-button,
 .year-number-input:hover::-webkit-outer-spin-button,
 .year-number-input:focus::-webkit-inner-spin-button,
 .year-number-input:focus::-webkit-outer-spin-button {
-	opacity: 1;
-	background: linear-gradient(180deg, #3f3f46 0%, #27272a 100%);
+  opacity: 1;
+  background: linear-gradient(180deg, #3f3f46 0%, #27272a 100%);
 }
 
 :root[data-theme='light'] .year-number-input {
-	color-scheme: light;
+  color-scheme: light;
 }
 
 :root[data-theme='light'] .year-number-input::-webkit-outer-spin-button,
 :root[data-theme='light'] .year-number-input::-webkit-inner-spin-button {
-	border-left-color: #d4d4d8;
-	background: linear-gradient(180deg, #f4f4f5 0%, #e4e4e7 100%);
-	filter: hue-rotate(16deg) saturate(1.1);
+  border-left-color: #d4d4d8;
+  background: linear-gradient(180deg, #f4f4f5 0%, #e4e4e7 100%);
+  filter: hue-rotate(16deg) saturate(1.1);
 }
 
 :root[data-theme='light'] .year-number-input:hover::-webkit-inner-spin-button,
 :root[data-theme='light'] .year-number-input:hover::-webkit-outer-spin-button {
-	background: linear-gradient(180deg, #e4e4e7 0%, #d4d4d8 100%);
+  background: linear-gradient(180deg, #e4e4e7 0%, #d4d4d8 100%);
 }
