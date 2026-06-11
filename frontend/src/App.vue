@@ -1,7 +1,3 @@
 <template>
-	<RouterView />
+  <RouterView />
 </template>
-
-<style>
-@import "./assets/_variables.css";
-</style>
