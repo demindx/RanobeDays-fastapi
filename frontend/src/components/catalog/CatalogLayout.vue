@@ -18,9 +18,7 @@ const emit = defineEmits(['close-filters'])
     <!-- Desktop filter sidebar -->
     <div
       class="hidden shrink-0 self-start transition-all duration-300 ease-in-out lg:block"
-      :class="[
-        props.filtersOpen ? 'w-72 sticky top-3' : 'w-0 overflow-hidden',
-      ]"
+      :class="[props.filtersOpen ? 'w-72 sticky top-3' : 'w-0 overflow-hidden']"
     >
       <div v-show="props.filtersOpen" class="w-72">
         <slot name="filters" />
