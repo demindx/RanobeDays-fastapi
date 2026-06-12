@@ -60,7 +60,9 @@ const getColor = (count) => {
 </script>
 
 <template>
-  <div class="rounded-2xl border border-zinc-700/70 bg-zinc-900/80 px-4 py-5 sm:px-6">
+  <div
+    class="flex flex-col justify-center rounded-2xl border border-zinc-700/70 bg-zinc-900/80 px-4 py-5 sm:px-6"
+  >
     <div class="mb-3 flex items-center justify-between">
       <div>
         <h3 class="text-base font-semibold text-white">Активность чтения</h3>
@@ -77,7 +79,7 @@ const getColor = (count) => {
       </div>
     </div>
 
-    <div class="overflow-x-auto pb-2">
+    <div class="flex justify-center overflow-x-auto pb-2">
       <div class="flex" style="min-width: min-content">
         <div class="mr-1 grid grid-rows-7 gap-[2px] pr-2 pt-[18px]">
           <span

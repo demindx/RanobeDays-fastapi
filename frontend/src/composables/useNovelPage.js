@@ -2,6 +2,24 @@ import { computed, ref, watch } from 'vue'
 import { useBookmarks } from './useBookmarks'
 import { getNovelById, novelPageData } from '../mocks/novelPageData'
 
+const RATING_KEY = 'ranobe-ratings'
+
+const loadRatings = () => {
+  if (typeof window === 'undefined') return {}
+  try {
+    return JSON.parse(window.localStorage.getItem(RATING_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+
+const saveRatings = (ratings) => {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(RATING_KEY, JSON.stringify(ratings))
+}
+
+const userRatings = ref(loadRatings())
+
 export const useNovelPage = (novelIdRef) => {
   const activeTab = ref('description')
   const selectedBookmarkId = ref('')
@@ -56,14 +74,24 @@ export const useNovelPage = (novelIdRef) => {
     { immediate: true },
   )
 
+  const userRating = computed(() => userRatings.value[novelIdRef.value] || 0)
+
+  const setUserRating = (rating) => {
+    const val = Math.max(0, Math.min(5, Math.round(rating)))
+    userRatings.value = { ...userRatings.value, [novelIdRef.value]: val }
+    saveRatings(userRatings.value)
+  }
+
   return {
     novel,
     activeTab,
     bookmarkOptions,
     selectedBookmarkId,
     readingCtaLabel,
+    userRating,
     setActiveTab,
     selectBookmark,
     removeFromBookmarks,
+    setUserRating,
   }
 }

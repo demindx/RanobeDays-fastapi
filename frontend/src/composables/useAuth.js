@@ -34,8 +34,21 @@ const restoreState = () => {
   try {
     const parsed = JSON.parse(saved)
     state.isAuthenticated = !!parsed?.isAuthenticated
-    state.user = parsed?.user ?? null
     state.hasUnreadNotifications = !!parsed?.hasUnreadNotifications
+    if (parsed?.user) {
+      state.user = {
+        ...parsed.user,
+        avatarUrl: parsed.user.avatarUrl || null,
+        email: parsed.user.email || 'demo@example.com',
+        settings: {
+          blacklistedGenres: parsed.user.settings?.blacklistedGenres || [],
+          blacklistedTags: parsed.user.settings?.blacklistedTags || [],
+          hideAdultContent: parsed.user.settings?.hideAdultContent || false,
+        },
+      }
+    } else {
+      state.user = null
+    }
   } catch {
     state.isAuthenticated = false
     state.user = null
@@ -57,7 +70,13 @@ const login = (loginValue, passwordValue) => {
   state.isAuthenticated = true
   state.user = {
     login: state.user?.login || 'DemoReader',
-    avatarColorClass: state.user?.avatarColorClass || 'bg-emerald-500',
+    avatarUrl: state.user?.avatarUrl || null,
+    email: state.user?.email || 'demo@example.com',
+    settings: state.user?.settings || {
+      blacklistedGenres: [],
+      blacklistedTags: [],
+      hideAdultContent: false,
+    },
   }
   state.hasUnreadNotifications = true
   saveState()

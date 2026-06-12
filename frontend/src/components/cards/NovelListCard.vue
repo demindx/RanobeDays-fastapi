@@ -7,6 +7,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  onTagClick: {
+    type: Function,
+    default: null,
+  },
 })
 
 const novelHref = computed(() =>
@@ -57,13 +61,27 @@ const isInternalLink = computed(() => novelHref.value.startsWith('/'))
       </p>
 
       <div class="mt-2 hidden flex-wrap gap-1.5 min-[380px]:flex">
-        <span
+        <button
           v-for="genre in props.novel.genres"
           :key="genre"
-          class="rounded-full bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-300"
+          type="button"
+          class="cursor-pointer rounded-full bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-300 transition hover:bg-zinc-700 hover:text-lime-300 active:scale-95"
+          @click.stop="props.onTagClick?.(genre, 'genres')"
         >
           {{ genre }}
-        </span>
+        </button>
+      </div>
+
+      <div class="mt-1.5 hidden flex-wrap gap-1.5 min-[380px]:flex">
+        <button
+          v-for="tag in props.novel.tags"
+          :key="tag"
+          type="button"
+          class="cursor-pointer rounded-md border border-zinc-700/50 px-2 py-0.5 text-[10px] text-zinc-500 transition hover:border-zinc-600 hover:text-zinc-300 active:scale-95"
+          @click.stop="props.onTagClick?.(tag, 'tags')"
+        >
+          {{ tag }}
+        </button>
       </div>
 
       <p class="mt-2 hidden text-xs text-zinc-400 min-[380px]:block">

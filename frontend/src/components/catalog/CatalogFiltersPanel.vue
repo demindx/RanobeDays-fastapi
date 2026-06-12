@@ -1,9 +1,6 @@
 <script setup>
 import FilterSection from './FilterSection.vue'
 import YearRangeFilterSection from './YearRangeFilterSection.vue'
-import AppButton from '../shared/AppButton.vue'
-import FilterGroup from '../shared/FilterGroup.vue'
-import AppPanel from '../shared/AppPanel.vue'
 
 const props = defineProps({
   filters: {
@@ -20,108 +17,63 @@ const emit = defineEmits(['toggle', 'set-year-range', 'reset'])
 </script>
 
 <template>
-  <aside class="space-y-3">
-    <AppPanel>
-      <h2 class="text-base font-semibold text-white">Фильтры</h2>
-      <p class="mt-1 text-xs text-zinc-400">
-        Год — диапазон. Остальные фильтры разделены на включение и исключение.
-      </p>
-      <AppButton variant="neutral" block class="mt-3" @click="emit('reset')">
-        Сбросить все фильтры
-      </AppButton>
-    </AppPanel>
+  <aside class="divide-y divide-zinc-800 rounded-xl border border-zinc-700/70 bg-zinc-900/80">
+    <div class="flex items-center justify-between px-3 py-2.5">
+      <h2 class="text-sm font-semibold text-zinc-200">Фильтры</h2>
+      <button
+        type="button"
+        class="cursor-pointer text-xs text-zinc-500 transition hover:text-zinc-300"
+        @click="emit('reset')"
+      >
+        Сбросить
+      </button>
+    </div>
 
     <YearRangeFilterSection
       :filter-state="props.filters.releaseYearRange"
       @change="(bound, value) => emit('set-year-range', bound, value)"
     />
 
-    <FilterGroup
-      title="Включить"
-      description="Выбранные теги должны присутствовать у новелы."
-      accent="include"
-    >
-      <FilterSection
-        title="Возрастное ограничение"
-        mode="include"
-        :options="props.options.ageRatings"
-        :filter-state="props.filters.ageRatings"
-        @toggle="(mode, value) => emit('toggle', 'ageRatings', mode, value)"
-      />
-      <FilterSection
-        title="Жанры"
-        mode="include"
-        :options="props.options.genres"
-        :filter-state="props.filters.genres"
-        searchable
-        @toggle="(mode, value) => emit('toggle', 'genres', mode, value)"
-      />
-      <FilterSection
-        title="Теги"
-        mode="include"
-        :options="props.options.tags"
-        :filter-state="props.filters.tags"
-        searchable
-        @toggle="(mode, value) => emit('toggle', 'tags', mode, value)"
-      />
-      <FilterSection
-        title="Язык оригинала"
-        mode="include"
-        :options="props.options.originalLanguages"
-        :filter-state="props.filters.originalLanguages"
-        @toggle="(mode, value) => emit('toggle', 'originalLanguages', mode, value)"
-      />
-      <FilterSection
-        title="Язык перевода"
-        mode="include"
-        :options="props.options.translationLanguages"
-        :filter-state="props.filters.translationLanguages"
-        @toggle="(mode, value) => emit('toggle', 'translationLanguages', mode, value)"
-      />
-    </FilterGroup>
+    <FilterSection
+      title="Возраст"
+      :options="props.options.ageRatings"
+      :include-state="props.filters.ageRatings.include"
+      :exclude-state="props.filters.ageRatings.exclude"
+      @toggle="(mode, value) => emit('toggle', 'ageRatings', mode, value)"
+    />
 
-    <FilterGroup
-      title="Исключить"
-      description="Выбранные теги не должны присутствовать у новелы."
-      accent="exclude"
-    >
-      <FilterSection
-        title="Возрастное ограничение"
-        mode="exclude"
-        :options="props.options.ageRatings"
-        :filter-state="props.filters.ageRatings"
-        @toggle="(mode, value) => emit('toggle', 'ageRatings', mode, value)"
-      />
-      <FilterSection
-        title="Жанры"
-        mode="exclude"
-        :options="props.options.genres"
-        :filter-state="props.filters.genres"
-        searchable
-        @toggle="(mode, value) => emit('toggle', 'genres', mode, value)"
-      />
-      <FilterSection
-        title="Теги"
-        mode="exclude"
-        :options="props.options.tags"
-        :filter-state="props.filters.tags"
-        searchable
-        @toggle="(mode, value) => emit('toggle', 'tags', mode, value)"
-      />
-      <FilterSection
-        title="Язык оригинала"
-        mode="exclude"
-        :options="props.options.originalLanguages"
-        :filter-state="props.filters.originalLanguages"
-        @toggle="(mode, value) => emit('toggle', 'originalLanguages', mode, value)"
-      />
-      <FilterSection
-        title="Язык перевода"
-        mode="exclude"
-        :options="props.options.translationLanguages"
-        :filter-state="props.filters.translationLanguages"
-        @toggle="(mode, value) => emit('toggle', 'translationLanguages', mode, value)"
-      />
-    </FilterGroup>
+    <FilterSection
+      title="Жанры"
+      :options="props.options.genres"
+      :include-state="props.filters.genres.include"
+      :exclude-state="props.filters.genres.exclude"
+      searchable
+      @toggle="(mode, value) => emit('toggle', 'genres', mode, value)"
+    />
+
+    <FilterSection
+      title="Теги"
+      :options="props.options.tags"
+      :include-state="props.filters.tags.include"
+      :exclude-state="props.filters.tags.exclude"
+      searchable
+      @toggle="(mode, value) => emit('toggle', 'tags', mode, value)"
+    />
+
+    <FilterSection
+      title="Язык оригинала"
+      :options="props.options.originalLanguages"
+      :include-state="props.filters.originalLanguages.include"
+      :exclude-state="props.filters.originalLanguages.exclude"
+      @toggle="(mode, value) => emit('toggle', 'originalLanguages', mode, value)"
+    />
+
+    <FilterSection
+      title="Язык перевода"
+      :options="props.options.translationLanguages"
+      :include-state="props.filters.translationLanguages.include"
+      :exclude-state="props.filters.translationLanguages.exclude"
+      @toggle="(mode, value) => emit('toggle', 'translationLanguages', mode, value)"
+    />
   </aside>
 </template>

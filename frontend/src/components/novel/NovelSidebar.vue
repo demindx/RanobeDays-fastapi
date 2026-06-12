@@ -21,9 +21,13 @@ const props = defineProps({
     type: String,
     default: 'Читать',
   },
+  userRating: {
+    type: Number,
+    default: 0,
+  },
 })
 
-const emit = defineEmits(['update-bookmark', 'remove-bookmark'])
+const emit = defineEmits(['update-bookmark', 'remove-bookmark', 'update-rating'])
 
 const readHref = computed(() => {
   const firstChapter = props.novel.chapters?.[0]
@@ -69,6 +73,28 @@ const readHref = computed(() => {
     <AppButton variant="primary-gradient" block class="mt-3 font-semibold" :href="readHref">
       {{ props.readingCtaLabel }}
     </AppButton>
+
+    <div class="mt-4">
+      <p class="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-400">Оценить</p>
+      <div class="flex items-center gap-1.5">
+        <div class="flex items-center">
+          <button
+            v-for="n in 5"
+            :key="n"
+            type="button"
+            class="cursor-pointer text-lg leading-none transition hover:scale-110 active:scale-90"
+            :class="n <= props.userRating ? 'text-amber-400' : 'text-zinc-600'"
+            @click="emit('update-rating', n === props.userRating ? 0 : n)"
+          >
+            {{ n <= props.userRating ? '★' : '☆' }}
+          </button>
+        </div>
+        <span class="text-xs text-zinc-500"> ★ {{ props.novel.rating || '—' }} </span>
+        <span v-if="props.userRating" class="text-xs text-zinc-500">
+          · Ваша {{ props.userRating }}
+        </span>
+      </div>
+    </div>
 
     <div class="mt-3 rounded-xl border border-zinc-700/70 bg-zinc-800/60 p-3">
       <p class="text-xs text-zinc-400">

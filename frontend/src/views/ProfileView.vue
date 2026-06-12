@@ -16,9 +16,10 @@ const { isSettingsOpen, openSettings, closeSettings } = useProfile()
       <AppButton variant="neutral" size="sm" @click="openSettings"> Настройки </AppButton>
     </div>
 
-    <ProfileHeader />
-
-    <ReadingCalendar />
+    <div class="grid gap-6 lg:grid-cols-2">
+      <ProfileHeader />
+      <ReadingCalendar />
+    </div>
 
     <ProfileTabs />
 

@@ -1,8 +1,5 @@
 <script setup>
 import { computed, ref } from 'vue'
-import ChevronRightIcon from '../icons/ChevronRightIcon.vue'
-import AppInput from '../shared/AppInput.vue'
-import AppPanel from '../shared/AppPanel.vue'
 
 const props = defineProps({
   filterState: {
@@ -12,7 +9,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['change'])
-const isOpen = ref(false)
+
+const open = ref(false)
+
+const toggleOpen = () => {
+  open.value = !open.value
+}
 
 const activeCount = computed(() => {
   let count = 0
@@ -23,57 +25,57 @@ const activeCount = computed(() => {
 </script>
 
 <template>
-  <AppPanel as="section">
+  <div class="px-3 py-2">
     <button
       type="button"
-      class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-zinc-800/50 active:scale-[0.99]"
-      @click="isOpen = !isOpen"
+      class="flex w-full cursor-pointer items-center justify-between gap-2 py-1 text-left"
+      @click="toggleOpen"
     >
-      <div class="min-w-0">
-        <h3 class="text-sm font-semibold text-white">Год выпуска</h3>
-      </div>
+      <span class="text-sm text-zinc-300">Год выпуска</span>
       <div class="flex items-center gap-2">
-        <span
-          v-if="activeCount"
-          class="rounded-full bg-lime-300 px-2 py-0.5 text-[11px] font-semibold text-zinc-900"
+        <span v-if="activeCount" class="text-[11px] text-zinc-500">{{ activeCount }}</span>
+        <svg
+          :class="['h-3 w-3 text-zinc-600 transition-transform', open ? 'rotate-90' : '']"
+          viewBox="0 0 12 12"
+          fill="none"
         >
-          {{ activeCount }}
-        </span>
-        <ChevronRightIcon
-          :class="['text-zinc-400 transition-transform', isOpen ? 'rotate-90' : 'rotate-0']"
-        />
+          <path
+            d="M4.5 2.5L7.5 6L4.5 9.5"
+            stroke="currentColor"
+            stroke-width="1.2"
+            stroke-linecap="round"
+          />
+        </svg>
       </div>
     </button>
 
-    <div v-if="isOpen" class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <div v-if="open" class="mt-2 grid grid-cols-2 gap-2">
       <div>
-        <label class="mb-1 block text-xs text-zinc-400" for="release-year-from">Год от</label>
-        <AppInput
-          id="release-year-from"
+        <label class="mb-1 block text-xs text-zinc-500">От</label>
+        <input
           :value="props.filterState.from"
           type="number"
           inputmode="numeric"
-          placeholder="Например, 2020"
+          placeholder="2020"
           min="1900"
           max="2100"
-          class="year-number-input w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-center text-xs text-white outline-none transition focus:border-lime-300"
+          class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-2.5 py-1.5 text-xs text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-zinc-600"
           @input="emit('change', 'from', $event.target.value)"
         />
       </div>
       <div>
-        <label class="mb-1 block text-xs text-zinc-400" for="release-year-to">Год до</label>
-        <AppInput
-          id="release-year-to"
+        <label class="mb-1 block text-xs text-zinc-500">До</label>
+        <input
           :value="props.filterState.to"
           type="number"
           inputmode="numeric"
-          placeholder="Например, 2025"
+          placeholder="2025"
           min="1900"
           max="2100"
-          class="year-number-input w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-center text-xs text-white outline-none transition focus:border-lime-300"
+          class="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 px-2.5 py-1.5 text-xs text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-zinc-600"
           @input="emit('change', 'to', $event.target.value)"
         />
       </div>
     </div>
-  </AppPanel>
+  </div>
 </template>

@@ -11,10 +11,16 @@ const formatNumber = (n) => new Intl.NumberFormat('ru-RU').format(n)
     class="flex flex-col gap-4 rounded-2xl border border-zinc-700/70 bg-zinc-900/80 px-4 py-5 sm:flex-row sm:items-center sm:gap-6 sm:px-6"
   >
     <div
-      class="mx-auto flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-bold text-white sm:mx-0 sm:h-24 sm:w-24"
-      :class="user.avatarColorClass"
+      class="mx-auto flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full text-2xl font-bold text-white sm:mx-0 sm:h-24 sm:w-24"
+      :class="user.avatarUrl ? '' : 'bg-emerald-500'"
     >
-      {{ user.login.slice(0, 1).toUpperCase() }}
+      <img
+        v-if="user.avatarUrl"
+        :src="user.avatarUrl"
+        alt="Аватар"
+        class="h-full w-full object-cover"
+      />
+      <span v-else>{{ user.login.slice(0, 1).toUpperCase() }}</span>
     </div>
 
     <div class="flex-1 text-center sm:text-left">

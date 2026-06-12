@@ -18,9 +18,11 @@ const {
   bookmarkOptions,
   selectedBookmarkId,
   readingCtaLabel,
+  userRating,
   setActiveTab,
   selectBookmark,
   removeFromBookmarks,
+  setUserRating,
 } = useNovelPage(novelId)
 
 const currentTabComponent = computed(() =>
@@ -39,6 +41,8 @@ const currentTabComponent = computed(() =>
           :bookmark-options="bookmarkOptions"
           :selected-bookmark-id="selectedBookmarkId"
           :reading-cta-label="readingCtaLabel"
+          :user-rating="userRating"
+          @update-rating="setUserRating"
           @update-bookmark="selectBookmark"
           @remove-bookmark="removeFromBookmarks"
         />

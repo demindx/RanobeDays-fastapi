@@ -16,9 +16,13 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  filtersOpen: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:viewMode', 'open-filters'])
+const emit = defineEmits(['update:viewMode', 'toggle-filters'])
 </script>
 
 <template>
@@ -32,8 +36,8 @@ const emit = defineEmits(['update:viewMode', 'open-filters'])
     </div>
 
     <div class="flex items-center gap-2">
-      <AppButton variant="neutral" size="sm" class="lg:hidden" @click="emit('open-filters')">
-        Фильтры
+      <AppButton variant="neutral" size="sm" @click="emit('toggle-filters')">
+        {{ props.filtersOpen ? 'Закрыть' : 'Фильтры' }}
       </AppButton>
 
       <AppViewModeToggle

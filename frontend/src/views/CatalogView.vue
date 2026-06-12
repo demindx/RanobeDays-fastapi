@@ -11,7 +11,7 @@ import { useCatalogFilters } from '../composables/useCatalogFilters'
 import { catalogNovels, catalogFilterOptions } from '../mocks/catalogData'
 
 const viewMode = ref('grid')
-const mobileFiltersOpen = ref(false)
+const filtersOpen = ref(false)
 
 const novelsRef = computed(() => catalogNovels)
 const {
@@ -26,33 +26,47 @@ const currentCatalogComponent = computed(() =>
   viewMode.value === 'grid' ? CatalogGrid : CatalogList,
 )
 
-const closeMobileFilters = () => {
-  mobileFiltersOpen.value = false
+const toggleFilters = () => {
+  filtersOpen.value = !filtersOpen.value
 }
 
 const handleResetFilters = () => {
   resetFilters()
 }
+
+const onTagClick = (value, filterKey) => {
+  const target = filters[filterKey]
+  if (!target) return
+  target.include = [value]
+  target.exclude = []
+}
 </script>
 
 <template>
   <div>
-    <CatalogLayout :filters-open="mobileFiltersOpen" @close-filters="closeMobileFilters">
+    <CatalogLayout :filters-open="filtersOpen" @close-filters="filtersOpen = false">
       <template #content>
         <div class="space-y-3">
           <CatalogToolbar
             :view-mode="viewMode"
             :total="filteredNovels.length"
             :active-filters="activeFiltersCount"
+            :filters-open="filtersOpen"
             @update:view-mode="viewMode = $event"
-            @open-filters="mobileFiltersOpen = true"
+            @toggle-filters="toggleFilters"
           />
 
           <AppEmptyState v-if="!filteredNovels.length">
             Ничего не найдено. Попробуйте ослабить фильтры или сбросить их.
           </AppEmptyState>
           <AppSectionSwitchTransition v-else>
-            <component :is="currentCatalogComponent" :key="viewMode" :novels="filteredNovels" />
+            <component
+              :is="currentCatalogComponent"
+              :key="viewMode"
+              :novels="filteredNovels"
+              :filters-open="filtersOpen"
+              :on-tag-click="viewMode === 'list' ? onTagClick : undefined"
+            />
           </AppSectionSwitchTransition>
         </div>
       </template>

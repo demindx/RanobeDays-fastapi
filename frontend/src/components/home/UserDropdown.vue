@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import NavHomeIcon from '../icons/NavHomeIcon.vue'
 import NavBookmarkIcon from '../icons/NavBookmarkIcon.vue'
 import NavCollectionIcon from '../icons/NavCollectionIcon.vue'
@@ -8,6 +8,7 @@ import SettingsIcon from '../icons/SettingsIcon.vue'
 import LogoutIcon from '../icons/LogoutIcon.vue'
 import { useTheme } from '../../composables/useTheme'
 import { useAuth } from '../../composables/useAuth'
+import { useProfile } from '../../composables/useProfile'
 import { useClickOutside } from '../../composables/useClickOutside'
 
 const props = defineProps({
@@ -17,12 +18,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['open-settings', 'open-profile', 'open-history', 'open-achievements'])
+const emit = defineEmits(['open-profile', 'open-history', 'open-achievements'])
 
+const router = useRouter()
 const isOpen = ref(false)
 const rootRef = ref(null)
 const { isDark, toggleTheme } = useTheme()
 const { logout } = useAuth()
+const { openSettings } = useProfile()
 
 const toggle = () => {
   isOpen.value = !isOpen.value
@@ -37,6 +40,12 @@ const handleLogout = () => {
   close()
 }
 
+const handleSettings = () => {
+  close()
+  router.push('/profile')
+  openSettings()
+}
+
 const handleAction = (action) => {
   emit(action)
   close()
@@ -49,17 +58,22 @@ useClickOutside(rootRef, isOpen, close)
   <div ref="rootRef" class="relative">
     <button
       type="button"
-      class="flex h-10 w-10 items-center justify-center rounded-full border transition"
+      class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition"
       :class="[
-        props.user?.avatarColorClass || 'bg-zinc-700',
         isOpen
-          ? 'border-lime-300/60 ring-2 ring-lime-300/30'
-          : 'border-zinc-700 hover:opacity-90 active:scale-95',
+          ? 'border-lime-300/60 ring-2 ring-lime-300/30 bg-emerald-500'
+          : 'border-zinc-700 bg-emerald-500 hover:opacity-90 active:scale-95',
       ]"
       :aria-label="`Профиль ${props.user?.login || ''}`"
       @click="toggle"
     >
-      <span class="text-sm font-semibold text-white">
+      <img
+        v-if="props.user?.avatarUrl"
+        :src="props.user.avatarUrl"
+        alt=""
+        class="h-full w-full object-cover"
+      />
+      <span v-else class="text-sm font-semibold text-white">
         {{ (props.user?.login || 'U').slice(0, 1).toUpperCase() }}
       </span>
     </button>
@@ -105,16 +119,7 @@ useClickOutside(rootRef, isOpen, close)
           <button
             type="button"
             class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-200 transition hover:bg-zinc-800 hover:text-white"
-            @click="handleAction('open-history')"
-          >
-            <NavCollectionIcon class="text-zinc-400" />
-            <span>История чтения</span>
-          </button>
-
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-200 transition hover:bg-zinc-800 hover:text-white"
-            @click="handleAction('open-settings')"
+            @click="handleSettings"
           >
             <SettingsIcon class="text-zinc-400" />
             <span>Настройки</span>
