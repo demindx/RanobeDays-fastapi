@@ -1,13 +1,11 @@
 <script setup>
 import DefaultFooter from '../components/home/DefaultFooter.vue'
 import HomeHeader from '../components/home/HomeHeader.vue'
-import MobileBottomNav from '../components/home/MobileBottomNav.vue'
-import AuthModal from '../components/home/AuthModal.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import AppErrorBoundary from '../components/shared/AppErrorBoundary.vue'
 import { useAuth } from '../composables/useAuth'
 
-const { isAuthenticated, user, hasUnreadNotifications, isAuthModalOpen } = useAuth()
+const { isAuthenticated, user, hasUnreadNotifications } = useAuth()
 
 const animatedRouteNames = new Set(['home', 'catalog', 'bookmarks', 'novel', 'profile'])
 
@@ -21,6 +19,7 @@ const routeViewKey = (route) => String(route?.name || route?.path || 'route')
       class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:gap-6 md:px-6 md:py-8 md:pb-8"
     >
       <HomeHeader
+        v-memo="[isAuthenticated, user, hasUnreadNotifications]"
         :is-authenticated="isAuthenticated"
         :user="user"
         :has-unread-notifications="hasUnreadNotifications"
@@ -41,13 +40,5 @@ const routeViewKey = (route) => String(route?.name || route?.path || 'route')
         <DefaultFooter />
       </div>
     </div>
-
-    <MobileBottomNav
-      :is-authenticated="isAuthenticated"
-      :user="user"
-      :has-unread-notifications="hasUnreadNotifications"
-    />
-
-    <AuthModal :open="isAuthModalOpen" @close="isAuthModalOpen = false" />
   </main>
 </template>
