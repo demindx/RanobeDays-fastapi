@@ -115,7 +115,8 @@ const handleClose = () => {
 <template>
   <AppModal
     :open="props.open"
-    panel-class="w-full max-w-xl rounded-2xl border border-zinc-700 bg-zinc-900 p-4 shadow-2xl sm:p-5"
+    container-class="flex items-end justify-center px-3 py-3 sm:items-center sm:px-4 sm:py-6"
+    panel-class="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-zinc-700 bg-zinc-900 p-4 shadow-2xl sm:p-5"
     @close="handleClose"
   >
     <div class="mb-4 flex items-center justify-between gap-3">
