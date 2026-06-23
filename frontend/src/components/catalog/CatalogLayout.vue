@@ -26,25 +26,13 @@ const emit = defineEmits(['close-filters'])
     </div>
 
     <!-- Mobile/tablet overlay -->
-    <div
-      :class="[
-        'fixed inset-0 z-50 lg:hidden',
-        props.filtersOpen ? 'pointer-events-auto' : 'pointer-events-none',
-      ]"
-    >
+    <div v-if="props.filtersOpen" class="fixed inset-0 z-50 lg:hidden pointer-events-auto">
       <div
-        :class="[
-          'absolute inset-0 bg-black/50 transition-opacity',
-          props.filtersOpen ? 'opacity-100' : 'opacity-0',
-        ]"
+        class="absolute inset-0 bg-black/50 opacity-100 transition-opacity"
         @click="emit('close-filters')"
       />
       <div
-        :class="[
-          'absolute right-0 top-0 h-full max-w-sm overflow-y-auto border-l border-zinc-700 bg-zinc-900 p-3 shadow-2xl transition-transform',
-          props.filtersOpen ? 'translate-x-0' : 'translate-x-full',
-        ]"
-        class="w-[88%]"
+        class="absolute right-0 top-0 h-full max-w-sm overflow-y-auto border-l border-zinc-700 bg-zinc-900 p-3 shadow-2xl transition-transform translate-x-0 w-[88%]"
       >
         <div class="mb-3 flex items-center justify-between">
           <h2 class="text-base font-semibold text-white">Фильтры</h2>
