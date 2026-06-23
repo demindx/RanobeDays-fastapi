@@ -1,7 +1,7 @@
 <script setup>
 import DefaultFooter from '../components/home/DefaultFooter.vue'
 import HomeHeader from '../components/home/HomeHeader.vue'
-import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
+
 import AppErrorBoundary from '../components/shared/AppErrorBoundary.vue'
 import { useAuth } from '../composables/useAuth'
 
@@ -28,9 +28,9 @@ const routeViewKey = (route) => String(route?.name || route?.path || 'route')
       <div class="flex-1">
         <AppErrorBoundary>
           <RouterView v-slot="{ Component, route }">
-            <AppSectionSwitchTransition v-if="shouldAnimateRoute(route)">
+            <Transition v-if="shouldAnimateRoute(route)" name="route-fade">
               <component :is="Component" :key="routeViewKey(route)" />
-            </AppSectionSwitchTransition>
+            </Transition>
             <component :is="Component" v-else />
           </RouterView>
         </AppErrorBoundary>
@@ -42,3 +42,15 @@ const routeViewKey = (route) => String(route?.name || route?.path || 'route')
     </div>
   </main>
 </template>
+
+<style>
+.route-fade-enter-active,
+.route-fade-leave-active {
+  transition: opacity 0.12s ease;
+}
+
+.route-fade-enter-from,
+.route-fade-leave-to {
+  opacity: 0;
+}
+</style>
