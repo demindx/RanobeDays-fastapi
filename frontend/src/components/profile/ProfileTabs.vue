@@ -4,10 +4,12 @@ import { useProfile } from '../../composables/useProfile'
 import TeamCard from './TeamCard.vue'
 import AppTabs from '../shared/AppTabs.vue'
 import AppEmptyState from '../shared/AppEmptyState.vue'
-import BookmarkNovelCard from '../cards/BookmarkNovelCard.vue'
+import NovelGridCard from '../cards/NovelGridCard.vue'
+import NovelListCard from '../cards/NovelListCard.vue'
 import HeartIcon from '../icons/HeartIcon.vue'
 import AppViewModeToggle from '../shared/AppViewModeToggle.vue'
 import AppSectionSwitchTransition from '../shared/AppSectionSwitchTransition.vue'
+import { catalogNovels } from '../../mocks/catalogData'
 
 const { user, bookmarks, comments } = useProfile()
 const activeTab = ref('teams')
@@ -32,6 +34,32 @@ const activeBookmark = computed(
 )
 
 const viewMode = ref('list')
+
+const toNovelShape = (item) => {
+  const catalogId = item.novelId ?? item.id
+  const novel = catalogNovels.find((n) => n.id === catalogId)
+  const chapterNum = parseInt(String(item.chapterLabel || '').replace(/\D/g, ''), 10) || 0
+  return {
+    id: catalogId,
+    title: item.title,
+    author: item.author,
+    rating: item.rating,
+    coverStyle: item.coverStyle,
+    coverUrl: item.coverUrl,
+    href: item.href || (catalogId ? `/novel/${catalogId}` : '#'),
+    chapters: chapterNum,
+    releaseYear: novel?.releaseYear ?? '',
+    ageRating: novel?.ageRating ?? '',
+    status: novel?.status ?? '',
+    synopsis: novel?.synopsis ?? '',
+    genres: novel?.genres ?? [],
+    tags: novel?.tags ?? [],
+    originalLanguage: novel?.originalLanguage ?? '',
+    translationLanguage: novel?.translationLanguage ?? '',
+  }
+}
+
+const mappedNovels = computed(() => (activeBookmark.value?.novels || []).map(toNovelShape))
 </script>
 
 <template>
@@ -67,44 +95,22 @@ const viewMode = ref('list')
           <template v-else>
             <AppSectionSwitchTransition>
               <div :key="activeBookmarkId">
-                <div
-                  v-if="viewMode === 'list'"
-                  class="divide-y divide-zinc-800/60 overflow-hidden rounded-xl border border-zinc-800"
-                >
-                  <div
-                    v-for="item in activeBookmark.novels"
-                    :key="item.id"
-                    class="flex items-center gap-3 bg-zinc-900/50 px-4 py-3 transition hover:bg-zinc-800/50 sm:px-5 sm:py-3.5"
-                  >
-                    <div
-                      class="h-12 w-9 shrink-0 rounded-md bg-gradient-to-br"
-                      :class="item.coverStyle"
-                    />
-                    <div class="min-w-0 flex-1">
-                      <p class="truncate text-sm font-medium text-zinc-200">
-                        {{ item.title }}
-                      </p>
-                      <p class="truncate text-xs text-zinc-500">
-                        {{ item.author }} · {{ item.chapterLabel }}
-                      </p>
-                    </div>
-                    <div
-                      class="flex shrink-0 items-center gap-1 rounded-full bg-zinc-800/70 px-2 py-1 text-xs text-zinc-400"
-                    >
-                      <span class="text-lime-400">★</span>
-                      {{ item.rating }}
-                    </div>
-                  </div>
+                <div v-if="viewMode === 'list'" class="space-y-3">
+                  <NovelListCard
+                    v-for="(item, idx) in mappedNovels"
+                    :key="activeBookmark.novels[idx]?.id || idx"
+                    :novel="item"
+                  />
                 </div>
 
                 <div
                   v-else
-                  class="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 sm:gap-3 lg:grid-cols-4"
+                  class="grid grid-cols-2 gap-2 min-[480px]:gap-2.5 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5"
                 >
-                  <BookmarkNovelCard
-                    v-for="item in activeBookmark.novels"
-                    :key="item.id"
-                    :item="item"
+                  <NovelGridCard
+                    v-for="(item, idx) in mappedNovels"
+                    :key="activeBookmark.novels[idx]?.id || idx"
+                    :novel="item"
                   />
                 </div>
               </div>

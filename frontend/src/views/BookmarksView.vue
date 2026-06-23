@@ -7,8 +7,10 @@ import AppEmptyState from '../components/shared/AppEmptyState.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import AppTabs from '../components/shared/AppTabs.vue'
 import AppViewModeToggle from '../components/shared/AppViewModeToggle.vue'
-import BookmarkNovelCard from '../components/cards/BookmarkNovelCard.vue'
+import NovelGridCard from '../components/cards/NovelGridCard.vue'
+import NovelListCard from '../components/cards/NovelListCard.vue'
 import BookmarksSettingsModal from '../components/bookmarks/BookmarksSettingsModal.vue'
+import { catalogNovels } from '../mocks/catalogData'
 
 const {
   bookmarks,
@@ -29,6 +31,31 @@ const bookmarkTabs = computed(() =>
     count: b.items.length,
   })),
 )
+
+const toNovelShape = (item) => {
+  const novel = catalogNovels.find((n) => n.id === item.novelId)
+  const chapterNum = parseInt(String(item.chapterLabel || '').replace(/\D/g, ''), 10) || 0
+  return {
+    id: item.novelId || item.id,
+    title: item.title,
+    author: item.author,
+    rating: item.rating,
+    coverStyle: item.coverStyle,
+    coverUrl: item.coverUrl,
+    href: item.href || (item.novelId ? `/novel/${item.novelId}` : '#'),
+    chapters: chapterNum,
+    releaseYear: novel?.releaseYear ?? '',
+    ageRating: novel?.ageRating ?? '',
+    status: novel?.status ?? '',
+    synopsis: novel?.synopsis ?? '',
+    genres: novel?.genres ?? [],
+    tags: novel?.tags ?? [],
+    originalLanguage: novel?.originalLanguage ?? '',
+    translationLanguage: novel?.translationLanguage ?? '',
+  }
+}
+
+const mappedItems = computed(() => (activeBookmark.value?.items || []).map(toNovelShape))
 </script>
 
 <template>
@@ -71,40 +98,21 @@ const bookmarkTabs = computed(() =>
             <template v-else>
               <div
                 v-if="viewMode === 'grid'"
-                class="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 sm:gap-3 lg:grid-cols-4"
+                class="grid grid-cols-2 gap-2 min-[480px]:gap-2.5 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5"
               >
-                <BookmarkNovelCard
-                  v-for="item in activeBookmark.items"
-                  :key="item.id"
-                  :item="item"
+                <NovelGridCard
+                  v-for="(item, idx) in mappedItems"
+                  :key="activeBookmark.items[idx]?.id || idx"
+                  :novel="item"
                 />
               </div>
 
-              <div
-                v-else
-                class="divide-y divide-zinc-800/60 overflow-hidden rounded-xl border border-zinc-800"
-              >
-                <div
-                  v-for="item in activeBookmark.items"
-                  :key="item.id"
-                  class="flex items-center gap-3 bg-zinc-900/50 px-4 py-3 transition hover:bg-zinc-800/50 sm:px-5 sm:py-3.5"
-                >
-                  <div
-                    class="h-12 w-9 shrink-0 rounded-md bg-gradient-to-br"
-                    :class="item.coverStyle"
-                  />
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium text-zinc-200">{{ item.title }}</p>
-                    <p class="truncate text-xs text-zinc-500">
-                      {{ item.author }} · {{ item.chapterLabel }}
-                    </p>
-                  </div>
-                  <span
-                    class="shrink-0 rounded-full bg-zinc-800/70 px-2 py-1 text-xs text-zinc-400"
-                  >
-                    ★ {{ item.rating }}
-                  </span>
-                </div>
+              <div v-else class="space-y-3">
+                <NovelListCard
+                  v-for="(item, idx) in mappedItems"
+                  :key="activeBookmark.items[idx]?.id || idx"
+                  :novel="item"
+                />
               </div>
             </template>
           </div>

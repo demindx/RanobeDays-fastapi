@@ -44,7 +44,7 @@ export const initialBookmarks = [
     items: [
       {
         id: 'bm-4',
-        novelId: 2,
+        novelId: 23,
         title: 'Хроники небесной башни',
         author: 'Чжан Вэй',
         chapterLabel: 'Глава 78',
@@ -53,7 +53,7 @@ export const initialBookmarks = [
       },
       {
         id: 'bm-5',
-        novelId: 7,
+        novelId: 15,
         title: 'Меч Великой Тан',
         author: 'Сюй Ци',
         chapterLabel: 'Глава 47',
