@@ -16,7 +16,9 @@ const {
   settings,
   fontOptions,
   bgPresets,
-  widthOptions,
+  widthMin,
+  widthMax,
+  widthStep,
   currentBg,
   setFont,
   setFontSize,
@@ -145,23 +147,35 @@ useClickOutside(rootRef, () => props.open, close)
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-medium opacity-70">Ширина текста</label>
-            <div class="flex gap-1.5">
+            <label class="mb-2 block text-sm font-medium opacity-70">
+              Ширина: {{ settings.contentWidth }}px
+            </label>
+            <div class="flex items-center gap-2">
               <button
-                v-for="w in widthOptions"
-                :key="w.value"
                 type="button"
-                :class="[
-                  'flex-1 rounded-lg border px-2 py-2 text-center text-xs transition',
-                  settings.contentWidth === w.value ? 'opacity-100' : 'opacity-50 hover:opacity-80',
-                ]"
-                :style="{
-                  borderColor: settings.contentWidth === w.value ? 'currentColor' : panelBorder,
-                  backgroundColor: settings.contentWidth === w.value ? panelInputBg : 'transparent',
-                }"
-                @click="setContentWidth(w.value)"
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border text-sm transition hover:opacity-80"
+                :style="{ borderColor: panelBorder }"
+                @click="setContentWidth(settings.contentWidth - widthStep)"
               >
-                {{ w.label }}
+                −
+              </button>
+              <input
+                type="range"
+                :min="widthMin"
+                :max="widthMax"
+                :step="widthStep"
+                :value="settings.contentWidth"
+                class="h-2 flex-1 cursor-pointer appearance-none rounded-full"
+                :style="{ accentColor: panelText }"
+                @input="setContentWidth(Number($event.target.value))"
+              />
+              <button
+                type="button"
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border text-sm transition hover:opacity-80"
+                :style="{ borderColor: panelBorder }"
+                @click="setContentWidth(settings.contentWidth + widthStep)"
+              >
+                +
               </button>
             </div>
           </div>

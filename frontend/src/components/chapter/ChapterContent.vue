@@ -5,10 +5,10 @@ import { useChapter } from '../../composables/useChapter'
 import AppEmptyState from '../shared/AppEmptyState.vue'
 
 const { chapter } = useChapter()
-const { settings, currentBg, currentWidth, currentFont } = useChapterSettings()
+const { settings, currentBg, currentFont } = useChapterSettings()
 
 const textColor = computed(() => currentBg()?.text || '#e4e4e7')
-const maxWidthStyle = computed(() => currentWidth()?.maxWidth || '48rem')
+const maxWidthStyle = computed(() => settings.value.contentWidth + 'px')
 const fontFamily = computed(() => currentFont()?.family || 'Inter, sans-serif')
 </script>
 

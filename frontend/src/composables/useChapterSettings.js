@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const STORAGE_KEY = 'ranobe-chapter-settings'
 
@@ -6,7 +6,7 @@ const defaultSettings = {
   fontFamily: 'Inter',
   fontSize: 16,
   bgColor: 'dark',
-  contentWidth: 'medium',
+  contentWidth: 920,
 }
 
 const fontOptions = [
@@ -27,11 +27,17 @@ const bgPresets = [
   { value: 'white', label: 'Белый', bg: '#ffffff', text: '#18181b' },
 ]
 
-const widthOptions = [
-  { value: 'narrow', label: 'Узкая', maxWidth: '42rem' },
-  { value: 'medium', label: 'Средняя', maxWidth: '48rem' },
-  { value: 'wide', label: 'Широкая', maxWidth: '56rem' },
-]
+const widthMin = 740
+const widthStep = 20
+
+const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    viewportWidth.value = window.innerWidth
+  })
+}
+
+const widthMax = computed(() => Math.max(widthMin, viewportWidth.value - 200))
 
 function load() {
   try {
@@ -39,6 +45,7 @@ function load() {
     if (!raw) return { ...defaultSettings }
     const parsed = JSON.parse(raw)
     if (typeof parsed?.fontSize !== 'number') parsed.fontSize = defaultSettings.fontSize
+    if (typeof parsed?.contentWidth !== 'number') parsed.contentWidth = defaultSettings.contentWidth
     return parsed
   } catch {
     return { ...defaultSettings }
@@ -71,10 +78,8 @@ export function useChapterSettings() {
   }
 
   const setContentWidth = (value) => {
-    settings.value.contentWidth = value
+    settings.value.contentWidth = Math.max(widthMin, Math.min(widthMax.value, value))
   }
-
-  const currentWidth = () => widthOptions.find((w) => w.value === settings.value.contentWidth)
 
   const reset = () => {
     settings.value = { ...defaultSettings }
@@ -84,10 +89,11 @@ export function useChapterSettings() {
     settings,
     fontOptions,
     bgPresets,
-    widthOptions,
+    widthMin,
+    widthMax,
+    widthStep,
     currentFont,
     currentBg,
-    currentWidth,
     setFont,
     setFontSize,
     setBgColor,
