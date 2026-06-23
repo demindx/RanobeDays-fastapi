@@ -1,5 +1,5 @@
 <template>
-  <Transition name="app-section-switch" mode="out-in">
+  <Transition name="app-section-switch" mode="in-out">
     <slot />
   </Transition>
 </template>
