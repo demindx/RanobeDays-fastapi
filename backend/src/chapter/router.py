@@ -41,7 +41,7 @@ async def get_chapter(
     id: int, service: ChapterServiceDep
 ) -> GenericResponse[ChapterResponse]:
     """Get chapter by id"""
-    chapter = service.get_by_id(id)
+    chapter = await service.get_by_id(id)
 
     chapter = ChapterResponse.model_validate(chapter)
 
