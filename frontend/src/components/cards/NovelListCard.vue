@@ -1,15 +1,12 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import NovelTags from '../shared/NovelTags.vue'
 
 const props = defineProps({
   novel: {
     type: Object,
     required: true,
-  },
-  onTagClick: {
-    type: Function,
-    default: null,
   },
 })
 
@@ -60,28 +57,8 @@ const isInternalLink = computed(() => novelHref.value.startsWith('/'))
         {{ props.novel.synopsis }}
       </p>
 
-      <div class="mt-2 hidden flex-wrap gap-1.5 min-[380px]:flex">
-        <button
-          v-for="genre in props.novel.genres"
-          :key="genre"
-          type="button"
-          class="cursor-pointer rounded-full bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-300 transition hover:bg-zinc-700 hover:text-lime-300 active:scale-95"
-          @click.stop="props.onTagClick?.(genre, 'genres')"
-        >
-          {{ genre }}
-        </button>
-      </div>
-
-      <div class="mt-1.5 hidden flex-wrap gap-1.5 min-[380px]:flex">
-        <button
-          v-for="tag in props.novel.tags"
-          :key="tag"
-          type="button"
-          class="cursor-pointer rounded-md border border-zinc-700/50 px-2 py-0.5 text-[10px] text-zinc-500 transition hover:border-zinc-600 hover:text-zinc-300 active:scale-95"
-          @click.stop="props.onTagClick?.(tag, 'tags')"
-        >
-          {{ tag }}
-        </button>
+      <div class="mt-2 hidden min-[380px]:block">
+        <NovelTags :genres="props.novel.genres" :tags="props.novel.tags" />
       </div>
 
       <p class="mt-2 hidden text-xs text-zinc-400 min-[380px]:block">

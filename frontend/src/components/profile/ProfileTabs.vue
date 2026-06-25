@@ -72,6 +72,7 @@ const mappedNovels = computed(() => (activeBookmark.value?.novels || []).map(toN
           <TeamCard
             v-for="team in user.teams"
             :key="team.id"
+            :id="team.id"
             :name="team.name"
             :avatar-color-class="team.avatarColorClass"
           />

@@ -1,4 +1,7 @@
 <script setup>
+import { RouterLink } from 'vue-router'
+import NovelTags from '../shared/NovelTags.vue'
+
 const props = defineProps({
   genres: {
     type: Array,
@@ -13,41 +16,34 @@ const props = defineProps({
     default: () => [],
   },
 })
+
+const toTeamEntry = (t) => {
+  if (t && typeof t === 'object' && t.id) return t
+  return { id: null, name: String(t) }
+}
 </script>
 
 <template>
   <div class="space-y-2">
-    <div class="flex flex-wrap items-center gap-1.5">
-      <span class="text-xs font-semibold text-zinc-400">Жанры:</span>
-      <span
-        v-for="genre in props.genres"
-        :key="`genre-${genre}`"
-        class="rounded-full border border-emerald-300/40 bg-emerald-400/15 px-2 py-0.5 text-xs text-emerald-200"
-      >
-        {{ genre }}
-      </span>
-    </div>
+    <NovelTags :genres="props.genres" :tags="props.tags" :show-labels="true" />
 
-    <div class="flex flex-wrap items-center gap-1.5">
-      <span class="text-xs font-semibold text-zinc-400">Теги:</span>
-      <span
-        v-for="tag in props.tags"
-        :key="`tag-${tag}`"
-        class="rounded-full border border-lime-300/40 bg-lime-400/15 px-2 py-0.5 text-xs text-lime-200"
-      >
-        {{ tag }}
-      </span>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-1.5">
+    <div v-if="props.translators.length" class="flex flex-wrap items-center gap-1.5">
       <span class="text-xs font-semibold text-zinc-400">Переводчики:</span>
-      <span
-        v-for="translator in props.translators"
-        :key="`translator-${translator}`"
-        class="rounded-full border border-zinc-600 bg-zinc-800 px-2 py-0.5 text-xs text-zinc-200"
-      >
-        {{ translator }}
-      </span>
+      <template v-for="t in props.translators" :key="`translator-${t?.id || t}`">
+        <RouterLink
+          v-if="t?.id"
+          :to="'/team/' + t.id"
+          class="rounded-full border border-zinc-600 bg-zinc-800 px-2 py-0.5 text-xs text-zinc-200 transition hover:border-zinc-500 hover:text-zinc-100 active:scale-95"
+        >
+          {{ t.name }}
+        </RouterLink>
+        <span
+          v-else
+          class="rounded-full border border-zinc-600 bg-zinc-800 px-2 py-0.5 text-xs text-zinc-200"
+        >
+          {{ t }}
+        </span>
+      </template>
     </div>
   </div>
 </template>

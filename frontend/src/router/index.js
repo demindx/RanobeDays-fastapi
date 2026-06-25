@@ -8,6 +8,7 @@ import NovelView from '../views/NovelView.vue'
 import ChapterView from '../views/ChapterView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import NotificationsView from '../views/NotificationsView.vue'
+import TeamView from '../views/TeamView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,11 @@ const router = createRouter({
           path: 'notifications',
           name: 'notifications',
           component: NotificationsView,
+        },
+        {
+          path: 'team/:id',
+          name: 'team',
+          component: TeamView,
         },
       ],
     },

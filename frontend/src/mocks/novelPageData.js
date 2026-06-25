@@ -13,7 +13,10 @@ export const novelPageData = [
       'Наследник павшего дома возвращается в столицу, где каждый союз временный, а каждое слово может стоить жизни. Чтобы вернуть трон, ему придется объединить врагов, расколоть старые кланы и выбрать, что важнее: власть или люди, которые в него поверили.',
     genres: ['Фэнтези', 'Политика', 'Приключения'],
     tags: ['Королевство', 'Интриги', 'Магия', 'Стратегия'],
-    translators: ['Команда RanobeDays', 'Ari Translation'],
+    translators: [
+      { id: 'team-1', name: 'Команда RanobeDays' },
+      { id: 'team-5', name: 'Ari Translation' },
+    ],
     readingProgress: 43,
     chapters: [
       {
@@ -76,7 +79,7 @@ const buildNovelFromCatalog = (id) => {
     description: source.synopsis,
     genres: source.genres || [],
     tags: source.tags || [],
-    translators: ['Команда RanobeDays'],
+    translators: [{ id: 'team-1', name: 'Команда RanobeDays' }],
     readingProgress: 0,
     chapters: [
       {

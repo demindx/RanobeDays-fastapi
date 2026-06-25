@@ -33,13 +33,6 @@ const toggleFilters = () => {
 const handleResetFilters = () => {
   resetFilters()
 }
-
-const onTagClick = (value, filterKey) => {
-  const target = filters[filterKey]
-  if (!target) return
-  target.include = [value]
-  target.exclude = []
-}
 </script>
 
 <template>
@@ -65,7 +58,6 @@ const onTagClick = (value, filterKey) => {
               :key="viewMode"
               :novels="filteredNovels"
               :filters-open="filtersOpen"
-              :on-tag-click="viewMode === 'list' ? onTagClick : undefined"
             />
           </AppSectionSwitchTransition>
         </div>
