@@ -2,6 +2,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchChapters, fetchChapterById } from '../api/chapters'
 import { mapChapter, mapChaptersList } from '../api/mapper'
+import { useAsyncState } from './useAsyncState'
 
 export function useChapter() {
   const route = useRoute()
@@ -14,21 +15,20 @@ export function useChapter() {
 
   const chapter = ref(null)
 
+  const { loading, error, run } = useAsyncState()
+
   watch(
     () => [novelId.value, chapterId.value],
     async ([nid, cid]) => {
       chapter.value = null
       if (!cid) return
-      try {
-        const [allChapters, chapterData] = await Promise.all([
-          fetchChapters(),
-          fetchChapterById(cid),
-        ])
-        chapters.value = mapChaptersList(allChapters).filter(
-          (c) => String(c.novel_id) === String(nid),
-        )
-        chapter.value = mapChapter(chapterData)
-      } catch {}
+      const result = await run(() => Promise.all([fetchChapters(), fetchChapterById(cid)]))
+      if (!result) return
+      const [allChapters, chapterData] = result
+      chapters.value = mapChaptersList(allChapters).filter(
+        (c) => String(c.novel_id) === String(nid),
+      )
+      chapter.value = mapChapter(chapterData)
     },
     { immediate: true },
   )
@@ -71,5 +71,7 @@ export function useChapter() {
     prevChapterId,
     nextChapterId,
     novelTitle,
+    loading,
+    error,
   }
 }

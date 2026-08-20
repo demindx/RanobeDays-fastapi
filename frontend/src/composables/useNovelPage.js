@@ -3,6 +3,7 @@ import { useBookmarks } from './useBookmarks'
 import { fetchNovelById } from '../api/novels'
 import { fetchChapters } from '../api/chapters'
 import { mapNovel, mapChaptersList } from '../api/mapper'
+import { useAsyncState } from './useAsyncState'
 
 const RATING_KEY = 'ranobe-ratings'
 
@@ -30,6 +31,7 @@ export const useNovelPage = (novelIdRef) => {
 
   const novel = ref(null)
   const chapters = ref([])
+  const { loading, error, run } = useAsyncState()
 
   watch(
     novelIdRef,
@@ -37,16 +39,16 @@ export const useNovelPage = (novelIdRef) => {
       novel.value = null
       chapters.value = []
       if (!id) return
-      try {
-        const [novelData, chaptersData] = await Promise.all([fetchNovelById(id), fetchChapters()])
-        const mapped = mapNovel(novelData)
-        if (!mapped) return
-        chapters.value = mapChaptersList(chaptersData).filter(
-          (c) => String(c.novel_id) === String(id),
-        )
-        mapped.chapters = chapters.value
-        novel.value = mapped
-      } catch {}
+      const result = await run(() => Promise.all([fetchNovelById(id), fetchChapters()]))
+      if (!result) return
+      const [novelData, chaptersData] = result
+      const mapped = mapNovel(novelData)
+      if (!mapped) return
+      chapters.value = mapChaptersList(chaptersData).filter(
+        (c) => String(c.novel_id) === String(id),
+      )
+      mapped.chapters = chapters.value
+      novel.value = mapped
     },
     { immediate: true },
   )
@@ -108,6 +110,8 @@ export const useNovelPage = (novelIdRef) => {
   return {
     novel,
     chapters,
+    loading,
+    error,
     activeTab,
     bookmarkOptions,
     selectedBookmarkId,

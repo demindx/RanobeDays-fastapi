@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AppEmptyState from '../components/shared/AppEmptyState.vue'
+import AppLoading from '../components/shared/AppLoading.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import NovelPageLayout from '../components/novel/NovelPageLayout.vue'
 import NovelSidebar from '../components/novel/NovelSidebar.vue'
@@ -14,6 +15,8 @@ const route = useRoute()
 const novelId = computed(() => String(route.params.id || '1'))
 const {
   novel,
+  loading,
+  error,
   activeTab,
   bookmarkOptions,
   selectedBookmarkId,
@@ -32,7 +35,13 @@ const currentTabComponent = computed(() =>
 
 <template>
   <div>
-    <AppEmptyState v-if="!novel"> Новела не найдена. </AppEmptyState>
+    <AppLoading v-if="loading" label="Загрузка новеллы..." />
+
+    <AppEmptyState v-else-if="error">
+      {{ error }}
+    </AppEmptyState>
+
+    <AppEmptyState v-else-if="!novel"> Новела не найдена. </AppEmptyState>
 
     <NovelPageLayout v-else>
       <template #sidebar>

@@ -1,6 +1,7 @@
 import { computed, ref, watch } from 'vue'
 import { fetchTeam, fetchTeamUsers, fetchTeamNovels } from '../api/teams'
 import { mapNovelsList } from '../api/mapper'
+import { useAsyncState } from './useAsyncState'
 
 const TYPE_LABELS = {
   publishers: 'Издательства',
@@ -17,6 +18,7 @@ export const useTeamPage = (teamIdRef) => {
   const team = ref(null)
   const members = ref([])
   const novels = ref([])
+  const { loading, error, run } = useAsyncState()
 
   watch(
     teamIdRef,
@@ -25,36 +27,34 @@ export const useTeamPage = (teamIdRef) => {
       members.value = []
       novels.value = []
       if (!id) return
-      try {
-        const [teamData, membersData, novelsData] = await Promise.all([
-          fetchTeam(id),
-          fetchTeamUsers(id),
-          fetchTeamNovels(id),
-        ])
-        team.value = {
-          id: teamData.id,
-          name: teamData.name,
-          slug: '',
-          avatarColorClass: 'bg-orange-500',
-          type: teamData.type,
-          typeLabel: TYPE_LABELS[teamData.type] || teamData.type,
-          shortDescription: '',
-          description: '',
-          createdAt: '',
-          stats: {
-            membersCount: membersData.length,
-            novelsCount: novelsData.length,
-            chaptersTotal: 0,
-          },
-        }
-        members.value = membersData.map((m) => ({
-          id: m.nickname,
-          nickname: m.nickname,
-          role: m.role,
-          avatarColorClass: 'bg-lime-500',
-        }))
-        novels.value = mapNovelsList(novelsData)
-      } catch {}
+      const result = await run(() =>
+        Promise.all([fetchTeam(id), fetchTeamUsers(id), fetchTeamNovels(id)]),
+      )
+      if (!result) return
+      const [teamData, membersData, novelsData] = result
+      team.value = {
+        id: teamData.id,
+        name: teamData.name,
+        slug: '',
+        avatarColorClass: 'bg-orange-500',
+        type: teamData.type,
+        typeLabel: TYPE_LABELS[teamData.type] || teamData.type,
+        shortDescription: '',
+        description: '',
+        createdAt: '',
+        stats: {
+          membersCount: membersData.length,
+          novelsCount: novelsData.length,
+          chaptersTotal: 0,
+        },
+      }
+      members.value = membersData.map((m) => ({
+        id: m.nickname,
+        nickname: m.nickname,
+        role: m.role,
+        avatarColorClass: 'bg-lime-500',
+      }))
+      novels.value = mapNovelsList(novelsData)
     },
     { immediate: true },
   )
@@ -77,6 +77,8 @@ export const useTeamPage = (teamIdRef) => {
     novels,
     tabs,
     activeTab,
+    loading,
+    error,
     setActiveTab,
     roleLabel,
   }

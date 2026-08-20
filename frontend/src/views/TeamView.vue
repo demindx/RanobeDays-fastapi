@@ -4,13 +4,14 @@ import { useRoute } from 'vue-router'
 import AppTabs from '../components/shared/AppTabs.vue'
 import AppPanel from '../components/shared/AppPanel.vue'
 import AppEmptyState from '../components/shared/AppEmptyState.vue'
+import AppLoading from '../components/shared/AppLoading.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import NovelGridCard from '../components/cards/NovelGridCard.vue'
 import { useTeamPage } from '../composables/useTeamPage'
 
 const route = useRoute()
 const teamId = computed(() => String(route.params.id || 'team-1'))
-const { team, members, novels, tabs, activeTab, setActiveTab, roleLabel } = useTeamPage(teamId)
+const { team, members, novels, tabs, activeTab, loading, error, roleLabel } = useTeamPage(teamId)
 
 const roleBadgeClass = (role) => {
   const map = {
@@ -20,24 +21,17 @@ const roleBadgeClass = (role) => {
   }
   return map[role] || 'border-zinc-600 bg-zinc-800 text-zinc-200'
 }
-
-const currentTabComponent = computed(() => {
-  switch (activeTab.value) {
-    case 'about':
-      return 'about-section'
-    case 'members':
-      return 'members-section'
-    case 'novels':
-      return 'novels-section'
-    default:
-      return 'about-section'
-  }
-})
 </script>
 
 <template>
   <div>
-    <AppEmptyState v-if="!team"> Команда не найдена. </AppEmptyState>
+    <AppLoading v-if="loading" label="Загрузка команды..." />
+
+    <AppEmptyState v-else-if="error">
+      {{ error }}
+    </AppEmptyState>
+
+    <AppEmptyState v-else-if="!team"> Команда не найдена. </AppEmptyState>
 
     <template v-else>
       <AppPanel as="section" class="mb-4 rounded-2xl p-4 sm:p-6">

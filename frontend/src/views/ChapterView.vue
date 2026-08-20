@@ -18,8 +18,10 @@ const {
   hasNext,
   prevChapterId,
   nextChapterId,
+  loading,
+  error,
 } = useChapter()
-const { settings, currentBg, currentFont } = useChapterSettings()
+const { currentBg } = useChapterSettings()
 
 const isSettingsOpen = ref(false)
 const showToolbar = ref(true)
@@ -201,7 +203,7 @@ onBeforeUnmount(() => {
     />
 
     <div class="flex-1 pt-12">
-      <ChapterContent />
+      <ChapterContent :chapter="chapter" :loading="loading" :error="error" />
     </div>
 
     <div class="pb-12 text-center">

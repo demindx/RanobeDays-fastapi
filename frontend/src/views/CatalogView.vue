@@ -1,13 +1,16 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import CatalogLayout from '../components/catalog/CatalogLayout.vue'
 import CatalogToolbar from '../components/catalog/CatalogToolbar.vue'
 import CatalogFiltersPanel from '../components/catalog/CatalogFiltersPanel.vue'
 import CatalogGrid from '../components/catalog/CatalogGrid.vue'
 import CatalogList from '../components/catalog/CatalogList.vue'
 import AppEmptyState from '../components/shared/AppEmptyState.vue'
+import AppLoading from '../components/shared/AppLoading.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import { useCatalogFilters } from '../composables/useCatalogFilters'
+import { useAsyncState } from '../composables/useAsyncState'
 import { fetchNovels } from '../api/novels'
 import { fetchCategories } from '../api/categories'
 import { fetchLanguages } from '../api/languages'
@@ -16,6 +19,13 @@ import { mapNovelsList } from '../api/mapper'
 
 const viewMode = ref('grid')
 const filtersOpen = ref(false)
+const route = useRoute()
+
+const searchQuery = computed(() =>
+  String(route.query.search || '')
+    .trim()
+    .toLowerCase(),
+)
 
 const novels = ref([])
 const filterOptions = ref({
@@ -26,6 +36,7 @@ const filterOptions = ref({
   originalLanguages: [],
   translationLanguages: [],
 })
+const { loading, error, run } = useAsyncState()
 
 const uniq = (values) => Array.from(new Set(values.filter(Boolean)))
 
@@ -39,17 +50,20 @@ const buildFilterOptions = (novels, categories, languages, countries) => ({
 })
 
 onMounted(async () => {
-  const [novelsData, categories, languages, countries] = await Promise.all([
-    fetchNovels(),
-    fetchCategories(),
-    fetchLanguages(),
-    fetchCountries(),
-  ])
+  const result = await run(() =>
+    Promise.all([fetchNovels(), fetchCategories(), fetchLanguages(), fetchCountries()]),
+  )
+  if (!result) return
+  const [novelsData, categories, languages, countries] = result
   novels.value = mapNovelsList(novelsData)
   filterOptions.value = buildFilterOptions(novels.value, categories, languages, countries)
 })
 
-const novelsRef = computed(() => novels.value)
+const novelsRef = computed(() =>
+  searchQuery.value
+    ? novels.value.filter((n) => String(n.title).toLowerCase().includes(searchQuery.value))
+    : novels.value,
+)
 const {
   filters,
   filteredNovels,
@@ -85,7 +99,13 @@ const handleResetFilters = () => {
             @toggle-filters="toggleFilters"
           />
 
-          <AppEmptyState v-if="!filteredNovels.length">
+          <AppLoading v-if="loading" label="Загрузка каталога..." />
+
+          <AppEmptyState v-else-if="error">
+            {{ error }}
+          </AppEmptyState>
+
+          <AppEmptyState v-else-if="!filteredNovels.length">
             Ничего не найдено. Попробуйте ослабить фильтры или сбросить их.
           </AppEmptyState>
           <AppSectionSwitchTransition v-else>
