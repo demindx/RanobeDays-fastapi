@@ -27,9 +27,9 @@ const resolvedItems = computed(() =>
 
     <div v-else class="space-y-2">
       <component
+        :is="item.href.startsWith('/') ? RouterLink : 'a'"
         v-for="(item, index) in resolvedItems"
         :key="item.id"
-        :is="item.href.startsWith('/') ? RouterLink : 'a'"
         :to="item.href.startsWith('/') ? item.href : undefined"
         :href="item.href.startsWith('/') ? undefined : item.href"
         :class="[

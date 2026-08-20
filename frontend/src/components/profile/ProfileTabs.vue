@@ -9,7 +9,7 @@ import NovelListCard from '../cards/NovelListCard.vue'
 import HeartIcon from '../icons/HeartIcon.vue'
 import AppViewModeToggle from '../shared/AppViewModeToggle.vue'
 import AppSectionSwitchTransition from '../shared/AppSectionSwitchTransition.vue'
-import { catalogNovels } from '../../mocks/catalogData'
+import { mapBookmarkItem } from '../../utils/mapBookmarkItem'
 
 const { user, bookmarks, comments } = useProfile()
 const activeTab = ref('teams')
@@ -35,31 +35,7 @@ const activeBookmark = computed(
 
 const viewMode = ref('list')
 
-const toNovelShape = (item) => {
-  const catalogId = item.novelId ?? item.id
-  const novel = catalogNovels.find((n) => n.id === catalogId)
-  const chapterNum = parseInt(String(item.chapterLabel || '').replace(/\D/g, ''), 10) || 0
-  return {
-    id: catalogId,
-    title: item.title,
-    author: item.author,
-    rating: item.rating,
-    coverStyle: item.coverStyle,
-    coverUrl: item.coverUrl,
-    href: item.href || (catalogId ? `/novel/${catalogId}` : '#'),
-    chapters: chapterNum,
-    releaseYear: novel?.releaseYear ?? '',
-    ageRating: novel?.ageRating ?? '',
-    status: novel?.status ?? '',
-    synopsis: novel?.synopsis ?? '',
-    genres: novel?.genres ?? [],
-    tags: novel?.tags ?? [],
-    originalLanguage: novel?.originalLanguage ?? '',
-    translationLanguage: novel?.translationLanguage ?? '',
-  }
-}
-
-const mappedNovels = computed(() => (activeBookmark.value?.novels || []).map(toNovelShape))
+const mappedNovels = computed(() => (activeBookmark.value?.novels || []).map(mapBookmarkItem))
 </script>
 
 <template>
@@ -71,8 +47,8 @@ const mappedNovels = computed(() => (activeBookmark.value?.novels || []).map(toN
         <div v-if="user.teams.length" class="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-8">
           <TeamCard
             v-for="team in user.teams"
-            :key="team.id"
             :id="team.id"
+            :key="team.id"
             :name="team.name"
             :avatar-color-class="team.avatarColorClass"
           />

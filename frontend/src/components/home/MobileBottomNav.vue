@@ -61,9 +61,9 @@ const handleSettings = () => {
       <div class="mx-auto w-full max-w-6xl px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2">
         <div class="grid grid-cols-5 items-end gap-1 text-zinc-300">
           <component
+            :is="link.to ? RouterLink : 'a'"
             v-for="(link, idx) in mainLinks"
             :key="link.label"
-            :is="link.to ? RouterLink : 'a'"
             :to="link.to"
             :href="link.href"
             :class="[

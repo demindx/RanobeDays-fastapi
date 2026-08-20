@@ -16,11 +16,6 @@ const props = defineProps({
     default: () => [],
   },
 })
-
-const toTeamEntry = (t) => {
-  if (t && typeof t === 'object' && t.id) return t
-  return { id: null, name: String(t) }
-}
 </script>
 
 <template>

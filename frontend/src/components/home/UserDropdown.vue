@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import NavHomeIcon from '../icons/NavHomeIcon.vue'
 import NavBookmarkIcon from '../icons/NavBookmarkIcon.vue'
-import NavCollectionIcon from '../icons/NavCollectionIcon.vue'
 import SettingsIcon from '../icons/SettingsIcon.vue'
 import LogoutIcon from '../icons/LogoutIcon.vue'
 import { useTheme } from '../../composables/useTheme'
@@ -17,8 +16,6 @@ const props = defineProps({
     default: null,
   },
 })
-
-const emit = defineEmits(['open-profile', 'open-history', 'open-achievements'])
 
 const router = useRouter()
 const isOpen = ref(false)
@@ -44,11 +41,6 @@ const handleSettings = () => {
   close()
   router.push('/profile')
   openSettings()
-}
-
-const handleAction = (action) => {
-  emit(action)
-  close()
 }
 
 useClickOutside(rootRef, isOpen, close)

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, watch } from 'vue'
 import { useDragScroll } from '../../composables/useDragScroll'
 import SectionTitle from '../ui/SectionTitle.vue'
 import NovelCard from '../cards/NovelCard.vue'

@@ -10,17 +10,10 @@ import AppViewModeToggle from '../components/shared/AppViewModeToggle.vue'
 import NovelGridCard from '../components/cards/NovelGridCard.vue'
 import NovelListCard from '../components/cards/NovelListCard.vue'
 import BookmarksSettingsModal from '../components/bookmarks/BookmarksSettingsModal.vue'
-import { catalogNovels } from '../mocks/catalogData'
+import { mapBookmarkItem } from '../utils/mapBookmarkItem'
 
-const {
-  bookmarks,
-  activeBookmark,
-  activeBookmarkId,
-  isSettingsOpen,
-  setActive,
-  openSettings,
-  closeSettings,
-} = useBookmarks()
+const { bookmarks, activeBookmark, activeBookmarkId, isSettingsOpen, openSettings, closeSettings } =
+  useBookmarks()
 
 const viewMode = ref('grid')
 
@@ -32,30 +25,7 @@ const bookmarkTabs = computed(() =>
   })),
 )
 
-const toNovelShape = (item) => {
-  const novel = catalogNovels.find((n) => n.id === item.novelId)
-  const chapterNum = parseInt(String(item.chapterLabel || '').replace(/\D/g, ''), 10) || 0
-  return {
-    id: item.novelId || item.id,
-    title: item.title,
-    author: item.author,
-    rating: item.rating,
-    coverStyle: item.coverStyle,
-    coverUrl: item.coverUrl,
-    href: item.href || (item.novelId ? `/novel/${item.novelId}` : '#'),
-    chapters: chapterNum,
-    releaseYear: novel?.releaseYear ?? '',
-    ageRating: novel?.ageRating ?? '',
-    status: novel?.status ?? '',
-    synopsis: novel?.synopsis ?? '',
-    genres: novel?.genres ?? [],
-    tags: novel?.tags ?? [],
-    originalLanguage: novel?.originalLanguage ?? '',
-    translationLanguage: novel?.translationLanguage ?? '',
-  }
-}
-
-const mappedItems = computed(() => (activeBookmark.value?.items || []).map(toNovelShape))
+const mappedItems = computed(() => (activeBookmark.value?.items || []).map(mapBookmarkItem))
 </script>
 
 <template>

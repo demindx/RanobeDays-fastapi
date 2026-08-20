@@ -31,18 +31,6 @@ const markAsRead = (event, list, id) => {
   const item = list.value.find((n) => n.id === id)
   if (item) item.isRead = true
 }
-
-const markAllAsRead = () => {
-  const list =
-    activeTab.value === 'free'
-      ? freeChapters
-      : activeTab.value === 'paid'
-        ? paidChapters
-        : systemNotifications
-  list.value.forEach((n) => {
-    n.isRead = true
-  })
-}
 </script>
 
 <template>

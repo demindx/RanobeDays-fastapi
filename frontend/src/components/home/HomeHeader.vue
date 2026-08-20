@@ -45,9 +45,9 @@ const { isAuthModalOpen } = useAuth()
 
       <nav class="flex flex-wrap items-center gap-1.5 text-xs text-zinc-300 sm:gap-2 sm:text-sm">
         <component
+          :is="link.to ? RouterLink : 'a'"
           v-for="link in navLinks"
           :key="link.label"
-          :is="link.to ? RouterLink : 'a'"
           :to="link.to"
           :href="link.href"
           class="cursor-pointer select-none rounded-md px-2 py-1 transition hover:bg-zinc-800 hover:text-white"
