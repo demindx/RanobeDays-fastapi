@@ -26,6 +26,8 @@ services:
       - "8080:8080"
     environment:
       PYTHONPATH: /app
+      WATCHFILES_FORCE_POLLING: "true"
+      WATCHFILES_POLL_DELAY_MS: "300"
     volumes:
       - ./backend/:/app
       - backend_venv:/app/.venv
