@@ -16,7 +16,9 @@ function persistToken(token) {
   try {
     if (token) window.localStorage.setItem(TOKEN_KEY, token)
     else window.localStorage.removeItem(TOKEN_KEY)
-  } catch {}
+  } catch {
+    return
+  }
 }
 
 let authToken = loadToken()
@@ -29,6 +31,10 @@ export function setAuthToken(token) {
 export function clearAuthToken() {
   authToken = null
   persistToken(null)
+}
+
+export function hasAuthToken() {
+  return !!authToken
 }
 
 export class ApiError extends Error {

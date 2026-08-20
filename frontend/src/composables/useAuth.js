@@ -1,5 +1,6 @@
 import { computed, reactive, ref } from 'vue'
 import { loginUser, registerUser, logoutUser, fetchProfile } from '../api/auth'
+import { hasAuthToken } from '../api/client'
 
 const AUTH_KEY = 'ranobe-auth'
 
@@ -29,6 +30,12 @@ const restoreState = () => {
   if (!saved) return
   try {
     const parsed = JSON.parse(saved)
+    if (!hasAuthToken()) {
+      state.isAuthenticated = false
+      state.user = null
+      state.hasUnreadNotifications = false
+      return
+    }
     state.isAuthenticated = !!parsed?.isAuthenticated
     state.hasUnreadNotifications = !!parsed?.hasUnreadNotifications
     if (parsed?.user) {
@@ -79,7 +86,6 @@ const login = async (loginValue, passwordValue) => {
     const profile = await fetchProfile()
     state.user = toUser(profile)
     state.isAuthenticated = true
-    state.hasUnreadNotifications = true
     saveState()
     return { ok: true }
   } catch (err) {
@@ -101,7 +107,6 @@ const register = async (loginValue, emailValue, passwordValue) => {
     const profile = await fetchProfile()
     state.user = toUser(profile)
     state.isAuthenticated = true
-    state.hasUnreadNotifications = true
     saveState()
     return { ok: true }
   } catch (err) {
