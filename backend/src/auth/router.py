@@ -54,7 +54,8 @@ async def logout_handler(
     refresh_token: Annotated[str | None, Cookie()] = None,
 ) -> GenericResponse[None]:
     """Logout users"""
-    await service.logout(uuid.UUID(hex=refresh_token))
+    if refresh_token:
+        await service.logout(refresh_token)
 
     response.delete_cookie("refresh_token")
 

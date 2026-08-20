@@ -93,6 +93,8 @@ class AuthService:
             access_token=access_token, refresh_token=new_session.refresh_token
         )
 
-    async def logout(self, refresh_token: uuid.UUID):
-        session = await self.repository.get_refresh_session(refresh_token)
+    async def logout(self, refresh_token: str):
+        session = await self.repository.get_refresh_session(
+            uuid.UUID(hex=refresh_token)
+        )
         await self.repository.delete(session)
