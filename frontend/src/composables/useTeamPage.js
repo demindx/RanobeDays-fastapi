@@ -1,23 +1,63 @@
-import { computed, ref } from 'vue'
-import { teamPageData, teamMembers, teamNovels } from '../mocks/teamPageData'
+import { computed, ref, watch } from 'vue'
+import { fetchTeam, fetchTeamUsers, fetchTeamNovels } from '../api/teams'
+import { mapNovelsList } from '../api/mapper'
+
+const TYPE_LABELS = {
+  publishers: 'Издательства',
+  authors: 'Авторы',
+  translators: 'Переводчики',
+}
 
 const roleLabel = (role) => {
-  const labels = { creator: 'Создатель', manager: 'Менеджер', translator: 'Переводчик' }
+  const labels = { creator: 'Создатель', manager: 'Менеджер', newbie: 'Новичок' }
   return labels[role] || role
 }
 
 export const useTeamPage = (teamIdRef) => {
-  const team = computed(() => {
-    if (String(teamPageData.id) !== String(teamIdRef.value)) return null
-    return {
-      ...teamPageData,
-      members: teamMembers,
-      novels: teamNovels,
-    }
-  })
+  const team = ref(null)
+  const members = ref([])
+  const novels = ref([])
 
-  const members = computed(() => team.value?.members ?? [])
-  const novels = computed(() => team.value?.novels ?? [])
+  watch(
+    teamIdRef,
+    async (id) => {
+      team.value = null
+      members.value = []
+      novels.value = []
+      if (!id) return
+      try {
+        const [teamData, membersData, novelsData] = await Promise.all([
+          fetchTeam(id),
+          fetchTeamUsers(id),
+          fetchTeamNovels(id),
+        ])
+        team.value = {
+          id: teamData.id,
+          name: teamData.name,
+          slug: '',
+          avatarColorClass: 'bg-orange-500',
+          type: teamData.type,
+          typeLabel: TYPE_LABELS[teamData.type] || teamData.type,
+          shortDescription: '',
+          description: '',
+          createdAt: '',
+          stats: {
+            membersCount: membersData.length,
+            novelsCount: novelsData.length,
+            chaptersTotal: 0,
+          },
+        }
+        members.value = membersData.map((m) => ({
+          id: m.nickname,
+          nickname: m.nickname,
+          role: m.role,
+          avatarColorClass: 'bg-lime-500',
+        }))
+        novels.value = mapNovelsList(novelsData)
+      } catch {}
+    },
+    { immediate: true },
+  )
 
   const activeTab = ref('about')
 

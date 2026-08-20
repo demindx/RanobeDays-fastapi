@@ -1,4 +1,5 @@
 import { computed, reactive, ref } from 'vue'
+import { loginUser, registerUser, logoutUser, fetchProfile } from '../api/auth'
 
 const AUTH_KEY = 'ranobe-auth'
 
@@ -9,11 +10,6 @@ const state = reactive({
 })
 
 const isAuthModalOpen = ref(false)
-
-const mockCredentials = {
-  login: 'demo',
-  password: 'demo123',
-}
 
 const saveState = () => {
   if (typeof window === 'undefined') return
@@ -39,7 +35,7 @@ const restoreState = () => {
       state.user = {
         ...parsed.user,
         avatarUrl: parsed.user.avatarUrl || null,
-        email: parsed.user.email || 'demo@example.com',
+        email: parsed.user.email || '',
         settings: {
           blacklistedGenres: parsed.user.settings?.blacklistedGenres || [],
           blacklistedTags: parsed.user.settings?.blacklistedTags || [],
@@ -58,33 +54,64 @@ const restoreState = () => {
 
 restoreState()
 
-const login = (loginValue, passwordValue) => {
-  const loginNormalized = loginValue.trim()
-  if (loginNormalized !== mockCredentials.login || passwordValue !== mockCredentials.password) {
-    return {
-      ok: false,
-      error: `Неверный логин или пароль. Тестовые данные: ${mockCredentials.login} / ${mockCredentials.password}`,
-    }
-  }
-
-  state.isAuthenticated = true
-  state.user = {
-    login: state.user?.login || 'DemoReader',
-    avatarUrl: state.user?.avatarUrl || null,
-    email: state.user?.email || 'demo@example.com',
-    settings: state.user?.settings || {
-      blacklistedGenres: [],
-      blacklistedTags: [],
-      hideAdultContent: false,
+const toUser = (profile) => {
+  if (!profile) return null
+  return {
+    login: profile.user_profile?.nickname || profile.login || '',
+    avatarUrl: profile.avatar_url || null,
+    email: profile.email || '',
+    settings: {
+      blacklistedGenres: profile.settings?.blacklisted_genres || [],
+      blacklistedTags: profile.settings?.blacklisted_tags || [],
+      hideAdultContent: profile.settings?.hide_adult_content || false,
     },
   }
-  state.hasUnreadNotifications = true
-  saveState()
-
-  return { ok: true }
 }
 
-const logout = () => {
+const login = async (loginValue, passwordValue) => {
+  const loginNormalized = loginValue.trim()
+  if (!loginNormalized || !passwordValue) {
+    return { ok: false, error: 'Введите логин и пароль.' }
+  }
+
+  try {
+    await loginUser(loginNormalized, passwordValue)
+    const profile = await fetchProfile()
+    state.user = toUser(profile)
+    state.isAuthenticated = true
+    state.hasUnreadNotifications = true
+    saveState()
+    return { ok: true }
+  } catch (err) {
+    if (err?.status === 0) return { ok: false, error: 'Не удалось подключиться к серверу.' }
+    if (err?.status === 401 || err?.status === 404)
+      return { ok: false, error: 'Неверный логин или пароль.' }
+    return { ok: false, error: err?.message || 'Ошибка входа.' }
+  }
+}
+
+const register = async (loginValue, emailValue, passwordValue) => {
+  const loginNormalized = loginValue.trim()
+  if (!loginNormalized || !emailValue || !passwordValue) {
+    return { ok: false, error: 'Заполните все поля.' }
+  }
+
+  try {
+    await registerUser(loginNormalized, emailValue, passwordValue)
+    const profile = await fetchProfile()
+    state.user = toUser(profile)
+    state.isAuthenticated = true
+    state.hasUnreadNotifications = true
+    saveState()
+    return { ok: true }
+  } catch (err) {
+    if (err?.status === 0) return { ok: false, error: 'Не удалось подключиться к серверу.' }
+    return { ok: false, error: err?.message || 'Ошибка регистрации.' }
+  }
+}
+
+const logout = async () => {
+  await logoutUser()
   state.isAuthenticated = false
   state.user = null
   state.hasUnreadNotifications = false
@@ -102,8 +129,8 @@ export const useAuth = () => ({
   user: computed(() => state.user),
   hasUnreadNotifications: computed(() => state.hasUnreadNotifications),
   isAuthModalOpen,
-  mockCredentials,
   login,
+  register,
   logout,
   updateUser,
 })

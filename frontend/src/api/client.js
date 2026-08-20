@@ -1,13 +1,34 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-let authToken = null
+const TOKEN_KEY = 'ranobe-api-token'
+
+function loadToken() {
+  if (typeof window === 'undefined') return null
+  try {
+    return window.localStorage.getItem(TOKEN_KEY)
+  } catch {
+    return null
+  }
+}
+
+function persistToken(token) {
+  if (typeof window === 'undefined') return
+  try {
+    if (token) window.localStorage.setItem(TOKEN_KEY, token)
+    else window.localStorage.removeItem(TOKEN_KEY)
+  } catch {}
+}
+
+let authToken = loadToken()
 
 export function setAuthToken(token) {
   authToken = token
+  persistToken(token)
 }
 
 export function clearAuthToken() {
   authToken = null
+  persistToken(null)
 }
 
 export class ApiError extends Error {
@@ -53,18 +74,24 @@ export async function request(endpoint, options = {}) {
     } catch {
       // response body is not JSON
     }
-    throw new ApiError(
-      errorData?.message || `Ошибка ${response.status}`,
-      response.status,
-      errorData,
-    )
+    const message =
+      errorData?.message ||
+      (Array.isArray(errorData?.detail) ? errorData.detail[0]?.msg : null) ||
+      `Ошибка ${response.status}`
+    throw new ApiError(message, response.status, errorData)
   }
 
   if (response.status === 204) {
     return null
   }
 
-  return response.json()
+  const json = await response.json()
+
+  if (json && typeof json === 'object' && 'data' in json) {
+    return json.data
+  }
+
+  return json
 }
 
 export function get(endpoint, options = {}) {

@@ -1,6 +1,7 @@
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getChapterById, getChapters } from '../mocks/chapterData'
+import { fetchChapters, fetchChapterById } from '../api/chapters'
+import { mapChapter, mapChaptersList } from '../api/mapper'
 
 export function useChapter() {
   const route = useRoute()
@@ -9,11 +10,32 @@ export function useChapter() {
 
   const chapterId = computed(() => route.params.chapterId)
 
-  const chapters = computed(() => getChapters(novelId.value))
+  const chapters = ref([])
 
-  const chapter = computed(() => getChapterById(novelId.value, chapterId.value))
+  const chapter = ref(null)
 
-  const currentIndex = computed(() => chapters.value.findIndex((c) => c.id === chapterId.value))
+  watch(
+    () => [novelId.value, chapterId.value],
+    async ([nid, cid]) => {
+      chapter.value = null
+      if (!cid) return
+      try {
+        const [allChapters, chapterData] = await Promise.all([
+          fetchChapters(),
+          fetchChapterById(cid),
+        ])
+        chapters.value = mapChaptersList(allChapters).filter(
+          (c) => String(c.novel_id) === String(nid),
+        )
+        chapter.value = mapChapter(chapterData)
+      } catch {}
+    },
+    { immediate: true },
+  )
+
+  const currentIndex = computed(() =>
+    chapters.value.findIndex((c) => String(c.id) === String(chapterId.value)),
+  )
 
   const hasPrev = computed(() => currentIndex.value > 0)
 

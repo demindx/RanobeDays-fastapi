@@ -1,13 +1,13 @@
 import { get, post } from './client'
 
 export function fetchLanguages() {
-  return get('/lang/')
+  return get('/api/v1/lang/')
 }
 
 export function fetchLanguage(id) {
-  return get(`/lang/${id}`)
+  return get(`/api/v1/lang/${id}`)
 }
 
 export function createLanguage(name) {
-  return post('/lang/', { name })
+  return post('/api/v1/lang/', { name })
 }

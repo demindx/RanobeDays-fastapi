@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import CatalogLayout from '../components/catalog/CatalogLayout.vue'
 import CatalogToolbar from '../components/catalog/CatalogToolbar.vue'
 import CatalogFiltersPanel from '../components/catalog/CatalogFiltersPanel.vue'
@@ -8,12 +8,48 @@ import CatalogList from '../components/catalog/CatalogList.vue'
 import AppEmptyState from '../components/shared/AppEmptyState.vue'
 import AppSectionSwitchTransition from '../components/shared/AppSectionSwitchTransition.vue'
 import { useCatalogFilters } from '../composables/useCatalogFilters'
-import { catalogNovels, catalogFilterOptions } from '../mocks/catalogData'
+import { fetchNovels } from '../api/novels'
+import { fetchCategories } from '../api/categories'
+import { fetchLanguages } from '../api/languages'
+import { fetchCountries } from '../api/countries'
+import { mapNovelsList } from '../api/mapper'
 
 const viewMode = ref('grid')
 const filtersOpen = ref(false)
 
-const novelsRef = computed(() => catalogNovels)
+const novels = ref([])
+const filterOptions = ref({
+  releaseYears: [],
+  ageRatings: [],
+  genres: [],
+  tags: [],
+  originalLanguages: [],
+  translationLanguages: [],
+})
+
+const uniq = (values) => Array.from(new Set(values.filter(Boolean)))
+
+const buildFilterOptions = (novels, categories, languages, countries) => ({
+  releaseYears: uniq(novels.map((item) => item.releaseYear)).sort((a, b) => b - a),
+  ageRatings: uniq(novels.map((item) => item.ageRating)),
+  genres: uniq(categories.filter((c) => c.type === 'genre').map((c) => c.name)).sort(),
+  tags: uniq(categories.filter((c) => c.type === 'tag').map((c) => c.name)).sort(),
+  originalLanguages: uniq(languages.map((l) => l.name)).sort(),
+  translationLanguages: uniq(countries.map((c) => c.name)).sort(),
+})
+
+onMounted(async () => {
+  const [novelsData, categories, languages, countries] = await Promise.all([
+    fetchNovels(),
+    fetchCategories(),
+    fetchLanguages(),
+    fetchCountries(),
+  ])
+  novels.value = mapNovelsList(novelsData)
+  filterOptions.value = buildFilterOptions(novels.value, categories, languages, countries)
+})
+
+const novelsRef = computed(() => novels.value)
 const {
   filters,
   filteredNovels,
@@ -66,7 +102,7 @@ const handleResetFilters = () => {
       <template #filters>
         <CatalogFiltersPanel
           :filters="filters"
-          :options="catalogFilterOptions"
+          :options="filterOptions"
           @toggle="(filterKey, mode, value) => toggleValue(filterKey, mode, value)"
           @set-year-range="(bound, value) => setReleaseYearRange(bound, value)"
           @reset="handleResetFilters"

@@ -1,6 +1,8 @@
 import { computed, ref, watch } from 'vue'
 import { useBookmarks } from './useBookmarks'
-import { getNovelById, novelPageData } from '../mocks/novelPageData'
+import { fetchNovelById } from '../api/novels'
+import { fetchChapters } from '../api/chapters'
+import { mapNovel, mapChaptersList } from '../api/mapper'
 
 const RATING_KEY = 'ranobe-ratings'
 
@@ -26,7 +28,28 @@ export const useNovelPage = (novelIdRef) => {
   const isBookmarkManuallyCleared = ref(false)
   const { bookmarks } = useBookmarks()
 
-  const novel = computed(() => getNovelById(novelIdRef.value) || novelPageData[0] || null)
+  const novel = ref(null)
+  const chapters = ref([])
+
+  watch(
+    novelIdRef,
+    async (id) => {
+      novel.value = null
+      chapters.value = []
+      if (!id) return
+      try {
+        const [novelData, chaptersData] = await Promise.all([fetchNovelById(id), fetchChapters()])
+        const mapped = mapNovel(novelData)
+        if (!mapped) return
+        chapters.value = mapChaptersList(chaptersData).filter(
+          (c) => String(c.novel_id) === String(id),
+        )
+        mapped.chapters = chapters.value
+        novel.value = mapped
+      } catch {}
+    },
+    { immediate: true },
+  )
 
   const bookmarkOptions = computed(() =>
     bookmarks.value.map((bookmark) => ({
@@ -84,6 +107,7 @@ export const useNovelPage = (novelIdRef) => {
 
   return {
     novel,
+    chapters,
     activeTab,
     bookmarkOptions,
     selectedBookmarkId,

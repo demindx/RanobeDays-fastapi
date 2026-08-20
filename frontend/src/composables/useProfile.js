@@ -54,7 +54,6 @@ export function useProfile() {
 
   const updatePassword = (currentPassword, newPassword) => {
     if (!currentPassword) return { ok: false, error: 'Введите текущий пароль.' }
-    if (currentPassword !== 'demo123') return { ok: false, error: 'Неверный текущий пароль.' }
     if (!newPassword || newPassword.length < 6)
       return { ok: false, error: 'Новый пароль должен быть не короче 6 символов.' }
     return { ok: true }

@@ -1,7 +1,22 @@
+const STATUS_LABELS = {
+  frozen: 'Заморожено',
+  continues: 'Онгоинг',
+  completed: 'Завершено',
+  abadoned: 'Заброшено',
+}
+
+function toCoverUrl(item) {
+  const raw = item.cover_path || item.coverUrl || ''
+  if (typeof raw === 'string' && raw.startsWith('http')) return raw
+  return ''
+}
+
 export function mapNovel(item) {
   if (!item) return null
 
-  const id = item.id || (item.slug ? item.slug : Math.random().toString(36).slice(2, 10))
+  const id = item.id ?? (item.slug ? item.slug : Math.random().toString(36).slice(2, 10))
+
+  const coverUrl = toCoverUrl(item)
 
   return {
     id,
@@ -10,7 +25,7 @@ export function mapNovel(item) {
     synopsis: item.description || '',
     description: item.description || '',
     type: item.type || 'original',
-    status: item.status || '',
+    status: STATUS_LABELS[item.status] || item.status || '',
     releaseYear: item.publish_date ? new Date(item.publish_date).getFullYear() : null,
     publish_date: item.publish_date || null,
     ageRating: item.age_limit ? `${item.age_limit}+` : '16+',
@@ -20,8 +35,8 @@ export function mapNovel(item) {
     tags: item.categories?.filter((c) => c.type === 'tag').map((c) => c.name) || item.tags || [],
     originalLanguage: item.language?.name || item.originalLanguage || '',
     translationLanguage: item.country?.name || item.translationLanguage || '',
-    coverStyle: item.cover_path ? '' : 'from-lime-300 to-emerald-500',
-    coverUrl: item.cover_path || item.coverUrl || '',
+    coverStyle: coverUrl ? '' : item.coverStyle || 'from-lime-300 to-emerald-500',
+    coverUrl,
     chapters: item.chapters || [],
     comments: item.comments || [],
     language: item.language || null,
@@ -38,9 +53,16 @@ export function mapNovelsList(items) {
 
 export function mapChapter(item) {
   if (!item) return null
+  const paragraphs = String(item.content || '')
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean)
   return {
     ...item,
-    id: item.id || `ch-${item.number || 0}`,
+    id: item.id ?? `ch-${item.number || 0}`,
+    publishedAt: item.created_at || item.published_at || null,
+    isRead: !!item.is_read,
+    content: paragraphs,
   }
 }
 

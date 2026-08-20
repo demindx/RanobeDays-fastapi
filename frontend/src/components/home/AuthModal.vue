@@ -18,7 +18,9 @@ const emit = defineEmits(['close'])
 
 const mode = ref('login')
 const loginError = ref('')
-const { login, mockCredentials } = useAuth()
+const registerError = ref('')
+const isSubmitting = ref(false)
+const { login, register } = useAuth()
 
 const loginForm = reactive({
   login: '',
@@ -53,14 +55,34 @@ const handleRegisterEmailBlur = () => {
   validateRegisterEmail({ strict: true })
 }
 
-const handleRegisterSubmit = () => {
+const handleRegisterSubmit = async () => {
   isEmailTouched.value = true
-  validateRegisterEmail({ strict: true })
+  registerError.value = ''
+  if (!validateRegisterEmail({ strict: true })) return
+  if (registerForm.password !== registerForm.confirmPassword) {
+    registerError.value = 'Пароли не совпадают.'
+    return
+  }
+
+  isSubmitting.value = true
+  const result = await register(registerForm.login, registerForm.email, registerForm.password)
+  isSubmitting.value = false
+  if (!result.ok) {
+    registerError.value = result.error
+    return
+  }
+  registerForm.login = ''
+  registerForm.email = ''
+  registerForm.password = ''
+  registerForm.confirmPassword = ''
+  emit('close')
 }
 
-const handleLoginSubmit = () => {
+const handleLoginSubmit = async () => {
   loginError.value = ''
-  const result = login(loginForm.login, loginForm.password)
+  isSubmitting.value = true
+  const result = await login(loginForm.login, loginForm.password)
+  isSubmitting.value = false
   if (!result.ok) {
     loginError.value = result.error
     return
@@ -76,6 +98,7 @@ watch(
     if (!next) {
       mode.value = 'login'
       loginError.value = ''
+      registerError.value = ''
       registerErrors.email = ''
       isEmailFocused.value = false
       isEmailTouched.value = false
@@ -102,13 +125,6 @@ watch(
         class="space-y-3"
         @submit.prevent="handleLoginSubmit"
       >
-        <div
-          class="rounded-lg border border-zinc-700 bg-zinc-800/70 px-3 py-2 text-xs text-zinc-400"
-        >
-          Тестовый вход:
-          <span class="font-semibold text-zinc-200">{{ mockCredentials.login }}</span> /
-          <span class="font-semibold text-zinc-200">{{ mockCredentials.password }}</span>
-        </div>
         <AppInput
           v-model="loginForm.login"
           type="text"
@@ -122,7 +138,15 @@ watch(
           @input="loginError = ''"
         />
         <p v-if="loginError" class="text-xs text-red-400">{{ loginError }}</p>
-        <AppButton type="submit" variant="primary" block class="font-semibold"> Войти </AppButton>
+        <AppButton
+          type="submit"
+          variant="primary"
+          block
+          class="font-semibold"
+          :disabled="isSubmitting"
+        >
+          Войти
+        </AppButton>
       </form>
 
       <form
@@ -156,7 +180,14 @@ watch(
           type="password"
           placeholder="Повторите пароль"
         />
-        <AppButton type="submit" variant="primary" block class="font-semibold">
+        <p v-if="registerError" class="text-xs text-red-400">{{ registerError }}</p>
+        <AppButton
+          type="submit"
+          variant="primary"
+          block
+          class="font-semibold"
+          :disabled="isSubmitting"
+        >
           Зарегистрироваться
         </AppButton>
       </form>

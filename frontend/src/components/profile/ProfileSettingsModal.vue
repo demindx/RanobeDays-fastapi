@@ -256,7 +256,7 @@ const handleClose = () => {
     <div v-if="activeTab === 'account'" class="mt-5 space-y-6">
       <div>
         <label class="mb-2 block text-sm text-zinc-400">Email</label>
-        <AppInput v-model="email" type="email" placeholder="demo@example.com" />
+        <AppInput v-model="email" type="email" placeholder="email@example.com" />
         <div class="mt-3 flex justify-end">
           <AppButton variant="primary" @click="handleSaveEmail"> Сменить email </AppButton>
         </div>

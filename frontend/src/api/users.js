@@ -1,21 +1,21 @@
 import { get, patch } from './client'
 
 export function fetchMe() {
-  return get('/users/me')
+  return get('/api/v1/users/me')
 }
 
 export function fetchUsers() {
-  return get('/users/')
+  return get('/api/v1/users/')
 }
 
 export function fetchUserById(id) {
-  return get(`/users/${id}`)
+  return get(`/api/v1/users/${id}`)
 }
 
 export function fetchUserProfile(id) {
-  return get(`/users/${id}/profile`)
+  return get(`/api/v1/users/${id}/profile`)
 }
 
 export function updateUserProfile(id, data) {
-  return patch(`/users/${id}/profile`, data)
+  return patch(`/api/v1/users/${id}/profile`, data)
 }
