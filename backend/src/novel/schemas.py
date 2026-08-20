@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from src.category.schemas import CategoryReponse
 from src.country.schemas import CountryResponse
 from src.language.schemas import LanguageReponse
 from src.novel.models import NovelStatus, NovelType
@@ -30,13 +31,18 @@ class NovelUpdate(BaseModel):
 
 
 class NovelResponse(BaseModel):
+    id: int
     title: str
     slug: str
     description: str
     type: NovelType
+    status: NovelStatus
     publish_date: datetime
+    age_limit: int
+    cover_path: str
     language: LanguageReponse
     country: CountryResponse
+    categories: list[CategoryReponse]
 
     class Config:
         from_attributes = True

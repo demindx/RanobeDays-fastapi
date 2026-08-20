@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -19,11 +21,13 @@ class ChapterUpdate(BaseModel):
 
 
 class ChapterResponse(BaseModel):
+    id: int
+    novel_id: int
     title: str
     number: int
     content: str
-
     is_published: bool
+    created_at: datetime
 
     class Config:
         from_attributes = True
