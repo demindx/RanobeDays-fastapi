@@ -25,7 +25,7 @@ class TeamUserRole(Enum):
 
 
 class Team(Base["TeamCreate"]):
-    __tablename__ = "teams"
+    __tablename__: str = "teams"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
 
@@ -37,23 +37,28 @@ class Team(Base["TeamCreate"]):
 
     is_verified: Mapped[bool] = mapped_column(default=False)
 
-    users: Mapped[list[User]] = relationship(back_populates="teams")
+    memberships: Mapped[list[TeamUsers]] = relationship(back_populates="team")
+
+    users: Mapped[list[User]] = relationship(
+        secondary="team_users", back_populates="teams", viewonly=True
+    )
 
     novels: Mapped[list[Novel]] = relationship()
 
 
 class TeamUsers(Base[None]):
-    __tablename__ = "team_users"
-
-    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
+    __tablename__: str = "team_users"
 
     role: Mapped[TeamUserRole]
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    team_id: Mapped[int] = mapped_column(
+        ForeignKey("teams.id", ondelete="CASCADE"), primary_key=True
+    )
 
-    __table_args__ = (
-        UniqueConstraint(
-            "user_id", "team_id", name="user_id and team_id unique constraint"
-        ),
+    user: Mapped[User] = relationship(
+        User, foreign_keys=[user_id], back_populates="memberships"
+    )
+    team: Mapped[Team] = relationship(
+        Team, foreign_keys=[team_id], back_populates="memberships"
     )
