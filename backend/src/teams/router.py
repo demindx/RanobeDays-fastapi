@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from src.core.schemas import GenericResponse
+from src.config import config
+from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.novel.schemas import NovelResponse
 from src.teams.dependencies import TeamServiceDep
 from src.teams.schemas import TeamAddUser, TeamCreate, TeamResponse, TeamUpdate
@@ -23,12 +24,16 @@ async def create_team_handler(
 @router.get("/")
 async def get_teams_handler(
     service: TeamServiceDep,
-) -> GenericResponse[list[TeamResponse]]:
-    teams = await service.get_all()
+    offset: int = 0,
+    limit: int = config.DEFAULT_PAGINATION_LIMIT,
+) -> GenericPaginationResponse[TeamResponse]:
+    teams = await service.get_all(offset=offset, limit=limit)
 
     teams = [TeamResponse.model_validate(team) for team in teams]
 
-    return GenericResponse[list[TeamResponse]](data=teams)
+    return GenericPaginationResponse[TeamResponse](
+        offset=offset, limit=limit, data=teams
+    )
 
 
 @router.get("/{id}")
@@ -85,10 +90,15 @@ async def remove_user_from_team(service: TeamServiceDep, id: int, user_id: int):
 
 @router.get("/{id}/novels")
 async def get_novels(
-    service: TeamServiceDep, id: int
-) -> GenericResponse[list[NovelResponse]]:
-    novels = await service.get_novels(id)
+    service: TeamServiceDep,
+    id: int,
+    offset: int = 0,
+    limit: int = config.DEFAULT_PAGINATION_LIMIT,
+) -> GenericPaginationResponse[NovelResponse]:
+    novels = await service.get_novels(id, limit=limit, offset=offset)
 
     novels = [NovelResponse.model_validate(novel) for novel in novels]
 
-    return GenericResponse[list[NovelResponse]](data=novels)
+    return GenericPaginationResponse[NovelResponse](
+        data=novels, limit=limit, offset=offset
+    )

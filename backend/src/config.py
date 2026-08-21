@@ -10,7 +10,11 @@ class Config(BaseSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_URL: str = ""
     SECRET_KEY: str = "qewdfqwefqwef"
+
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+    DEFAULT_PAGINATION_LIMIT: int = 50
+
 
     model_config = SettingsConfigDict(env_file=".env")
 

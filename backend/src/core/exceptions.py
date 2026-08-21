@@ -15,14 +15,14 @@ class AppException(Exception):
 
 
 class AlreadyExists(AppException):
-    def __init__(self, model: type[Base[Any, Any]]):
+    def __init__(self, model: type[Base[Any]]):
         super().__init__(
             f"{model.__name__} already exists", status.HTTP_400_BAD_REQUEST
         )
 
 
 class NotFound(AppException):
-    def __init__(self, model: type[Base[Any, Any]], cred_type: str, cred: Any):
+    def __init__(self, model: type[Base[Any]], cred_type: str, cred: Any):
         super().__init__(
             f"{model.__name__} was not found by {cred_type}: {cred}",
             status.HTTP_404_NOT_FOUND,
