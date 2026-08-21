@@ -28,7 +28,7 @@ class AuthService:
 
         profile_data = UserProfileCreate(nickname=data.nickname, user_id=user.id)
 
-        await self.user_profile_service.create(profile_data)
+        _ = await self.user_profile_service.create(profile_data)
 
     async def _user_auth(self, data: UserLogin) -> User:
         user: User | None = None
