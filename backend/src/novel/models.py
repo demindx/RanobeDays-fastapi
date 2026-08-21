@@ -29,7 +29,7 @@ class NovelStatus(Enum):
 
 
 class Novel(Base["NovelCreate"], BaseTimestamps):
-    __tablename__ = "novels"
+    __tablename__: str = "novels"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(255))
@@ -70,7 +70,7 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
 
 class NovelCategories(Base[None]):
-    __tablename__ = "novel_categories"
+    __tablename__: str = "novel_categories"
 
     novel_id: Mapped[int] = mapped_column(ForeignKey("novels.id"), primary_key=True)
     category_id: Mapped[int] = mapped_column(

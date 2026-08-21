@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 
 class Chapter(Base["ChapterCreate"], BaseTimestamps):
-    __tablename__ = "chapters"
+    __tablename__: str = "chapters"
 
-    id: Mapped[int] = mapped_column(autoincrement=True)
+    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
 
     title: Mapped[str] = mapped_column(String(100))
     number: Mapped[int] = mapped_column(nullable=False)
@@ -20,5 +20,5 @@ class Chapter(Base["ChapterCreate"], BaseTimestamps):
 
     is_published: Mapped[bool] = mapped_column(default=False)
 
-    novel_id: Mapped[int] = mapped_column(ForeignKey("novels.id"), primary_key=True)
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), primary_key=True)
+    novel_id: Mapped[int] = mapped_column(ForeignKey("novels.id"))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))

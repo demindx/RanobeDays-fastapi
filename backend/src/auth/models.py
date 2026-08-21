@@ -9,7 +9,7 @@ from src.core.models import Base, BaseTimestamps
 
 
 class RefreshSession(Base[RefreshSessionCreate], BaseTimestamps):
-    __tablename__ = "refresh_sessions"
+    __tablename__: str = "refresh_sessions"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID, primary_key=True, index=True, default=uuid.uuid4
