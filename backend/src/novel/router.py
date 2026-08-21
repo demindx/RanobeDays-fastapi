@@ -27,7 +27,7 @@ async def get_novels(
 async def get_novel(
     id: int, service: NovelServiceDep
 ) -> GenericResponse[NovelResponse]:
-    novel = service.get_by_id(id)
+    novel = await service.get_by_id(id)
 
     return GenericResponse[NovelResponse](data=NovelResponse.model_validate(novel))
 

@@ -32,7 +32,7 @@ class User(Base["UserRegister"], BaseTimestamps):
     password_hash: Mapped[str] = mapped_column(String(256))
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)
 
-    user_profile: Mapped[UserProfile] = relationship(back_populates="user")
+    user_profile: Mapped[UserProfile] = relationship(back_populates="user", lazy="joined")
     teams: Mapped[Team] = relationship(back_populates="users")
 
     @override

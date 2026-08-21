@@ -51,7 +51,9 @@ class Novel(Base["NovelCreate"], BaseTimestamps):
 
     is_approved: Mapped[bool] = mapped_column(default=False)
 
-    categories: Mapped[list[Category]] = relationship(secondary="novel_categories")
+    categories: Mapped[list[Category]] = relationship(
+        secondary="novel_categories", lazy="selectin"
+    )
 
     language: Mapped[Language] = relationship(lazy="joined")
     country: Mapped[Country] = relationship(lazy="joined")

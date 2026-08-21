@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class Chapter(Base["ChapterCreate"], BaseTimestamps):
     __tablename__ = "chapters"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(autoincrement=True)
 
     title: Mapped[str] = mapped_column(String(100))
     number: Mapped[int] = mapped_column(nullable=False)

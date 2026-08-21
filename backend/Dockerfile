@@ -4,13 +4,11 @@ WORKDIR /app
 
 RUN useradd --create-home --shell /bin/bash app
 
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock ./
 
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
-
+ENV UV_INSTALL_DIR=/usr/local/bin
 RUN sh /uv-installer.sh && rm /uv-installer.sh
-
-ENV PATH="/root/.local/bin/:$PATH"
 
 RUN uv sync
 

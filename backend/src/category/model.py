@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.core.models import Base
 
 if TYPE_CHECKING:
-    from src.chapters.schemas import ChapterCreate  # noqa: F401
+    from src.category.schemas import CategoryCreate  # noqa
 
 
 class CategoryTypeEnum(Enum):
@@ -14,7 +14,7 @@ class CategoryTypeEnum(Enum):
     GENRE = "genre"
 
 
-class Category(Base["ChapterCreate"]):
+class Category(Base["CategoryCreate"]):
     __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

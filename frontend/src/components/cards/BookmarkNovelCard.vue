@@ -1,0 +1,52 @@
+<script setup>
+import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
+
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true,
+  },
+})
+
+const novelHref = computed(() =>
+  props.item.href && props.item.href !== '#'
+    ? props.item.href
+    : `/novel/${props.item.novelId || 1}`,
+)
+
+const isInternalLink = computed(() => novelHref.value.startsWith('/'))
+</script>
+
+<template>
+  <component
+    :is="isInternalLink ? RouterLink : 'a'"
+    :to="isInternalLink ? novelHref : undefined"
+    :href="isInternalLink ? undefined : novelHref"
+    class="flex h-full flex-col rounded-xl border border-zinc-700/70 bg-zinc-900/70 p-2.5 transition hover:border-lime-300/60 card-interactive sm:rounded-2xl sm:p-3"
+  >
+    <div
+      :class="[
+        'relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gradient-to-br sm:rounded-xl',
+        props.item.coverStyle,
+      ]"
+    >
+      <img
+        v-if="props.item.coverUrl"
+        :src="props.item.coverUrl"
+        :alt="props.item.title"
+        class="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="mt-2 min-h-[2.6rem]">
+      <h3 class="line-clamp-2 text-sm font-semibold text-white">{{ props.item.title }}</h3>
+    </div>
+    <p class="mt-1 truncate text-xs text-zinc-400">{{ props.item.author }}</p>
+    <div class="mt-2 flex items-center justify-between text-xs text-zinc-300">
+      <span>{{ props.item.chapterLabel }}</span>
+      <span>★ {{ props.item.rating }}</span>
+    </div>
+  </component>
+</template>
