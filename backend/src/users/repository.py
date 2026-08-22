@@ -38,7 +38,7 @@ class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
         try:
             result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_login.__name__, id)
+            raise NotFound(self.model, self.get_by_login.__name__, login)
 
         return result
 
@@ -48,7 +48,7 @@ class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
         try:
             result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_email.__name__, id)
+            raise NotFound(self.model, self.get_by_email.__name__, email)
 
         return result
 
