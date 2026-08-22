@@ -1,11 +1,10 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Self, override
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
-from src.users.utils import get_password_hash
 
 if TYPE_CHECKING:
     from src.teams.models import Team, TeamUsers
@@ -42,15 +41,6 @@ class User(Base["UserRegister"], BaseTimestamps):
     teams: Mapped[list[Team]] = relationship(
         back_populates="users", secondary="team_users", viewonly=True, lazy="selectin"
     )
-
-    @override
-    @classmethod
-    def from_data(cls, data: UserRegister) -> Self:
-        instance = cls(**data.model_dump(exclude={"password1", "password2"}))
-
-        instance.password_hash = get_password_hash(data.password1)
-
-        return instance
 
 
 class UserProfile(Base["UserProfileCreate"], BaseTimestamps):

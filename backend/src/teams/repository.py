@@ -8,7 +8,6 @@ from src.core.repository import PostgresRepository
 from src.novel.models import Novel
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamAddUser, TeamUpdate
-from src.users.models import User, UserProfile
 
 
 class TeamRepository(PostgresRepository[Team, TeamUpdate]):
@@ -33,18 +32,10 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
 
         return list(result.all())
 
-    async def get_team_users(self, id: int) -> list[tuple]:
-        stmt = (
-            select(UserProfile.nickname, TeamUsers.role)
-            .select_from(TeamUsers)
-            .join(User, User.id == TeamUsers.user_id)
-            .join(UserProfile, User.id == UserProfile.user_id)
-            .where(TeamUsers.team_id == id)
-        )
+    async def get_team_users(self, id: int) -> list[TeamUsers]:
+        stmt = select(TeamUsers).where(TeamUsers.team_id == id)
 
-        result = await self.session.execute(stmt)
-
-        return [(row.nickname, row.role) for row in result]
+        return list((await self.session.scalars(stmt)).all())
 
     async def add_user(self, id: int, data: TeamAddUser) -> None:
         connection = TeamUsers(team_id=id, user_id=data.user_id, role=data.role)
@@ -66,13 +57,14 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
             .where(TeamUsers.user_id == user_id)
         )
 
-        await self.session.execute(stmt)
+        _ = await self.session.execute(stmt)
         await self.session.flush()
 
     async def get_novels(
         self, id: int, limit: int = config.DEFAULT_PAGINATION_LIMIT, offset: int = 0
     ) -> list[Novel]:
         team = await self.get_by_id(id)
-        await self.session.run_sync(lambda sess: team.novels)
+
+        _ = await self.session.run_sync(lambda sess: team.novels)
 
         return team.novels[offset:limit:]

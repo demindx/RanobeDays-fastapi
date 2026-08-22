@@ -61,6 +61,7 @@ class TeamUsers(Base[None]):
     user: Mapped[User] = relationship(
         User, foreign_keys=[user_id], back_populates="memberships", lazy="joined"
     )
+
     team: Mapped[Team] = relationship(
         Team, foreign_keys=[team_id], back_populates="memberships"
     )

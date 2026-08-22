@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 from src.teams.models import TeamType, TeamUserRole
+from src.users.schemas import UserResponse
 
 
 class TeamCreate(BaseModel):
@@ -20,7 +21,12 @@ class TeamResponse(BaseModel):
     type: TeamType
 
     class Config:
-        from_attributes = True
+        from_attributes: bool = True
+
+
+class TeamUsersResponse(BaseModel):
+    user: UserResponse
+    role: TeamUserRole
 
 
 class TeamAddUser(BaseModel):

@@ -13,15 +13,6 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-class UserTeamResponse(BaseModel):
-    role: TeamUserRole
-    nickname: str
-
-    @staticmethod
-    def from_tuple(data: tuple) -> UserTeamResponse:
-        return UserTeamResponse(nickname=data[0], role=data[1])
-
-
 class UserLogin(BaseModel):
     login: str | None = None
     email: EmailStr | None = None
