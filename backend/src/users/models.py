@@ -35,10 +35,12 @@ class User(Base["UserRegister"], BaseTimestamps):
     user_profile: Mapped[UserProfile] = relationship(
         back_populates="user", lazy="joined"
     )
-    memberships: Mapped[list[TeamUsers]] = relationship(back_populates="user")
+    memberships: Mapped[list[TeamUsers]] = relationship(
+        back_populates="user", lazy="selectin"
+    )
 
     teams: Mapped[list[Team]] = relationship(
-        back_populates="users", secondary="team_users", viewonly=True
+        back_populates="users", secondary="team_users", viewonly=True, lazy="selectin"
     )
 
     @override

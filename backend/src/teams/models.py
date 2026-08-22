@@ -37,10 +37,12 @@ class Team(Base["TeamCreate"]):
 
     is_verified: Mapped[bool] = mapped_column(default=False)
 
-    memberships: Mapped[list[TeamUsers]] = relationship(back_populates="team")
+    memberships: Mapped[list[TeamUsers]] = relationship(
+        back_populates="team", lazy="selectin"
+    )
 
     users: Mapped[list[User]] = relationship(
-        secondary="team_users", back_populates="teams", viewonly=True
+        secondary="team_users", back_populates="teams", viewonly=True, lazy="selectin"
     )
 
     novels: Mapped[list[Novel]] = relationship()
@@ -57,7 +59,7 @@ class TeamUsers(Base[None]):
     )
 
     user: Mapped[User] = relationship(
-        User, foreign_keys=[user_id], back_populates="memberships"
+        User, foreign_keys=[user_id], back_populates="memberships", lazy="joined"
     )
     team: Mapped[Team] = relationship(
         Team, foreign_keys=[team_id], back_populates="memberships"
