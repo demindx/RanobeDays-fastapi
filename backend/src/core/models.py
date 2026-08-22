@@ -9,12 +9,20 @@ from src.core.exceptions import NoneObjectEncoutered
 
 
 class Base[CreateScheme: BaseModel | None](DeclarativeBase):
-    __abstract__ = True
+    __abstract__: bool = True
 
     @classmethod
     def from_data(cls, data: CreateScheme) -> Self:
+
         if data is not None:
-            return cls(**data.model_dump())
+            dump = data.model_dump()
+            instance = cls()
+
+            for key, value in dump.items():
+                if hasattr(instance, key):
+                    setattr(instance, key, value)
+
+            return instance
 
         raise NoneObjectEncoutered
 
