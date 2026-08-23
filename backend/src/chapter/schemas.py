@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ChapterCreate(BaseModel):
@@ -29,5 +29,4 @@ class ChapterResponse(BaseModel):
     is_published: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

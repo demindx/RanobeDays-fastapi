@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CountryCreate(BaseModel):
@@ -6,8 +6,9 @@ class CountryCreate(BaseModel):
 
 
 class CountryResponse(CountryCreate):
-    class Config:
-        from_attributes = True
+    id: int
+
+    model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
 class CountryUpdate(BaseModel):

@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from src.category.schemas import CategoryReponse
+from src.category.schemas import CategoryResponse
 from src.country.schemas import CountryResponse
-from src.language.schemas import LanguageReponse
+from src.language.schemas import LanguageResponse
 from src.novel.models import NovelStatus, NovelType
 
 
@@ -40,9 +40,8 @@ class NovelResponse(BaseModel):
     publish_date: datetime
     age_limit: int
     cover_path: str
-    language: LanguageReponse
+    language: LanguageResponse
     country: CountryResponse
-    categories: list[CategoryReponse]
+    categories: list[CategoryResponse]
 
-    class Config:
-        from_attributes = True
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

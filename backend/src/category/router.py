@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from src.category.dependencies import CategoryServiceDep
-from src.category.schemas import CategoryCreate, CategoryReponse, CategoryUpdate
+from src.category.schemas import CategoryCreate, CategoryResponse, CategoryUpdate
 from src.config import config
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 
@@ -13,12 +13,12 @@ async def get_categories(
     service: CategoryServiceDep,
     limit: int = config.DEFAULT_PAGINATION_LIMIT,
     offset: int = 0,
-) -> GenericPaginationResponse[CategoryReponse]:
+) -> GenericPaginationResponse[CategoryResponse]:
     categories = await service.get_all(limit=limit, offset=offset)
 
-    categories = [CategoryReponse.model_validate(category) for category in categories]
+    categories = [CategoryResponse.model_validate(category) for category in categories]
 
-    return GenericPaginationResponse[CategoryReponse](
+    return GenericPaginationResponse[CategoryResponse](
         data=categories, limit=limit, offset=offset
     )
 
@@ -26,34 +26,34 @@ async def get_categories(
 @router.post("/")
 async def create_category(
     data: CategoryCreate, service: CategoryServiceDep
-) -> GenericResponse[CategoryReponse]:
+) -> GenericResponse[CategoryResponse]:
     category = await service.create(data)
 
-    category = CategoryReponse.model_validate(category)
+    category = CategoryResponse.model_validate(category)
 
-    return GenericResponse[CategoryReponse](data=category)
+    return GenericResponse[CategoryResponse](data=category)
 
 
 @router.get("/{id}")
 async def get_category(
     id: int, service: CategoryServiceDep
-) -> GenericResponse[CategoryReponse]:
+) -> GenericResponse[CategoryResponse]:
     category = await service.get_by_id(id)
 
-    category = CategoryReponse.model_validate(category)
+    category = CategoryResponse.model_validate(category)
 
-    return GenericResponse[CategoryReponse](data=category)
+    return GenericResponse[CategoryResponse](data=category)
 
 
 @router.patch("/{id}")
 async def update_category(
     id: int, data: CategoryUpdate, service: CategoryServiceDep
-) -> GenericResponse[CategoryReponse]:
+) -> GenericResponse[CategoryResponse]:
     category = await service.update(id, data)
 
-    category = CategoryReponse.model_validate(category)
+    category = CategoryResponse.model_validate(category)
 
-    return GenericResponse[CategoryReponse](data=category)
+    return GenericResponse[CategoryResponse](data=category)
 
 
 @router.delete("/{id}")

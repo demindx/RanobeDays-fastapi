@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from src.config import config
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.language.dependencies import LanguageServiceDep
-from src.language.schemas import LanguageCreate, LanguageReponse, LanguageUpdate
+from src.language.schemas import LanguageCreate, LanguageResponse, LanguageUpdate
 
 router = APIRouter(prefix="/lang", tags=["language"])
 
@@ -13,12 +13,12 @@ async def get_languages(
     service: LanguageServiceDep,
     limit: int = config.DEFAULT_PAGINATION_LIMIT,
     offset: int = 0,
-) -> GenericPaginationResponse[LanguageReponse]:
+) -> GenericPaginationResponse[LanguageResponse]:
     languages = await service.get_all(limit=limit, offset=offset)
 
-    languages = [LanguageReponse.model_validate(language) for language in languages]
+    languages = [LanguageResponse.model_validate(language) for language in languages]
 
-    return GenericPaginationResponse[LanguageReponse](
+    return GenericPaginationResponse[LanguageResponse](
         data=languages, limit=limit, offset=offset
     )
 
@@ -26,34 +26,34 @@ async def get_languages(
 @router.post("/")
 async def create_language(
     data: LanguageCreate, service: LanguageServiceDep
-) -> GenericResponse[LanguageReponse]:
+) -> GenericResponse[LanguageResponse]:
     language = await service.create(data)
 
-    language = LanguageReponse.model_validate(language)
+    language = LanguageResponse.model_validate(language)
 
-    return GenericResponse[LanguageReponse](data=language)
+    return GenericResponse[LanguageResponse](data=language)
 
 
 @router.get("/{id}")
 async def get_language(
     id: int, service: LanguageServiceDep
-) -> GenericResponse[LanguageReponse]:
+) -> GenericResponse[LanguageResponse]:
     language = await service.get_by_id(id)
 
-    language = LanguageReponse.model_validate(language)
+    language = LanguageResponse.model_validate(language)
 
-    return GenericResponse[LanguageReponse](data=language)
+    return GenericResponse[LanguageResponse](data=language)
 
 
 @router.patch("/{id}")
 async def update_language(
     id: int, data: LanguageUpdate, service: LanguageServiceDep
-) -> GenericResponse[LanguageReponse]:
+) -> GenericResponse[LanguageResponse]:
     language = await service.update(id, data)
 
-    language = LanguageReponse.model_validate(language)
+    language = LanguageResponse.model_validate(language)
 
-    return GenericResponse[LanguageReponse](data=language)
+    return GenericResponse[LanguageResponse](data=language)
 
 
 @router.delete("/{id}")
