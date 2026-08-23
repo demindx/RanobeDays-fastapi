@@ -3,6 +3,7 @@ from collections.abc import AsyncGenerator, AsyncIterator
 from datetime import UTC, datetime
 
 import httpx
+import pytest
 import pytest_asyncio
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -31,6 +32,33 @@ MAINTENANCE_DATABASE_URL = os.environ.get(
 
 def _db_name(url: str) -> str:
     return url.rsplit("/", 1)[-1]
+
+
+_recorded_responses: list[httpx.Response] = []
+
+
+async def _record_response(response: httpx.Response):
+    _recorded_responses.append(response)
+
+
+@pytest.fixture(autouse=True)
+def _reset_recorder():
+    _recorded_responses.clear()
+    yield
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call" and report.failed and _recorded_responses:
+        resp = _recorded_responses[-1]
+        print("\n" + "=" * 60)
+        print(f"LAST RESPONSE: {resp.request.method} {resp.request.url}")
+        print(f"STATUS: {resp.status_code}")
+        print("-" * 60)
+        print(resp.text)
+        print("=" * 60)
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -81,7 +109,11 @@ async def client(session_factory) -> AsyncIterator[httpx.AsyncClient]:
     app.dependency_overrides[get_db_session] = override_get_db_session
 
     transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+    async with httpx.AsyncClient(
+        transport=transport,
+        base_url="http://test",
+        event_hooks={"response": [_record_response]},
+    ) as c:
         yield c
 
     app.dependency_overrides.pop(get_db_session, None)

@@ -72,3 +72,24 @@ async def test_patch_profile(client, seed):
     )
     assert resp.status_code == 200
     assert resp.json()["data"]["nickname"] == "Renamed"
+
+
+async def test_get_profile_not_found(client):
+    resp = await client.get("/api/v1/users/999999/profile")
+    assert resp.status_code == 404
+
+
+async def test_get_me_invalid_token(client):
+    resp = await client.get(
+        "/api/v1/users/me", headers={"Authorization": "Bearer garbage"}
+    )
+    assert resp.status_code == 401
+
+
+async def test_user_response_shape(client, seed):
+    user, _ = await seed.user()
+    resp = await client.get(f"/api/v1/users/{user.id}")
+    data = resp.json()["data"]
+    assert data["email"] == "user1@example.com"
+    assert data["user_profile"]["nickname"] == "User One"
+    assert data["user_profile"]["readed_chapters"] == 0

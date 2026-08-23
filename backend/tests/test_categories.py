@@ -41,3 +41,10 @@ async def test_delete_category(client, seed):
 
     get_resp = await client.get(f"/api/v1/category/{category.id}")
     assert get_resp.status_code == 404
+
+
+async def test_create_category_invalid_type(client):
+    resp = await client.post(
+        "/api/v1/category/", json={"name": "X", "type": "unknown"}
+    )
+    assert resp.status_code == 422

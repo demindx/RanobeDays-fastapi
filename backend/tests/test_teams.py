@@ -7,7 +7,8 @@ async def test_list_teams_empty(client):
 async def test_create_team(client, seed):
     user, _ = await seed.user()
     resp = await client.post(
-        "/api/v1/teams/", json={"creator_id": user.id, "name": "Team", "type": "translators"}
+        "/api/v1/teams/",
+        json={"creator_id": user.id, "name": "Team", "type": "translators"},
     )
     assert resp.status_code == 200
     data = resp.json()["data"]
@@ -99,3 +100,49 @@ async def test_get_team_novels(client, seed):
     data = resp.json()["data"]
     assert len(data) == 1
     assert data[0]["title"] == "Novel A"
+
+
+async def test_create_team_invalid_type(client, seed):
+    user, _ = await seed.user()
+    resp = await client.post(
+        "/api/v1/teams/", json={"creator_id": user.id, "name": "Team", "type": "unknown"}
+    )
+    assert resp.status_code == 422
+
+
+async def test_create_team_unknown_creator(client):
+    resp = await client.post(
+        "/api/v1/teams/", json={"creator_id": 999999, "name": "Team", "type": "translators"}
+    )
+    assert resp.status_code == 400
+
+
+async def test_get_team_users_empty(client, seed):
+    user, _ = await seed.user()
+    team = await seed.team(user.id)
+
+    resp = await client.get(f"/api/v1/teams/{team.id}/users")
+    assert resp.status_code == 200
+    assert resp.json()["data"] == []
+
+
+async def test_get_team_novels_empty(client, seed):
+    user, _ = await seed.user()
+    team = await seed.team(user.id)
+
+    resp = await client.get(f"/api/v1/teams/{team.id}/novels")
+    assert resp.status_code == 200
+    assert resp.json()["data"] == []
+
+
+async def test_team_users_response_shape(client, seed):
+    user, _ = await seed.user()
+    team = await seed.team(user.id)
+    await seed.membership(team.id, user.id)
+
+    resp = await client.get(f"/api/v1/teams/{team.id}/users")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data) == 1
+    assert data[0]["role"] == "manager"
+    assert data[0]["user"]["email"] == "user1@example.com"
