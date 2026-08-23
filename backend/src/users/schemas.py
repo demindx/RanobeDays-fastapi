@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, ValidationError, model_validator
 
-from src.teams.models import TeamUserRole
 from src.users.models import UserRoleEnum
 
 
@@ -10,7 +9,7 @@ class UserResponse(BaseModel):
     user_profile: UserProfileResponse
 
     class Config:
-        from_attributes = True
+        from_attributes: bool = True
 
 
 class UserLogin(BaseModel):
@@ -30,7 +29,7 @@ class UserRegister(BaseModel):
     @model_validator(mode="after")
     def validate_user(self) -> UserRegister:
         if self.password1 != self.password2:
-            raise ValidationError("Passwords mismatch")
+            raise ValueError("Passwords mismatch")
 
         return self
 
@@ -66,4 +65,4 @@ class UserProfileResponse(BaseModel):
     readed_chapters: int
 
     class Config:
-        from_attributes = True
+        from_attributes: bool = True

@@ -17,7 +17,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 async def get_me(
     user: CurrentUser, session: DbSession
 ) -> GenericResponse[UserResponse]:
-    await session.run_sync(lambda _: user.user_profile)
+    _ = await session.run_sync(lambda _: user.user_profile)
 
     response = UserResponse.model_validate(user)
 
