@@ -7,14 +7,20 @@ const STATUS_LABELS = {
 
 function toCoverUrl(item) {
   const raw = item.cover_path || item.coverUrl || ''
-  if (typeof raw === 'string' && raw.startsWith('http')) return raw
+  if (typeof raw === 'string' && /^https?:\/\//i.test(raw)) return raw
   return ''
+}
+
+function toReleaseYear(value) {
+  if (!value) return null
+  const year = new Date(value).getFullYear()
+  return Number.isFinite(year) ? year : null
 }
 
 export function mapNovel(item) {
   if (!item) return null
 
-  const id = item.id ?? (item.slug ? item.slug : Math.random().toString(36).slice(2, 10))
+  const id = item.id ?? item.slug ?? item.title ?? ''
 
   const coverUrl = toCoverUrl(item)
 
@@ -26,10 +32,10 @@ export function mapNovel(item) {
     description: item.description || '',
     type: item.type || 'original',
     status: STATUS_LABELS[item.status] || item.status || '',
-    releaseYear: item.publish_date ? new Date(item.publish_date).getFullYear() : null,
+    releaseYear: toReleaseYear(item.publish_date),
     publish_date: item.publish_date || null,
-    ageRating: item.age_limit ? `${item.age_limit}+` : '16+',
-    rating: item.rating || null,
+    ageRating: item.age_limit != null ? `${item.age_limit}+` : '16+',
+    rating: item.rating ?? null,
     genres:
       item.categories?.filter((c) => c.type === 'genre').map((c) => c.name) || item.genres || [],
     tags: item.categories?.filter((c) => c.type === 'tag').map((c) => c.name) || item.tags || [],
@@ -53,10 +59,10 @@ export function mapNovelsList(items) {
 
 export function mapChapter(item) {
   if (!item) return null
-  const paragraphs = String(item.content || '')
-    .split(/\n\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean)
+  const rawParagraphs = Array.isArray(item.content)
+    ? item.content
+    : String(item.content || '').split(/\n\n+/)
+  const paragraphs = rawParagraphs.map((p) => p.trim()).filter(Boolean)
   return {
     ...item,
     id: item.id ?? `ch-${item.number || 0}`,
@@ -69,4 +75,19 @@ export function mapChapter(item) {
 export function mapChaptersList(items) {
   if (!Array.isArray(items)) return []
   return items.map(mapChapter)
+}
+
+export function mapTeamMember(item) {
+  if (!item) return null
+  const user = item.user || {}
+  const nickname = user.user_profile?.nickname || item.nickname || user.login || ''
+  const email = user.email || item.email || ''
+
+  return {
+    id: user.id ?? item.user_id ?? (email || nickname),
+    nickname,
+    email,
+    role: item.role || '',
+    avatarColorClass: 'bg-lime-500',
+  }
 }

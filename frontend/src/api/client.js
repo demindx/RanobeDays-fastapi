@@ -49,7 +49,6 @@ export class ApiError extends Error {
 export async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`
   const headers = {
-    'Content-Type': 'application/json',
     ...options.headers,
   }
 
@@ -58,11 +57,18 @@ export async function request(endpoint, options = {}) {
   }
 
   const config = {
+    credentials: 'include',
     ...options,
     headers,
   }
 
-  if (config.body && typeof config.body === 'object') {
+  const isJsonBody =
+    config.body &&
+    typeof config.body === 'object' &&
+    (Array.isArray(config.body) || Object.getPrototypeOf(config.body) === Object.prototype)
+
+  if (isJsonBody) {
+    config.headers['Content-Type'] = 'application/json'
     config.body = JSON.stringify(config.body)
   }
 
@@ -91,7 +97,10 @@ export async function request(endpoint, options = {}) {
     return null
   }
 
-  const json = await response.json()
+  const responseText = await response.text()
+  if (!responseText) return null
+
+  const json = JSON.parse(responseText)
 
   if (json && typeof json === 'object' && 'data' in json) {
     return json.data
