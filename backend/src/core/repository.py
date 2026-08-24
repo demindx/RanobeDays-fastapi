@@ -15,11 +15,11 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
     model: type[ModelType]
 
     def __init__(self, session: AsyncSession) -> None:
-        self.__session: AsyncSession = session
+        self._session: AsyncSession = session
 
     @property
     def session(self) -> AsyncSession:
-        return self.__session
+        return self._session
 
     @abstractmethod
     async def get_by_id(self, id: Any) -> ModelType: ...
