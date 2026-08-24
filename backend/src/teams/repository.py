@@ -11,8 +11,10 @@ from src.teams.schemas import TeamAddUser, TeamUpdate
 
 
 class TeamRepository(PostgresRepository[Team, TeamUpdate]):
-    def __init__(self, session: AsyncSession, model: type[Team]):
-        super().__init__(session, model)
+    model: type[Team] = Team
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
 
     async def get_by_creator_id(self, id: int) -> list[Team]:
         stmt = select(Team).where(Team.creator_id == id)

@@ -13,8 +13,9 @@ class Config(BaseSettings):
 
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    DEFAULT_PAGINATION_LIMIT: int = 50
+    DB_ECHO: bool = True
 
+    DEFAULT_PAGINATION_LIMIT: int = 50
 
     model_config = SettingsConfigDict(env_file=".env")
 

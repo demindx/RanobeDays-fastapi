@@ -6,5 +6,7 @@ from src.language.schemas import LanguageUpdate
 
 
 class LanguageRepository(PostgresRepository[Language, LanguageUpdate]):
-    def __init__(self, session: AsyncSession, model: type[Language]) -> None:
-        super().__init__(session, model)
+    model: type[Language] = Language
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)

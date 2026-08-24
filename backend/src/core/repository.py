@@ -12,13 +12,10 @@ from src.core.models import Base
 
 
 class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
-    def __init__(self, session: AsyncSession, model: type[ModelType]) -> None:
-        self.__session: AsyncSession = session
-        self.__model: type[ModelType] = model
+    model: type[ModelType]
 
-    @property
-    def model(self) -> type[ModelType]:
-        return self.__model
+    def __init__(self, session: AsyncSession) -> None:
+        self.__session: AsyncSession = session
 
     @property
     def session(self) -> AsyncSession:
