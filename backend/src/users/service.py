@@ -17,9 +17,7 @@ class UserService(
 ):
     @override
     async def create(self, data: UserRegister) -> User:
-        instance = User(
-            **data.model_dump(exclude={"password1", "password2", "nickname"})
-        )
+        instance = User.from_data(data)
 
         instance.password_hash = get_password_hash(data.password1)
 

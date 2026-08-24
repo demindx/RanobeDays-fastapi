@@ -4,8 +4,14 @@ from src.config import config
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.novel.schemas import NovelResponse
 from src.teams.dependencies import TeamServiceDep
-from src.teams.schemas import TeamAddUser, TeamCreate, TeamResponse, TeamUpdate
-from src.users.schemas import UserTeamResponse
+from src.teams.models import TeamUsers
+from src.teams.schemas import (
+    TeamAddUser,
+    TeamCreate,
+    TeamResponse,
+    TeamUpdate,
+    TeamUsersResponse,
+)
 
 router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -64,12 +70,12 @@ async def delete_team_handler(service: TeamServiceDep, id: int) -> None:
 @router.get("/{id}/users")
 async def get_team_users(
     service: TeamServiceDep, id: int
-) -> GenericResponse[list[UserTeamResponse]]:
-    users = await service.get_users(id)
+) -> GenericResponse[list[TeamUsersResponse]]:
+    team_users = await service.get_users(id)
 
-    users = [UserTeamResponse.from_tuple(user) for user in users]
+    data = [TeamUsersResponse.model_validate(item) for item in team_users]
 
-    return GenericResponse[list[UserTeamResponse]](data=users)
+    return GenericResponse[list[TeamUsersResponse]](data=data)
 
 
 @router.patch("/{id}/users")

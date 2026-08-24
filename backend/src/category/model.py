@@ -15,7 +15,7 @@ class CategoryTypeEnum(Enum):
 
 
 class Category(Base["CategoryCreate"]):
-    __tablename__ = "categories"
+    __tablename__: str = "categories"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]

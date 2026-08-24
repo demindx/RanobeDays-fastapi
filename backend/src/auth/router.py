@@ -40,7 +40,7 @@ async def refresh_token_handler(
     refresh_token: Annotated[str | None, Cookie()] = None,
 ) -> GenericResponse[Tokens]:
     """Refresh access tokens"""
-    tokens = await service.refresh_token(uuid.UUID(hex=refresh_token))
+    tokens = await service.refresh_token(refresh_token)
 
     response.set_cookie("refresh_token", str(tokens.refresh_token))
 

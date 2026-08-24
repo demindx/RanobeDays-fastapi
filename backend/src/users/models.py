@@ -1,14 +1,13 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Self, override
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import Base, BaseTimestamps
-from src.users.utils import get_password_hash
 
 if TYPE_CHECKING:
-    from src.teams.models import Team
+    from src.teams.models import Team, TeamUsers
     from src.users.schemas import UserProfileCreate, UserRegister  # noqa: F401
 
 
@@ -19,7 +18,7 @@ class UserRoleEnum(Enum):
 
 
 class User(Base["UserRegister"], BaseTimestamps):
-    __tablename__ = "users"
+    __tablename__: str = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
@@ -32,21 +31,20 @@ class User(Base["UserRegister"], BaseTimestamps):
     password_hash: Mapped[str] = mapped_column(String(256))
     role: Mapped[UserRoleEnum] = mapped_column(default=UserRoleEnum.COMMON)
 
-    user_profile: Mapped[UserProfile] = relationship(back_populates="user", lazy="joined")
-    teams: Mapped[Team] = relationship(back_populates="users")
+    user_profile: Mapped[UserProfile] = relationship(
+        back_populates="user", lazy="joined"
+    )
+    memberships: Mapped[list[TeamUsers]] = relationship(
+        back_populates="user", lazy="selectin"
+    )
 
-    @override
-    @classmethod
-    def from_data(cls, data: UserRegister) -> Self:
-        instance = cls(**data.model_dump(exclude={"password1", "password2"}))
-
-        instance.password_hash = get_password_hash(data.password1)
-
-        return instance
+    teams: Mapped[list[Team]] = relationship(
+        back_populates="users", secondary="team_users", viewonly=True, lazy="selectin"
+    )
 
 
 class UserProfile(Base["UserProfileCreate"], BaseTimestamps):
-    __tablename__ = "user_profiles"
+    __tablename__: str = "user_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))

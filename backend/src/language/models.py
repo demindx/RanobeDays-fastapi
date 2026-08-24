@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Language(Base["LanguageCreate"]):
-    __tablename__ = "languages"
+    __tablename__: str = "languages"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     name: Mapped[str] = mapped_column(String(100))

@@ -1,13 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LanguageCreate(BaseModel):
     name: str
 
 
-class LanguageReponse(LanguageCreate):
-    class Config:
-        from_attributes = True
+class LanguageResponse(LanguageCreate):
+    id: int
+
+    model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
 class LanguageUpdate(BaseModel):

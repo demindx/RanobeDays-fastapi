@@ -9,7 +9,7 @@ router = APIRouter(prefix="/country", tags=["country"])
 
 
 @router.get("/")
-async def get_languages(
+async def get_countries(
     service: CountryServiceDep,
     limit: int = config.DEFAULT_PAGINATION_LIMIT,
     offset: int = 0,
@@ -24,7 +24,7 @@ async def get_languages(
 
 
 @router.post("/")
-async def create_language(
+async def create_country(
     data: CountryCreate, service: CountryServiceDep
 ) -> GenericResponse[CountryResponse]:
     language = await service.create(data)
@@ -35,7 +35,7 @@ async def create_language(
 
 
 @router.get("/{id}")
-async def get_language(
+async def get_country(
     id: int, service: CountryServiceDep
 ) -> GenericResponse[CountryResponse]:
     language = await service.get_by_id(id)
@@ -46,7 +46,7 @@ async def get_language(
 
 
 @router.patch("/{id}")
-async def update_language(
+async def update_country(
     id: int, data: CountryUpdate, service: CountryServiceDep
 ) -> GenericResponse[CountryResponse]:
     language = await service.update(id, data)
@@ -57,5 +57,5 @@ async def update_language(
 
 
 @router.delete("/{id}")
-async def delete_language(id: int, service: CountryServiceDep) -> None:
+async def delete_country(id: int, service: CountryServiceDep) -> None:
     await service.delete(id)

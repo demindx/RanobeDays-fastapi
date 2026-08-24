@@ -6,5 +6,7 @@ from src.core.repository import PostgresRepository
 
 
 class CategoryRepository(PostgresRepository[Category, CategoryUpdate]):
-    def __init__(self, session: AsyncSession, model: type[Category]) -> None:
-        super().__init__(session, model)
+    model: type[Category] = Category
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)

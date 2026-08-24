@@ -3,17 +3,16 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.core.dependencies import DbSession
-from src.users.models import User, UserProfile
 from src.users.repository import UserProfileRepository, UserRepository
 from src.users.service import UserProfileService, UserService
 
 
 def get_user_repo(session: DbSession) -> UserRepository:
-    return UserRepository(session, User)
+    return UserRepository(session)
 
 
 def get_user_profile_repo(session: DbSession) -> UserProfileRepository:
-    return UserProfileRepository(session, UserProfile)
+    return UserProfileRepository(session)
 
 
 def get_user_service(

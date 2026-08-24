@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Country(Base["CountryCreate"]):
-    __tablename__ = "countries"
+    __tablename__: str = "countries"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     name: Mapped[str] = mapped_column(String(100))

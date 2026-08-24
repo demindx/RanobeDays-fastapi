@@ -12,6 +12,8 @@ from src.users.utils import get_password_hash
 
 
 class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
+    model: type[User] = User
+
     @override
     async def update(self, id: int | uuid.UUID, data: UserPasswordUpdate) -> User:
         instance: User = await self.get_by_id(id)
@@ -38,7 +40,7 @@ class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
         try:
             result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_login.__name__, id)
+            raise NotFound(self.model, self.get_by_login.__name__, login)
 
         return result
 
@@ -48,12 +50,14 @@ class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
         try:
             result = (await self.session.execute(stmt)).scalar_one()
         except NoResultFound:
-            raise NotFound(self.model, self.get_by_email.__name__, id)
+            raise NotFound(self.model, self.get_by_email.__name__, email)
 
         return result
 
 
 class UserProfileRepository(PostgresRepository[UserProfile, UserProfileUpdate]):
+    model: type[UserProfile] = UserProfile
+
     async def get_by_user_id(self, user_id: int) -> UserProfile:
         stmt = select(self.model).where(self.model.user_id == user_id)
 

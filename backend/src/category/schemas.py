@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from src.category.model import CategoryTypeEnum
 
@@ -13,6 +13,7 @@ class CategoryUpdate(BaseModel):
     type: CategoryTypeEnum | None = None
 
 
-class CategoryReponse(CategoryCreate):
-    class Config:
-        from_attributes = True
+class CategoryResponse(CategoryCreate):
+    id: int
+
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

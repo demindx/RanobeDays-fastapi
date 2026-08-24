@@ -6,5 +6,7 @@ from src.novel.schemas import NovelUpdate
 
 
 class NovelRepository(PostgresRepository[Novel, NovelUpdate]):
-    def __init__(self, session: AsyncSession, model: type[Novel]):
-        super().__init__(session, model)
+    model: type[Novel] = Novel
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
