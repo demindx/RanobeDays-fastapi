@@ -3,17 +3,24 @@ import { ref } from 'vue'
 export function useAsyncState() {
   const loading = ref(false)
   const error = ref(null)
+  let latestRunId = 0
 
   const run = async (fn) => {
+    const runId = ++latestRunId
     loading.value = true
     error.value = null
     try {
-      return await fn()
+      const result = await fn()
+      return runId === latestRunId ? result : null
     } catch (err) {
-      error.value = err?.message || 'Произошла ошибка'
+      if (runId === latestRunId) {
+        error.value = err?.message || 'Произошла ошибка'
+      }
       return null
     } finally {
-      loading.value = false
+      if (runId === latestRunId) {
+        loading.value = false
+      }
     }
   }
 

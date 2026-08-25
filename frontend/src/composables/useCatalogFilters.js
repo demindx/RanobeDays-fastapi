@@ -5,6 +5,33 @@ const createIncludeExclude = () => ({ include: [], exclude: [] })
 const createYearRange = () => ({ from: '', to: '' })
 
 const FILTER_KEYS = ['ageRatings', 'genres', 'tags', 'originalLanguages', 'translationLanguages']
+const FILTER_QUERY_KEYS = new Set([
+  'yearFrom',
+  'yearTo',
+  ...FILTER_KEYS.flatMap((key) => [key, key + 'Exclude']),
+])
+
+export const mergeCatalogFilterQuery = (currentQuery, filterQuery) => {
+  const unmanagedQuery = Object.fromEntries(
+    Object.entries(currentQuery).filter(([key]) => !FILTER_QUERY_KEYS.has(key)),
+  )
+  return { ...unmanagedQuery, ...filterQuery }
+}
+
+export const matchesCatalogYearRange = (releaseYear, range) => {
+  const from = Number.parseInt(range.from, 10)
+  const to = Number.parseInt(range.to, 10)
+  const hasFrom = Number.isFinite(from)
+  const hasTo = Number.isFinite(to)
+  if (!hasFrom && !hasTo) return true
+
+  if (releaseYear == null || releaseYear === '') return false
+  const year = Number(releaseYear)
+  if (!Number.isFinite(year)) return false
+  if (hasFrom && year < from) return false
+  if (hasTo && year > to) return false
+  return true
+}
 
 export const createCatalogFilters = () => ({
   releaseYearRange: createYearRange(),
@@ -72,7 +99,7 @@ export const useCatalogFilters = (novelsRef) => {
 
   const syncUrl = () => {
     if (isApplyingFromUrl) return
-    router.replace({ query: buildQueryFromFilters() })
+    router.replace({ query: mergeCatalogFilterQuery(route.query, buildQueryFromFilters()) })
   }
 
   const setReleaseYearRange = (bound, value) => {
@@ -84,16 +111,7 @@ export const useCatalogFilters = (novelsRef) => {
   }
 
   const matchesYearRange = (releaseYear) => {
-    const fromRaw = filters.releaseYearRange.from
-    const toRaw = filters.releaseYearRange.to
-    const from = Number.parseInt(fromRaw, 10)
-    const to = Number.parseInt(toRaw, 10)
-    const hasFrom = Number.isFinite(from)
-    const hasTo = Number.isFinite(to)
-    if (!hasFrom && !hasTo) return true
-    if (hasFrom && releaseYear < from) return false
-    if (hasTo && releaseYear > to) return false
-    return true
+    return matchesCatalogYearRange(releaseYear, filters.releaseYearRange)
   }
 
   const toggleValue = (filterKey, mode, value) => {

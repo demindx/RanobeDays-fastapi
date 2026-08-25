@@ -1,4 +1,6 @@
 <script setup>
+import { onBeforeUnmount, onMounted } from 'vue'
+
 const props = defineProps({
   open: {
     type: Boolean,
@@ -15,6 +17,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+const handleKeydown = (event) => {
+  if (props.open && event.key === 'Escape') emit('close')
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
 </script>
 
 <template>
@@ -24,7 +33,7 @@ const emit = defineEmits(['close'])
     :class="props.containerClass"
     @click.self="emit('close')"
   >
-    <div :class="props.panelClass">
+    <div role="dialog" aria-modal="true" :class="props.panelClass">
       <slot />
     </div>
   </div>

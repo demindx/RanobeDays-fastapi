@@ -1,6 +1,6 @@
 import { computed, ref, watch } from 'vue'
 import { fetchTeam, fetchTeamUsers, fetchTeamNovels } from '../api/teams'
-import { mapNovelsList } from '../api/mapper'
+import { mapNovelsList, mapTeamMember } from '../api/mapper'
 import { useAsyncState } from './useAsyncState'
 
 const TYPE_LABELS = {
@@ -48,12 +48,7 @@ export const useTeamPage = (teamIdRef) => {
           chaptersTotal: 0,
         },
       }
-      members.value = membersData.map((m) => ({
-        id: m.nickname,
-        nickname: m.nickname,
-        role: m.role,
-        avatarColorClass: 'bg-lime-500',
-      }))
+      members.value = membersData.map(mapTeamMember).filter(Boolean)
       novels.value = mapNovelsList(novelsData)
     },
     { immediate: true },

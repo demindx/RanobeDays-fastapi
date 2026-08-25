@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import { fetchChapters, fetchChapterById } from '../api/chapters'
 import { mapChapter, mapChaptersList } from '../api/mapper'
 import { useAsyncState } from './useAsyncState'
+import { getChapterNavigation } from '../utils/chapterNavigation'
 
 export function useChapter() {
   const route = useRoute()
@@ -25,29 +26,24 @@ export function useChapter() {
       const result = await run(() => Promise.all([fetchChapters(), fetchChapterById(cid)]))
       if (!result) return
       const [allChapters, chapterData] = result
-      chapters.value = mapChaptersList(allChapters).filter(
+      const filteredChapters = mapChaptersList(allChapters).filter(
         (c) => String(c.novel_id) === String(nid),
       )
+      chapters.value = getChapterNavigation(filteredChapters, cid).chapters
       chapter.value = mapChapter(chapterData)
     },
     { immediate: true },
   )
 
-  const currentIndex = computed(() =>
-    chapters.value.findIndex((c) => String(c.id) === String(chapterId.value)),
-  )
+  const navigation = computed(() => getChapterNavigation(chapters.value, chapterId.value))
 
-  const hasPrev = computed(() => currentIndex.value > 0)
+  const hasPrev = computed(() => navigation.value.prevChapterId !== null)
 
-  const hasNext = computed(() => currentIndex.value < chapters.value.length - 1)
+  const hasNext = computed(() => navigation.value.nextChapterId !== null)
 
-  const prevChapterId = computed(() =>
-    hasPrev.value ? chapters.value[currentIndex.value - 1]?.id : null,
-  )
+  const prevChapterId = computed(() => navigation.value.prevChapterId)
 
-  const nextChapterId = computed(() =>
-    hasNext.value ? chapters.value[currentIndex.value + 1]?.id : null,
-  )
+  const nextChapterId = computed(() => navigation.value.nextChapterId)
 
   const chapterOptions = computed(() =>
     chapters.value.map((c) => ({

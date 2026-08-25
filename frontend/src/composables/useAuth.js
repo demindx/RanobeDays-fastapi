@@ -12,28 +12,36 @@ const state = reactive({
 
 const isAuthModalOpen = ref(false)
 
+const clearState = () => {
+  state.isAuthenticated = false
+  state.user = null
+  state.hasUnreadNotifications = false
+}
+
 const saveState = () => {
   if (typeof window === 'undefined') return
-  window.localStorage.setItem(
-    AUTH_KEY,
-    JSON.stringify({
-      isAuthenticated: state.isAuthenticated,
-      user: state.user,
-      hasUnreadNotifications: state.hasUnreadNotifications,
-    }),
-  )
+  try {
+    window.localStorage.setItem(
+      AUTH_KEY,
+      JSON.stringify({
+        isAuthenticated: state.isAuthenticated,
+        user: state.user,
+        hasUnreadNotifications: state.hasUnreadNotifications,
+      }),
+    )
+  } catch {
+    // Authentication must still work when storage is unavailable.
+  }
 }
 
 const restoreState = () => {
   if (typeof window === 'undefined') return
-  const saved = window.localStorage.getItem(AUTH_KEY)
-  if (!saved) return
   try {
+    const saved = window.localStorage.getItem(AUTH_KEY)
+    if (!saved) return
     const parsed = JSON.parse(saved)
     if (!hasAuthToken()) {
-      state.isAuthenticated = false
-      state.user = null
-      state.hasUnreadNotifications = false
+      clearState()
       return
     }
     state.isAuthenticated = !!parsed?.isAuthenticated
@@ -53,9 +61,7 @@ const restoreState = () => {
       state.user = null
     }
   } catch {
-    state.isAuthenticated = false
-    state.user = null
-    state.hasUnreadNotifications = false
+    clearState()
   }
 }
 
@@ -81,14 +87,25 @@ const login = async (loginValue, passwordValue) => {
     return { ok: false, error: 'Введите логин и пароль.' }
   }
 
+  let sessionCreated = false
   try {
     await loginUser(loginNormalized, passwordValue)
+    sessionCreated = true
     const profile = await fetchProfile()
     state.user = toUser(profile)
     state.isAuthenticated = true
     saveState()
     return { ok: true }
   } catch (err) {
+    if (sessionCreated) {
+      try {
+        await logoutUser()
+      } catch {
+        // The local token is cleared by the API logout helper even if the request fails.
+      }
+    }
+    clearState()
+    saveState()
     if (err?.status === 0) return { ok: false, error: 'Не удалось подключиться к серверу.' }
     if (err?.status === 401 || err?.status === 404)
       return { ok: false, error: 'Неверный логин или пароль.' }
@@ -102,25 +119,39 @@ const register = async (loginValue, emailValue, passwordValue) => {
     return { ok: false, error: 'Заполните все поля.' }
   }
 
+  let sessionCreated = false
   try {
     await registerUser(loginNormalized, emailValue, passwordValue)
+    sessionCreated = true
     const profile = await fetchProfile()
     state.user = toUser(profile)
     state.isAuthenticated = true
     saveState()
     return { ok: true }
   } catch (err) {
+    if (sessionCreated) {
+      try {
+        await logoutUser()
+      } catch {
+        // The local token is cleared by the API logout helper even if the request fails.
+      }
+    }
+    clearState()
+    saveState()
     if (err?.status === 0) return { ok: false, error: 'Не удалось подключиться к серверу.' }
     return { ok: false, error: err?.message || 'Ошибка регистрации.' }
   }
 }
 
 const logout = async () => {
-  await logoutUser()
-  state.isAuthenticated = false
-  state.user = null
-  state.hasUnreadNotifications = false
-  saveState()
+  try {
+    await logoutUser()
+  } catch {
+    // Logging out locally must not depend on network availability.
+  } finally {
+    clearState()
+    saveState()
+  }
 }
 
 const updateUser = (partial) => {

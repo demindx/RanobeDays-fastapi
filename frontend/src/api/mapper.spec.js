@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mapNovel, mapNovelsList, mapChapter, mapChaptersList } from './mapper'
+import { mapNovel, mapNovelsList, mapChapter, mapChaptersList, mapTeamMember } from './mapper'
 
 describe('mapNovel', () => {
   it('maps backend fields to frontend shape', () => {
@@ -41,8 +41,27 @@ describe('mapNovel', () => {
     expect(result.coverStyle).toBe('')
   })
 
+  it('rejects strings that only start with the letters http', () => {
+    const result = mapNovel({ id: 1, cover_path: 'http-malicious-value' })
+    expect(result.coverUrl).toBe('')
+  })
+
   it('returns null for null input', () => {
     expect(mapNovel(null)).toBeNull()
+  })
+
+  it('keeps zero values and does not generate random fallback ids', () => {
+    const first = mapNovel({ title: 'Без ID', age_limit: 0, rating: 0 })
+    const second = mapNovel({ title: 'Без ID', age_limit: 0, rating: 0 })
+
+    expect(first.id).toBe('Без ID')
+    expect(second.id).toBe(first.id)
+    expect(first.ageRating).toBe('0+')
+    expect(first.rating).toBe(0)
+  })
+
+  it('maps an invalid publish date to a missing release year', () => {
+    expect(mapNovel({ id: 1, publish_date: 'invalid' }).releaseYear).toBeNull()
   })
 })
 
@@ -61,6 +80,30 @@ describe('mapChapter', () => {
     expect(result.content).toEqual(['a', 'b', 'c'])
     expect(result.publishedAt).toBe('2026-01-01T00:00:00Z')
     expect(result.isRead).toBe(false)
+  })
+
+  it('preserves content that is already split into paragraphs', () => {
+    expect(mapChapter({ id: 1, content: ['first', 'second'] }).content).toEqual(['first', 'second'])
+  })
+})
+
+describe('mapTeamMember', () => {
+  it('maps the nested TeamUsersResponse returned by the backend', () => {
+    expect(
+      mapTeamMember({
+        role: 'manager',
+        user: {
+          email: 'reader@example.com',
+          user_profile: { nickname: 'Reader' },
+        },
+      }),
+    ).toEqual({
+      id: 'reader@example.com',
+      nickname: 'Reader',
+      email: 'reader@example.com',
+      role: 'manager',
+      avatarColorClass: 'bg-lime-500',
+    })
   })
 })
 
