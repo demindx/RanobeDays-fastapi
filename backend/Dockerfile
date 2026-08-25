@@ -8,11 +8,12 @@ COPY pyproject.toml uv.lock ./
 
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
 ENV UV_INSTALL_DIR=/usr/local/bin
+ENV UV_LINK_MODE=copy
 RUN sh /uv-installer.sh && rm /uv-installer.sh
 
-RUN uv sync
+RUN uv sync --locked && chown -R app:app /app/.venv
 
-COPY . .
+COPY --chown=app:app . .
 
 USER app
 
