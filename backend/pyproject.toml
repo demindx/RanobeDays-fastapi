@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.14"
 classifiers = [ "Programming Language :: Python :: 3 :: Only" ]
 dependencies = [
+  "alembic>=1.19.1",
+  "alembic-postgresql-enum>=1.10",
   "asyncpg>=0.30",
   "bcrypt>=4.3",
   "fastapi[standard,standard]>=0.115.14",
@@ -15,7 +17,12 @@ dependencies = [
   "pydantic-settings>=2.10.1",
   "pyjwt>=2.10.1",
   "sqlalchemy>=2.0.41",
-  "alembic>=1.19.1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.1.1",
+  "pytest-asyncio>=1.4",
 ]
 
 [tool.ruff]
@@ -70,19 +77,12 @@ lint.isort.force-wrap-aliases = true
 lint.isort.known-first-party = [ "src" ]
 lint.pycodestyle.max-line-length = 88
 
-[dependency-groups]
-dev = [
-    "pytest>=9.1.1",
-    "pytest-asyncio>=1.4.0",
-]
-
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
+testpaths = [ "tests" ]
+pythonpath = [ "." ]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"
-
 
 [tool.alembic]
 
@@ -102,7 +102,7 @@ script_location = "%(here)s/alembic"
 
 # additional paths to be prepended to sys.path. defaults to the current working directory.
 prepend_sys_path = [
-    "."
+  ".",
 ]
 
 # timezone to use when rendering the date within the migration file
@@ -132,7 +132,6 @@ prepend_sys_path = [
 #    "%(here)s/alembic/versions",
 #    "%(here)s/foo/bar"
 # ]
-
 
 # set to 'true' to search source files recursively
 # in each "version_locations" directory
@@ -167,4 +166,3 @@ prepend_sys_path = [
 # type = "exec"
 # executable = "ruff"
 # options = "check --fix REVISION_SCRIPT_FILENAME"
-

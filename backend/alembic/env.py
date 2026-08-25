@@ -1,6 +1,7 @@
 import asyncio
 from logging.config import fileConfig
 
+import alembic_postgresql_enum  # noqa: F401
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
@@ -43,10 +44,10 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+
+def get_database_url() -> str:
+    """Return an explicitly injected URL or fall back to application config."""
+    return config.attributes.get("database_url", app_config.POSTGRES_URL)
 
 
 def run_migrations_offline() -> None:
@@ -61,7 +62,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = app_config.POSTGRES_URL
+    url = get_database_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -92,7 +93,7 @@ async def run_async_migrations() -> None:
         {},
     )
 
-    configuration["sqlalchemy.url"] = app_config.POSTGRES_URL
+    configuration["sqlalchemy.url"] = get_database_url()
 
     connectable = async_engine_from_config(
         configuration,
