@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from src.config import config
-from src.core.database import init_db
 from src.core.exceptions import AppException
 from src.core.router import api_v1
 from src.core.schemas import GenericResponse
@@ -13,7 +12,6 @@ from src.core.schemas import GenericResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
     yield
 
 
