@@ -73,18 +73,14 @@ class AuthService:
         )
 
     async def refresh_token(self, token: uuid.UUID) -> Tokens:
-        try:
-            session = await self.repository.get_refresh_session(token)
-        except RefreshSessionNotFound:
-            raise InvalidRefreshToken
+        session = await self.repository.consume_refresh_token(
+            token, datetime.now(UTC).timestamp()
+        )
 
-        await self.repository.delete(session)
-
-        if datetime.now(UTC).timestamp() >= session.expires_in:
+        if session is None:
             raise InvalidRefreshToken
 
         expires_in = int((datetime.now(UTC) + timedelta(weeks=4)).timestamp())
-
         new_session = await self.repository.create_refresh_session(
             RefreshSessionCreate(
                 user_id=session.user_id,
