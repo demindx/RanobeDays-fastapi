@@ -45,25 +45,19 @@ async def test_register_password_mismatch(client):
 
 async def test_login_success(client):
     await register(client)
-    resp = await client.post(
-        LOGIN, json={"login": "user1", "password": "password123", "fingerprint": "fp"}
-    )
+    resp = await client.post(LOGIN, json={"login": "user1", "password": "password123"})
     assert resp.status_code == 200
     assert resp.json()["data"]["access_token"]
 
 
 async def test_login_wrong_password(client):
     await register(client)
-    resp = await client.post(
-        LOGIN, json={"login": "user1", "password": "wrong", "fingerprint": "fp"}
-    )
+    resp = await client.post(LOGIN, json={"login": "user1", "password": "wrong"})
     assert resp.status_code == 401
 
 
 async def test_login_unknown_user(client):
-    resp = await client.post(
-        LOGIN, json={"login": "nobody", "password": "x", "fingerprint": "fp"}
-    )
+    resp = await client.post(LOGIN, json={"login": "nobody", "password": "x"})
     assert resp.status_code == 404
 
 
@@ -114,37 +108,32 @@ async def test_login_by_email(client):
     await register(client)
     resp = await client.post(
         LOGIN,
-        json={"email": "user1@example.com", "password": "password123", "fingerprint": "fp"},
+        json={"email": "user1@example.com", "password": "password123"},
     )
     assert resp.status_code == 200
     assert resp.json()["data"]["access_token"]
 
 
-async def test_login_missing_fingerprint(client):
-    await register(client)
-    resp = await client.post(LOGIN, json={"login": "user1", "password": "password123"})
-    assert resp.status_code == 422
-
-
 async def test_login_missing_password(client):
-    resp = await client.post(LOGIN, json={"login": "user1", "fingerprint": "fp"})
+    resp = await client.post(LOGIN, json={"login": "user1"})
     assert resp.status_code == 422
 
 
 async def test_login_without_credentials(client):
-    resp = await client.post(LOGIN, json={"password": "x", "fingerprint": "fp"})
+    resp = await client.post(LOGIN, json={"password": "x"})
     assert resp.status_code == 404
 
 
 async def test_refresh_with_valid_cookie(client):
     await register(client)
     login_resp = await client.post(
-        LOGIN, json={"login": "user1", "password": "password123", "fingerprint": "fp"}
+        LOGIN, json={"login": "user1", "password": "password123"}
     )
     refresh_token = _refresh_token_from(login_resp)
 
     resp = await client.post(
-        "/api/v1/auth/refresh", headers={"Cookie": f"refresh_token={refresh_token}"}
+        "/api/v1/auth/refresh",
+        headers={"Cookie": f"refresh_token={refresh_token}"},
     )
     assert resp.status_code == 200
     assert resp.json()["data"]["access_token"]
@@ -153,7 +142,7 @@ async def test_refresh_with_valid_cookie(client):
 async def test_logout_with_cookie(client):
     await register(client)
     login_resp = await client.post(
-        LOGIN, json={"login": "user1", "password": "password123", "fingerprint": "fp"}
+        LOGIN, json={"login": "user1", "password": "password123"}
     )
     refresh_token = _refresh_token_from(login_resp)
 

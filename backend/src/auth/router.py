@@ -1,10 +1,10 @@
-import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Cookie, Response
+from fastapi import APIRouter, Cookie, Response
 
 from src.auth.dependencies import AuthServiceDep, RefreshToken
-from src.auth.schemas import RefreshSessionUpdate, Tokens
+from src.auth.schemas import Tokens
+from src.config import config
 from src.core.schemas import GenericResponse
 from src.users.schemas import UserLogin, UserRegister
 
@@ -28,7 +28,14 @@ async def login_handler(
     """Login users"""
     tokens = await service.login(data)
 
-    response.set_cookie("refresh_token", str(tokens.refresh_token))
+    response.set_cookie(
+        "refresh_token",
+        str(tokens.refresh_token),
+        httponly=True,
+        secure=config.COOKIE_SECURE,
+        samesite="strict",
+        path="/api/v1/auth",
+    )
 
     return GenericResponse[Tokens](data=tokens)
 
@@ -38,14 +45,18 @@ async def refresh_token_handler(
     service: AuthServiceDep,
     response: Response,
     refresh_token: RefreshToken,
-    fingerprint: Annotated[str, Body()],
 ) -> GenericResponse[Tokens]:
     """Refresh access tokens"""
-    tokens = await service.refresh_token(
-        RefreshSessionUpdate(refresh_token=refresh_token, fingerprint=fingerprint)
-    )
+    tokens = await service.refresh_token(refresh_token)
 
-    response.set_cookie("refresh_token", str(tokens.refresh_token))
+    response.set_cookie(
+        "refresh_token",
+        str(tokens.refresh_token),
+        httponly=True,
+        secure=config.COOKIE_SECURE,
+        samesite="strict",
+        path="/api/v1/auth",
+    )
 
     return GenericResponse[Tokens](data=tokens)
 
@@ -60,6 +71,12 @@ async def logout_handler(
     if refresh_token:
         await service.logout(refresh_token)
 
-    response.delete_cookie("refresh_token")
+    response.delete_cookie(
+        "refresh_token",
+        samesite="strict",
+        httponly=True,
+        secure=config.COOKIE_SECURE,
+        path="/api/v1/auth",
+    )
 
     return GenericResponse[None](message="Logout was successful")

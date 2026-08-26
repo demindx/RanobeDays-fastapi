@@ -17,6 +17,8 @@ class Config(BaseSettings):
 
     DEFAULT_PAGINATION_LIMIT: int = 50
 
+    COOKIE_SECURE: bool = False
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @model_validator(mode="after")

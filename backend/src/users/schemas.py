@@ -15,7 +15,6 @@ class UserLogin(BaseModel):
     login: str | None = None
     email: EmailStr | None = None
     password: str
-    fingerprint: str
 
 
 class UserRegister(BaseModel):
