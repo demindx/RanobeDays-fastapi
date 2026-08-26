@@ -1,10 +1,10 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Response
+from fastapi import APIRouter, Body, Cookie, Response
 
 from src.auth.dependencies import AuthServiceDep, RefreshToken
-from src.auth.schemas import Tokens
+from src.auth.schemas import RefreshSessionUpdate, Tokens
 from src.core.schemas import GenericResponse
 from src.users.schemas import UserLogin, UserRegister
 
@@ -38,9 +38,12 @@ async def refresh_token_handler(
     service: AuthServiceDep,
     response: Response,
     refresh_token: RefreshToken,
+    fingerprint: Annotated[str, Body()],
 ) -> GenericResponse[Tokens]:
     """Refresh access tokens"""
-    tokens = await service.refresh_token(refresh_token)
+    tokens = await service.refresh_token(
+        RefreshSessionUpdate(refresh_token=refresh_token, fingerprint=fingerprint)
+    )
 
     response.set_cookie("refresh_token", str(tokens.refresh_token))
 

@@ -14,6 +14,11 @@ class TokenData(BaseModel):
     exp: datetime
 
 
+class RefreshSessionUpdate(BaseModel):
+    refresh_token: uuid.UUID
+    fingerprint: str
+
+
 class RefreshSessionCreate(BaseModel):
     refresh_token: uuid.UUID
     expires_in: int

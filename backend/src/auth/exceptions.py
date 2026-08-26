@@ -46,7 +46,7 @@ class ForbiddenError(AppException):
         super().__init__("Not allowed", status.HTTP_403_FORBIDDEN)
 
 
-class InvalidRerfreshToken(AppException):
+class InvalidRefreshToken(AppException):
     def __init__(self):
         super().__init__("Invalid refresh token", status.HTTP_401_UNAUTHORIZED)
 

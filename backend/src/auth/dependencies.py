@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import Cookie, Depends
 
-from src.auth.exceptions import ForbiddenError, InvalidRerfreshToken, InvalidTokenError
+from src.auth.exceptions import ForbiddenError, InvalidRefreshToken, InvalidTokenError
 from src.auth.repository import AuthRepository
 from src.auth.security import JwtHeaderBearer
 from src.auth.service import AuthService
@@ -58,12 +58,12 @@ def get_refresh_token(
     token: Annotated[str | None, Cookie(alias="refresh_token")] = None,
 ) -> UUID:
     if token is None:
-        raise InvalidRerfreshToken
+        raise InvalidRefreshToken
 
     try:
         return UUID(token)
     except ValueError:
-        raise InvalidRerfreshToken
+        raise InvalidRefreshToken
 
 
 RefreshToken = Annotated[UUID, Depends(get_refresh_token)]

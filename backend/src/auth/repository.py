@@ -17,7 +17,7 @@ class AuthRepository:
             RefreshSession.refresh_token == refresh_token
         )
 
-        session = (await self.session.execute(stmt)).scalar_one()
+        session = (await self.session.execute(stmt)).scalar_one_or_none()
 
         if not session:
             raise RefreshSessionNotFound
