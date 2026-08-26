@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Response
 
-from src.auth.dependencies import AuthServiceDep
+from src.auth.dependencies import AuthServiceDep, RefreshToken
 from src.auth.schemas import Tokens
 from src.core.schemas import GenericResponse
 from src.users.schemas import UserLogin, UserRegister
@@ -37,7 +37,7 @@ async def login_handler(
 async def refresh_token_handler(
     service: AuthServiceDep,
     response: Response,
-    refresh_token: Annotated[str | None, Cookie()] = None,
+    refresh_token: RefreshToken,
 ) -> GenericResponse[Tokens]:
     """Refresh access tokens"""
     tokens = await service.refresh_token(refresh_token)

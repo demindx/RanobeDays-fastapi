@@ -1,7 +1,13 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from src.auth.exceptions import CookieError, TokenExpired, UserAuthDenied
+from src.auth.exceptions import (
+    CookieError,
+    InvalidRerfreshToken,
+    RefreshSessionNotFound,
+    TokenExpired,
+    UserAuthDenied,
+)
 from src.auth.repository import AuthRepository
 from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
@@ -69,12 +75,11 @@ class AuthService:
             access_token=access_token, refresh_token=refresh_session.refresh_token
         )
 
-    async def refresh_token(self, refresh_token: str | None) -> Tokens:
-        if refresh_token is None:
-            raise CookieError("Refresh token is empty")
-
-        token = uuid.UUID(hex=refresh_token)
-        session = await self.repository.get_refresh_session(token)
+    async def refresh_token(self, refresh_token: uuid.UUID) -> Tokens:
+        try:
+            session = await self.repository.get_refresh_session(refresh_token)
+        except RefreshSessionNotFound:
+            raise InvalidRerfreshToken
 
         await self.repository.delete(session)
 
@@ -86,7 +91,7 @@ class AuthService:
             RefreshSessionCreate(
                 user_id=session.user_id,
                 refresh_token=uuid.uuid4(),
-                fingerprint=str(uuid.uuid4()),
+                fingerprint=session.fingerprint,
                 expires_in=expires_in,
             )
         )
