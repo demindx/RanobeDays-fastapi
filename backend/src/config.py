@@ -13,7 +13,7 @@ class Config(BaseSettings):
 
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    DB_ECHO: bool = True
+    DB_ECHO: bool = False
 
     DEFAULT_PAGINATION_LIMIT: int = 50
 
