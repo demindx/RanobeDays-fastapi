@@ -3,7 +3,6 @@ from datetime import UTC, datetime, timedelta
 
 from src.auth.exceptions import (
     InvalidRefreshToken,
-    RefreshSessionNotFound,
     UserAuthDenied,
 )
 from src.auth.repository import AuthRepository

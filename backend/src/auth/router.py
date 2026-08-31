@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Response
 
 from src.auth.dependencies import AuthServiceDep, RefreshToken
-from src.auth.schemas import Tokens
+from src.auth.schemas import TokenResponse
 from src.config import config
 from src.core.schemas import GenericResponse
 from src.users.schemas import UserLogin, UserRegister
@@ -24,7 +24,7 @@ async def register_handler(
 @router.post("/login")
 async def login_handler(
     service: AuthServiceDep, data: UserLogin, response: Response
-) -> GenericResponse[Tokens]:
+) -> GenericResponse[TokenResponse]:
     """Login users"""
     tokens = await service.login(data)
 
@@ -37,7 +37,9 @@ async def login_handler(
         path="/api/v1/auth",
     )
 
-    return GenericResponse[Tokens](data=tokens)
+    return GenericResponse[TokenResponse](
+        data=TokenResponse(access_token=tokens.access_token)
+    )
 
 
 @router.post("/refresh")
@@ -45,7 +47,7 @@ async def refresh_token_handler(
     service: AuthServiceDep,
     response: Response,
     refresh_token: RefreshToken,
-) -> GenericResponse[Tokens]:
+) -> GenericResponse[TokenResponse]:
     """Refresh access tokens"""
     tokens = await service.refresh_token(refresh_token)
 
@@ -58,7 +60,9 @@ async def refresh_token_handler(
         path="/api/v1/auth",
     )
 
-    return GenericResponse[Tokens](data=tokens)
+    return GenericResponse[TokenResponse](
+        data=TokenResponse(access_token=tokens.access_token)
+    )
 
 
 @router.post("/logout")
