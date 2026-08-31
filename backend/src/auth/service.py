@@ -95,7 +95,11 @@ class AuthService:
         )
 
     async def logout(self, refresh_token: str):
-        session = await self.repository.get_refresh_session(
-            uuid.UUID(hex=refresh_token)
+        try:
+            token = uuid.UUID(refresh_token)
+        except ValueError:
+            return
+
+        _ = await self.repository.consume_refresh_token(
+            token, datetime.now(UTC).timestamp()
         )
-        await self.repository.delete(session)

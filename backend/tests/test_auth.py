@@ -11,6 +11,7 @@ from src.main import app
 REGISTER = "/api/v1/auth/register"
 LOGIN = "/api/v1/auth/login"
 REFRESH = "/api/v1/auth/refresh"
+LOGOUT = "/api/v1/auth/logout"
 
 
 async def register(
@@ -97,6 +98,15 @@ async def _refresh_with_token(refresh_token: str) -> httpx.Response:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         return await client.post(
             REFRESH,
+            headers={"Cookie": f"refresh_token={refresh_token}"},
+        )
+
+
+async def _logout_with_token(refresh_token: str) -> httpx.Response:
+    transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        return await client.post(
+            LOGOUT,
             headers={"Cookie": f"refresh_token={refresh_token}"},
         )
 
@@ -270,3 +280,43 @@ async def test_refresh_rotates_cookie(client):
 
     assert refresh_resp.status_code == 200
     assert new_refresh_token != old_refresh_token
+
+
+async def test_logout_with_malformed_uuid_cookie_is_idempotent(client):
+    resp = await _logout_with_token("not-a-uuid")
+
+    assert resp.status_code == 200
+    assert resp.json()["message"] == "Logout was successful"
+
+
+async def test_logout_with_unknown_token_is_idempotent(client):
+    resp = await _logout_with_token(str(uuid4()))
+
+    assert resp.status_code == 200
+    assert resp.json()["message"] == "Logout was successful"
+
+
+async def test_logout_can_be_repeated(client):
+    login_resp = await _login(client)
+    refresh_token = _refresh_token_from(login_resp)
+
+    first_resp = await _logout_with_token(refresh_token)
+    repeated_resp = await _logout_with_token(refresh_token)
+
+    assert first_resp.status_code == 200
+    assert repeated_resp.status_code == 200
+
+
+async def test_logout_clears_refresh_cookie(client):
+    login_resp = await _login(client)
+    refresh_token = _refresh_token_from(login_resp)
+
+    resp = await _logout_with_token(refresh_token)
+    set_cookie = resp.headers["set-cookie"].lower()
+
+    assert resp.status_code == 200
+    assert "refresh_token=" in set_cookie
+    assert "max-age=0" in set_cookie
+    assert "path=/api/v1/auth" in set_cookie
+    assert "httponly" in set_cookie
+    assert "samesite=strict" in set_cookie
