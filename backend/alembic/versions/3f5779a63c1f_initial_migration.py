@@ -1,8 +1,8 @@
-"""initial schema
+"""initial migration
 
-Revision ID: 0619f0076434
+Revision ID: 3f5779a63c1f
 Revises:
-Create Date: 2026-08-25 10:36:50.204468
+Create Date: 2026-08-31 21:32:10.805333
 
 """
 
@@ -15,7 +15,7 @@ from sqlalchemy.dialects import postgresql
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "0619f0076434"
+revision: str = "3f5779a63c1f"
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -83,7 +83,6 @@ def upgrade() -> None:
         "refresh_sessions",
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("refresh_token", sa.UUID(), nullable=False),
-        sa.Column("fingerprint", sa.String(length=200), nullable=False),
         sa.Column("expires_in", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),

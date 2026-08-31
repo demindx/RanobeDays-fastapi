@@ -12,19 +12,12 @@ sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession]:
-    async with sessionmaker() as session:
-        try:
-            yield session
-            await session.commit()
-        except Exception:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
+    async with sessionmaker.begin() as session:
+        yield session
 
 
 async def init_db() -> None:
     async with engine.begin() as conn:
-        await conn.execute(text("create extension if not exists vector;"))
+        _ = await conn.execute(text("create extension if not exists vector;"))
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)

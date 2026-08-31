@@ -1,8 +1,9 @@
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Cookie, Depends
 
-from src.auth.exceptions import ForbiddenError, InvalidTokenError
+from src.auth.exceptions import ForbiddenError, InvalidRefreshToken, InvalidTokenError
 from src.auth.repository import AuthRepository
 from src.auth.security import JwtHeaderBearer
 from src.auth.service import AuthService
@@ -51,3 +52,18 @@ async def get_admin_user(user: Annotated[User, Depends(get_current_user)]):
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_refresh_token(
+    token: Annotated[str | None, Cookie(alias="refresh_token")] = None,
+) -> UUID:
+    if token is None:
+        raise InvalidRefreshToken
+
+    try:
+        return UUID(token)
+    except ValueError:
+        raise InvalidRefreshToken
+
+
+RefreshToken = Annotated[UUID, Depends(get_refresh_token)]

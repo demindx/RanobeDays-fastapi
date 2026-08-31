@@ -44,3 +44,15 @@ class NotAuthenticated(AppException):
 class ForbiddenError(AppException):
     def __init__(self):
         super().__init__("Not allowed", status.HTTP_403_FORBIDDEN)
+
+
+class InvalidRefreshToken(AppException):
+    def __init__(self):
+        super().__init__("Invalid refresh token", status.HTTP_401_UNAUTHORIZED)
+
+
+class RefreshSessionError(AppException):
+    def __init__(self):
+        super().__init__(
+            "Something wrong with refresh session", status.HTTP_401_UNAUTHORIZED
+        )

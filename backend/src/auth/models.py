@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -16,8 +16,6 @@ class RefreshSession(Base[RefreshSessionCreate], BaseTimestamps):
     )
 
     refresh_token: Mapped[uuid.UUID] = mapped_column(UUID, index=True)
-
-    fingerprint: Mapped[str] = mapped_column(String(200))
 
     expires_in: Mapped[int] = mapped_column()
 

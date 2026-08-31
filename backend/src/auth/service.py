@@ -1,7 +1,10 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from src.auth.exceptions import CookieError, TokenExpired, UserAuthDenied
+from src.auth.exceptions import (
+    InvalidRefreshToken,
+    UserAuthDenied,
+)
 from src.auth.repository import AuthRepository
 from src.auth.schemas import RefreshSessionCreate, Tokens
 from src.auth.utils import generate_jwt_token
@@ -58,7 +61,6 @@ class AuthService:
             RefreshSessionCreate(
                 user_id=user.id,
                 refresh_token=uuid.uuid4(),
-                fingerprint=data.fingerprint,
                 expires_in=expires_in,
             )
         )
@@ -69,24 +71,19 @@ class AuthService:
             access_token=access_token, refresh_token=refresh_session.refresh_token
         )
 
-    async def refresh_token(self, refresh_token: str | None) -> Tokens:
-        if refresh_token is None:
-            raise CookieError("Refresh token is empty")
+    async def refresh_token(self, token: uuid.UUID) -> Tokens:
+        session = await self.repository.consume_refresh_token(
+            token, datetime.now(UTC).timestamp()
+        )
 
-        token = uuid.UUID(hex=refresh_token)
-        session = await self.repository.get_refresh_session(token)
-
-        await self.repository.delete(session)
-
-        if datetime.now(UTC).timestamp() >= session.expires_in:
-            raise TokenExpired
+        if session is None:
+            raise InvalidRefreshToken
 
         expires_in = int((datetime.now(UTC) + timedelta(weeks=4)).timestamp())
         new_session = await self.repository.create_refresh_session(
             RefreshSessionCreate(
                 user_id=session.user_id,
                 refresh_token=uuid.uuid4(),
-                fingerprint=str(uuid.uuid4()),
                 expires_in=expires_in,
             )
         )
@@ -98,7 +95,11 @@ class AuthService:
         )
 
     async def logout(self, refresh_token: str):
-        session = await self.repository.get_refresh_session(
-            uuid.UUID(hex=refresh_token)
+        try:
+            token = uuid.UUID(refresh_token)
+        except ValueError:
+            return
+
+        _ = await self.repository.consume_refresh_token(
+            token, datetime.now(UTC).timestamp()
         )
-        await self.repository.delete(session)
