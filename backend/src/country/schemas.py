@@ -1,8 +1,14 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, StringConstraints
+
+CountryName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)
+]
 
 
 class CountryCreate(BaseModel):
-    name: str
+    name: CountryName
 
 
 class CountryResponse(CountryCreate):
@@ -12,4 +18,4 @@ class CountryResponse(CountryCreate):
 
 
 class CountryUpdate(BaseModel):
-    name: str | None = None
+    name: CountryName | None = None

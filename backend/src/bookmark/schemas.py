@@ -1,13 +1,19 @@
-from pydantic import BaseModel
+from typing import Annotated
+
+from pydantic import BaseModel, StringConstraints
+
+BookmarkName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=150)
+]
 
 
 class BookmarkCreate(BaseModel):
-    name: str
+    name: BookmarkName
     is_public: bool = True
 
 
 class BookmarkUpdate(BaseModel):
-    name: str | None = None
+    name: BookmarkName | None = None
     is_public: bool | None = None
 
 
@@ -19,5 +25,5 @@ class BookmarkItemResponse(BaseModel): ...
 
 
 class BookmarkResponse(BaseModel):
-    name: str
+    name: BookmarkName
     items: list[BookmarkItemResponse]

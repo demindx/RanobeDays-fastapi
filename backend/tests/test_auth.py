@@ -149,6 +149,18 @@ async def test_login_by_email(client):
     assert resp.json()["data"]["access_token"]
 
 
+async def test_login_with_login_and_email(client):
+    resp = await client.post(
+        LOGIN,
+        json={
+            "login": "user1",
+            "email": "user1@example.com",
+            "password": "password123",
+        },
+    )
+    assert resp.status_code == 422
+
+
 async def test_login_missing_password(client):
     resp = await client.post(LOGIN, json={"login": "user1"})
     assert resp.status_code == 422
@@ -156,7 +168,7 @@ async def test_login_missing_password(client):
 
 async def test_login_without_credentials(client):
     resp = await client.post(LOGIN, json={"password": "x"})
-    assert resp.status_code == 404
+    assert resp.status_code == 422
 
 
 async def test_refresh_with_valid_cookie(client):

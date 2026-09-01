@@ -1,15 +1,19 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from src.category.model import CategoryTypeEnum
 
+CategoryName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
 
 class CategoryCreate(BaseModel):
-    name: str
+    name: CategoryName
     type: CategoryTypeEnum
 
 
 class CategoryUpdate(BaseModel):
-    name: str | None = None
+    name: CategoryName | None = None
     type: CategoryTypeEnum | None = None
 
 

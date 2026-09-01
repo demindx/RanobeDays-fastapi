@@ -1,8 +1,14 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, StringConstraints
+
+LanguageName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)
+]
 
 
 class LanguageCreate(BaseModel):
-    name: str
+    name: LanguageName
 
 
 class LanguageResponse(LanguageCreate):
@@ -12,4 +18,4 @@ class LanguageResponse(LanguageCreate):
 
 
 class LanguageUpdate(BaseModel):
-    name: str | None = None
+    name: LanguageName | None = None

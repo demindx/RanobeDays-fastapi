@@ -4,6 +4,16 @@ from pydantic import BaseModel, Field
 from src.config import config
 
 
+def is_not_whitespaces(value: str | None):
+    if value is None:
+        return value
+
+    if len(value) == 0 or value.isspace():
+        raise ValueError("string cannot be empty of whitespaces")
+
+    return value
+
+
 class GenericResponse[T](BaseModel):
     code: int = Field(default=status.HTTP_200_OK)
     message: str = Field(default="success")
