@@ -171,6 +171,44 @@ async def test_login_without_credentials(client):
     assert resp.status_code == 422
 
 
+async def test_login_rejects_empty_password(client):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": ""})
+
+    assert resp.status_code == 422
+
+
+async def test_login_rejects_whitespace_only_password(client):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": "   "})
+
+    assert resp.status_code == 422
+
+
+async def test_register_rejects_whitespace_only_password(client):
+    resp = await register(client, password=" " * 8)
+
+    assert resp.status_code == 422
+
+
+async def test_register_rejects_unknown_field(client):
+    resp = await client.post(
+        REGISTER,
+        json={
+            "login": "user1",
+            "email": "user1@example.com",
+            "nickname": "Nick",
+            "password1": "password123",
+            "password2": "password123",
+            "is_admin": True,
+        },
+    )
+
+    assert resp.status_code == 422
+
+
 async def test_refresh_with_valid_cookie(client):
     await register(client)
     login_resp = await client.post(

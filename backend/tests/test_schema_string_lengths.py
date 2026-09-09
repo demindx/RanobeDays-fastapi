@@ -2,12 +2,13 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from src.bookmark.schemas import BookmarkName
+from src.category.schemas import CategoryName
 from src.chapter.schemas import ChapterTitle
 from src.country.schemas import CountryName
 from src.language.schemas import LanguageName
 from src.novel.schemas import CoverPath, NovelSlug, NovelTitle
 from src.teams.schemas import TeamName
-from src.users.schemas import Login, UserEmail
+from src.users.schemas import Login, Nickname, UserEmail
 
 
 @pytest.mark.parametrize(
@@ -47,6 +48,25 @@ def test_string_type_accepts_database_length_limit(string_type, max_length):
 def test_string_type_rejects_value_over_database_limit(string_type, max_length):
     with pytest.raises(ValidationError):
         TypeAdapter(string_type).validate_python("a" * (max_length + 1))
+
+
+@pytest.mark.parametrize(
+    "string_type",
+    [
+        Login,
+        Nickname,
+        BookmarkName,
+        CategoryName,
+        ChapterTitle,
+        CountryName,
+        LanguageName,
+        NovelTitle,
+        TeamName,
+    ],
+)
+def test_input_string_type_rejects_whitespace_only_value(string_type):
+    with pytest.raises(ValidationError):
+        TypeAdapter(string_type).validate_python("   ")
 
 
 def test_email_accepts_database_length_limit():
