@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.config import config
+from src.core.dependencies import PaginationDep
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.language.dependencies import LanguageServiceDep
 from src.language.schemas import LanguageCreate, LanguageResponse, LanguageUpdate
@@ -10,16 +10,14 @@ router = APIRouter(prefix="/lang", tags=["language"])
 
 @router.get("/")
 async def get_languages(
-    service: LanguageServiceDep,
-    limit: int = config.DEFAULT_PAGINATION_LIMIT,
-    offset: int = 0,
+    service: LanguageServiceDep, pagination: PaginationDep
 ) -> GenericPaginationResponse[LanguageResponse]:
-    languages = await service.get_all(limit=limit, offset=offset)
+    languages = await service.get_all(pagination)
 
     languages = [LanguageResponse.model_validate(language) for language in languages]
 
     return GenericPaginationResponse[LanguageResponse](
-        data=languages, limit=limit, offset=offset
+        data=languages, limit=pagination.limit, offset=pagination.offset
     )
 
 
