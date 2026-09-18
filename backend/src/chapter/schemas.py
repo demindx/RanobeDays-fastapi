@@ -17,6 +17,8 @@ class ChapterCreate(BaseModel):
     novel_id: int
     team_id: int
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class ChapterUpdate(BaseModel):
     title: ChapterTitle | None = None
@@ -24,6 +26,8 @@ class ChapterUpdate(BaseModel):
     content: ChapterContent | None = None
 
     is_published: bool | None = None
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class ChapterResponse(BaseModel):
@@ -35,4 +39,4 @@ class ChapterResponse(BaseModel):
     is_published: bool
     created_at: datetime
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")

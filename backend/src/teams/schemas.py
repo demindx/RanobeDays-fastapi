@@ -15,10 +15,14 @@ class TeamCreate(BaseModel):
     name: TeamName
     type: TeamType
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class TeamUpdate(BaseModel):
     name: TeamName | None = None
     type: TeamType | None = None
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class TeamResponse(BaseModel):
@@ -26,16 +30,18 @@ class TeamResponse(BaseModel):
     name: TeamName
     type: TeamType
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
 
 
 class TeamUsersResponse(BaseModel):
     user: UserResponse
     role: TeamUserRole
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
 
 
 class TeamAddUser(BaseModel):
     user_id: int
     role: TeamUserRole
+
+    model_config = ConfigDict(extra="forbid")

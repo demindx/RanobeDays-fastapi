@@ -10,12 +10,16 @@ LanguageName = Annotated[
 class LanguageCreate(BaseModel):
     name: LanguageName
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class LanguageResponse(LanguageCreate):
     id: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
 
 
 class LanguageUpdate(BaseModel):
     name: LanguageName | None = None
+
+    model_config = ConfigDict(extra="forbid")

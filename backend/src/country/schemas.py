@@ -10,12 +10,16 @@ CountryName = Annotated[
 class CountryCreate(BaseModel):
     name: CountryName
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class CountryResponse(CountryCreate):
     id: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
 
 
 class CountryUpdate(BaseModel):
     name: CountryName | None = None
+
+    model_config = ConfigDict(extra="forbid")

@@ -49,13 +49,15 @@ class UserResponse(BaseModel):
     role: UserRoleEnum
     user_profile: UserProfileResponse
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
 
 
 class UserLogin(BaseModel):
     login: Login | None = None
     email: UserEmail | None = None
     password: PasswordInput
+
+    model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
     def validate_user_login(self) -> UserLogin:
@@ -77,6 +79,8 @@ class UserRegister(BaseModel):
     password1: NewPassword
     password2: NewPassword
 
+    model_config = ConfigDict(extra="forbid")
+
     @model_validator(mode="after")
     def validate_user(self) -> UserRegister:
         if self.password1 != self.password2:
@@ -92,6 +96,8 @@ class UserPasswordUpdate(BaseModel):
     password1: NewPassword
     password2: NewPassword
 
+    model_config = ConfigDict(extra="forbid")
+
     @model_validator(mode="after")
     def validate_password(self) -> UserPasswordUpdate:
         if self.password1 != self.password2:
@@ -105,14 +111,18 @@ class UserProfileCreate(BaseModel):
     nickname: Nickname
     readed_chapters: int = 0
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class UserProfileUpdate(BaseModel):
     nickname: Nickname | None = None
     readed_chapters: int | None = None
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class UserProfileResponse(BaseModel):
     nickname: Nickname
     readed_chapters: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")

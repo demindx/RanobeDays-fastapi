@@ -26,6 +26,8 @@ class NovelCreate(BaseModel):
     publish_date: datetime
     type: NovelType
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class NovelUpdate(BaseModel):
     title: NovelTitle | None = None
@@ -36,6 +38,8 @@ class NovelUpdate(BaseModel):
     publish_date: datetime | None = None
     type: NovelType | None = None
     status: NovelStatus | None = None
+
+    model_config = ConfigDict(extra="forbid")
 
 
 class NovelResponse(BaseModel):
@@ -52,4 +56,4 @@ class NovelResponse(BaseModel):
     country: CountryResponse
     categories: list[CategoryResponse]
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")

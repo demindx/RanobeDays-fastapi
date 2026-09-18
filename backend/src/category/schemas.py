@@ -11,13 +11,17 @@ class CategoryCreate(BaseModel):
     name: CategoryName
     type: CategoryTypeEnum
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class CategoryUpdate(BaseModel):
     name: CategoryName | None = None
     type: CategoryTypeEnum | None = None
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class CategoryResponse(CategoryCreate):
     id: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True)
+    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
