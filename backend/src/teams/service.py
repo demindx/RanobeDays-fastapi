@@ -2,6 +2,7 @@ from typing import override
 
 from src.config import config
 from src.core.exceptions import InvalidReference, NotFound
+from src.core.schemas import Pagination
 from src.core.service import AbstractService
 from src.novel.models import Novel
 from src.teams.models import Team, TeamUserRole, TeamUsers
@@ -32,10 +33,8 @@ class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository])
     async def remove_user(self, id: int, user_id: int) -> None:
         await self.repo.remove_user(id, user_id)
 
-    async def get_novels(
-        self, id: int, limit: int = config.DEFAULT_PAGINATION_LIMIT, offset: int = 0
-    ) -> list[Novel]:
-        return await self.repo.get_novels(id, limit=limit, offset=offset)
+    async def get_novels(self, id: int, pagination: Pagination) -> list[Novel]:
+        return await self.repo.get_novels(id, pagination)
 
     @override
     async def create(self, data: TeamCreate) -> Team:

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from src.core.models import Base
 from src.core.repository import AbstractRepository
+from src.core.schemas import Pagination
 
 
 class AbstractService[
@@ -22,8 +23,8 @@ class AbstractService[
     async def get_by_id(self, id: Any) -> ModelType:
         return await self.repo.get_by_id(id)
 
-    async def get_all(self, limit: int = 50, offset: int = 0) -> list[ModelType]:
-        return await self.repo.get_all(limit, offset)
+    async def get_all(self, pagination: Pagination = Pagination()) -> list[ModelType]:
+        return await self.repo.get_all(pagination)
 
     async def create(self, data: CreateSchema) -> ModelType:
         instance = self.repo.model.from_data(data)

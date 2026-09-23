@@ -1,7 +1,7 @@
 import { get, post, patch, del } from './client'
 
-export function fetchChapters() {
-  return get('/api/v1/chapter/')
+export function fetchChapters(options = {}) {
+  return get('/api/v1/chapter/?limit=100', options)
 }
 
 export function fetchChapterById(id) {

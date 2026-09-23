@@ -1,35 +1,40 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
 
+from pydantic import ConfigDict, StringConstraints
+
+from src.core.schemas import SchemaBase
 from src.teams.models import TeamType, TeamUserRole
 from src.users.schemas import UserResponse
 
+TeamName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+]
 
-class TeamCreate(BaseModel):
+
+class TeamCreate(SchemaBase):
     creator_id: int
-    name: str
+    name: TeamName
     type: TeamType
 
-
-class TeamUpdate(BaseModel):
-    name: str | None = None
+class TeamUpdate(SchemaBase):
+    name: TeamName | None = None
     type: TeamType | None = None
 
-
-class TeamResponse(BaseModel):
+class TeamResponse(SchemaBase):
     id: int
-    name: str
+    name: TeamName
     type: TeamType
 
     model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class TeamUsersResponse(BaseModel):
+class TeamUsersResponse(SchemaBase):
     user: UserResponse
     role: TeamUserRole
 
     model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class TeamAddUser(BaseModel):
+class TeamAddUser(SchemaBase):
     user_id: int
     role: TeamUserRole

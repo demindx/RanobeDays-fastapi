@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions import AlreadyExists, NotFound
 from src.core.models import Base
+from src.core.schemas import Pagination
 
 
 class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
@@ -25,7 +26,7 @@ class AbstractRepository[ModelType: Base[Any], UpdateSchema: BaseModel](ABC):
     async def get_by_id(self, id: Any) -> ModelType: ...
 
     @abstractmethod
-    async def get_all(self, limit: int, offset: int) -> list[ModelType]: ...
+    async def get_all(self, pagination: Pagination) -> list[ModelType]: ...
 
     @abstractmethod
     async def create(self, instance: ModelType) -> ModelType: ...
@@ -52,8 +53,8 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
         return result
 
     @override
-    async def get_all(self, limit: int, offset: int) -> list[ModelType]:
-        stmt = select(self.model).limit(limit).offset(offset)
+    async def get_all(self, pagination: Pagination) -> list[ModelType]:
+        stmt = select(self.model).limit(pagination.limit).offset(pagination.offset)
 
         result = (await self.session.execute(stmt)).scalars()
 

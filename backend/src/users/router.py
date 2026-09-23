@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
 from src.auth.dependencies import CurrentUser
-from src.core.dependencies import DbSession
-from src.core.schemas import GenericResponse
+from src.core.dependencies import DbSession, PaginationDep
+from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.users.dependencies import UserProfileServiceDep, UserServiceDep
 from src.users.schemas import (
     UserProfileResponse,
@@ -26,14 +26,16 @@ async def get_me(
 
 @router.get("/")
 async def get_users_handler(
-    service: UserServiceDep,
-) -> GenericResponse[list[UserResponse]]:
+    service: UserServiceDep, pagination: PaginationDep
+) -> GenericPaginationResponse[UserResponse]:
     """Get all users"""
-    users = await service.get_all()
+    users = await service.get_all(pagination)
 
     data = [UserResponse.model_validate(user) for user in users]
 
-    return GenericResponse[list[UserResponse]](data=data)
+    return GenericPaginationResponse[UserResponse](
+        data=data, offset=pagination.offset, limit=pagination.limit
+    )
 
 
 @router.get("/{id}")

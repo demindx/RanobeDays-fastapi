@@ -19,6 +19,8 @@ class Config(BaseSettings):
 
     COOKIE_SECURE: bool = False
 
+    MIN_PASSWORD_LEN: int = 8
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @model_validator(mode="after")

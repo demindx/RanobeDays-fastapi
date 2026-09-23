@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from src.category.dependencies import CategoryServiceDep
 from src.category.schemas import CategoryCreate, CategoryResponse, CategoryUpdate
-from src.config import config
+from src.core.dependencies import PaginationDep
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 
 router = APIRouter(prefix="/category", tags=["category"])
@@ -10,16 +10,14 @@ router = APIRouter(prefix="/category", tags=["category"])
 
 @router.get("/")
 async def get_categories(
-    service: CategoryServiceDep,
-    limit: int = config.DEFAULT_PAGINATION_LIMIT,
-    offset: int = 0,
+    service: CategoryServiceDep, pagination: PaginationDep
 ) -> GenericPaginationResponse[CategoryResponse]:
-    categories = await service.get_all(limit=limit, offset=offset)
+    categories = await service.get_all(pagination)
 
     categories = [CategoryResponse.model_validate(category) for category in categories]
 
     return GenericPaginationResponse[CategoryResponse](
-        data=categories, limit=limit, offset=offset
+        data=categories, limit=pagination.limit, offset=pagination.offset
     )
 
 

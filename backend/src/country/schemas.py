@@ -1,9 +1,16 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
+
+from pydantic import ConfigDict, StringConstraints
+
+from src.core.schemas import SchemaBase
+
+CountryName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)
+]
 
 
-class CountryCreate(BaseModel):
-    name: str
-
+class CountryCreate(SchemaBase):
+    name: CountryName
 
 class CountryResponse(CountryCreate):
     id: int
@@ -11,5 +18,5 @@ class CountryResponse(CountryCreate):
     model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class CountryUpdate(BaseModel):
-    name: str | None = None
+class CountryUpdate(SchemaBase):
+    name: CountryName | None = None

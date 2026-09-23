@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import httpx
+import pytest
 from sqlalchemy import update
 
 from src.auth.models import RefreshSession
@@ -149,6 +150,18 @@ async def test_login_by_email(client):
     assert resp.json()["data"]["access_token"]
 
 
+async def test_login_with_login_and_email(client):
+    resp = await client.post(
+        LOGIN,
+        json={
+            "login": "user1",
+            "email": "user1@example.com",
+            "password": "password123",
+        },
+    )
+    assert resp.status_code == 422
+
+
 async def test_login_missing_password(client):
     resp = await client.post(LOGIN, json={"login": "user1"})
     assert resp.status_code == 422
@@ -156,7 +169,61 @@ async def test_login_missing_password(client):
 
 async def test_login_without_credentials(client):
     resp = await client.post(LOGIN, json={"password": "x"})
-    assert resp.status_code == 404
+    assert resp.status_code == 422
+
+
+async def test_login_rejects_empty_password(client):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": ""})
+
+    assert resp.status_code == 422
+
+
+async def test_login_rejects_whitespace_only_password(client):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": "   "})
+
+    assert resp.status_code == 422
+
+
+@pytest.mark.parametrize("password", ["\t", "\n", " \t\n "])
+async def test_login_rejects_non_space_whitespace_password(client, password):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": password})
+
+    assert resp.status_code == 422
+
+
+async def test_register_rejects_whitespace_only_password(client):
+    resp = await register(client, password=" " * 8)
+
+    assert resp.status_code == 422
+
+
+@pytest.mark.parametrize("password", ["\t" * 8, "\n" * 8, " \t\n " * 2])
+async def test_register_rejects_non_space_whitespace_password(client, password):
+    resp = await register(client, password=password)
+
+    assert resp.status_code == 422
+
+
+async def test_register_rejects_unknown_field(client):
+    resp = await client.post(
+        REGISTER,
+        json={
+            "login": "user1",
+            "email": "user1@example.com",
+            "nickname": "Nick",
+            "password1": "password123",
+            "password2": "password123",
+            "is_admin": True,
+        },
+    )
+
+    assert resp.status_code == 422
 
 
 async def test_refresh_with_valid_cookie(client):

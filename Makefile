@@ -1,9 +1,10 @@
 COMPOSE ?= docker compose
 ALEMBIC := $(COMPOSE) run --rm --no-deps backend uv run alembic
+SEED := $(COMPOSE) run --rm --no-deps backend uv run python -m scripts.seed
 
 .DEFAULT_GOAL := help
 
-.PHONY: help db-up \
+.PHONY: help db-up db-seed \
 	alembic-help alembic-revision alembic-migration alembic-upgrade \
 	alembic-downgrade alembic-current alembic-history alembic-heads \
 	alembic-branches alembic-show alembic-check alembic-stamp \
@@ -28,6 +29,9 @@ help:
 
 db-up:
 	$(COMPOSE) up -d db
+
+db-seed: db-up
+	$(SEED)
 
 alembic-help:
 	$(ALEMBIC) --help

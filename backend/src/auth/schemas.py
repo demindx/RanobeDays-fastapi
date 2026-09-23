@@ -1,28 +1,24 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel
+from src.core.schemas import SchemaBase
 
 
-class Tokens(BaseModel):
+class Tokens(SchemaBase):
     access_token: str
     refresh_token: uuid.UUID
 
-
-class TokenResponse(BaseModel):
+class TokenResponse(SchemaBase):
     access_token: str
 
-
-class TokenData(BaseModel):
+class TokenData(SchemaBase):
     sub: int
     exp: datetime
 
-
-class RefreshRequest(BaseModel):
+class RefreshRequest(SchemaBase):
     refresh_token: uuid.UUID
 
-
-class RefreshSessionCreate(BaseModel):
+class RefreshSessionCreate(SchemaBase):
     refresh_token: uuid.UUID
     expires_in: int
     user_id: int

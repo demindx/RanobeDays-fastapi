@@ -1,31 +1,37 @@
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import ConfigDict, StringConstraints
+
+from src.core.schemas import SchemaBase
+
+ChapterTitle = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)
+]
+ChapterContent = Annotated[str, StringConstraints(min_length=1)]
 
 
-class ChapterCreate(BaseModel):
-    title: str
+class ChapterCreate(SchemaBase):
+    title: ChapterTitle
     number: int
-    content: str
+    content: ChapterContent
 
     novel_id: int
     team_id: int
 
-
-class ChapterUpdate(BaseModel):
-    title: str | None = None
+class ChapterUpdate(SchemaBase):
+    title: ChapterTitle | None = None
     number: int | None = None
-    content: str | None = None
+    content: ChapterContent | None = None
 
     is_published: bool | None = None
 
-
-class ChapterResponse(BaseModel):
+class ChapterResponse(SchemaBase):
     id: int
     novel_id: int
-    title: str
+    title: ChapterTitle
     number: int
-    content: str
+    content: ChapterContent
     is_published: bool
     created_at: datetime
 

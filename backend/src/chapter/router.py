@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from src.chapter.dependencies import ChapterServiceDep
 from src.chapter.schemas import ChapterCreate, ChapterResponse, ChapterUpdate
 from src.config import config
+from src.core.dependencies import PaginationDep
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 
 router = APIRouter(prefix="/chapter", tags=["chapter"])
@@ -10,19 +11,17 @@ router = APIRouter(prefix="/chapter", tags=["chapter"])
 
 @router.get("/")
 async def get_chapters(
-    service: ChapterServiceDep,
-    limit: int = config.DEFAULT_PAGINATION_LIMIT,
-    offset: int = 0,
+    service: ChapterServiceDep, pagination: PaginationDep
 ) -> GenericPaginationResponse[ChapterResponse]:
     """
     Returns list of all chapters
     """
-    chapters = await service.get_all(limit=limit, offset=offset)
+    chapters = await service.get_all(pagination)
 
     chapters = [ChapterResponse.model_validate(chapter) for chapter in chapters]
 
     return GenericPaginationResponse[ChapterResponse](
-        data=chapters, limit=limit, offset=offset
+        data=chapters, limit=pagination.limit, offset=pagination.offset
     )
 
 
@@ -72,5 +71,6 @@ async def delete_chapter(id: int, service: ChapterServiceDep):
     """
 
     await service.delete(id)
+
 
 # TODO: make get all novel chapters

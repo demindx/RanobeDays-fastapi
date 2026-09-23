@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.config import config
 from src.core.exceptions import AlreadyExists
 from src.core.repository import PostgresRepository
+from src.core.schemas import Pagination
 from src.novel.models import Novel
 from src.teams.models import Team, TeamUsers
 from src.teams.schemas import TeamAddUser, TeamUpdate
@@ -62,11 +63,9 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
         _ = await self.session.execute(stmt)
         await self.session.flush()
 
-    async def get_novels(
-        self, id: int, limit: int = config.DEFAULT_PAGINATION_LIMIT, offset: int = 0
-    ) -> list[Novel]:
+    async def get_novels(self, id: int, pagination: Pagination) -> list[Novel]:
         team = await self.get_by_id(id)
 
         _ = await self.session.run_sync(lambda sess: team.novels)
 
-        return team.novels[offset:limit:]
+        return team.novels[pagination.offset : pagination.offset + pagination.limit :]
