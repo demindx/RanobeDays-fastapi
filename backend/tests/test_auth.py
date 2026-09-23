@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import httpx
+import pytest
 from sqlalchemy import update
 
 from src.auth.models import RefreshSession
@@ -187,8 +188,24 @@ async def test_login_rejects_whitespace_only_password(client):
     assert resp.status_code == 422
 
 
+@pytest.mark.parametrize("password", ["\t", "\n", " \t\n "])
+async def test_login_rejects_non_space_whitespace_password(client, password):
+    await register(client)
+
+    resp = await client.post(LOGIN, json={"login": "user1", "password": password})
+
+    assert resp.status_code == 422
+
+
 async def test_register_rejects_whitespace_only_password(client):
     resp = await register(client, password=" " * 8)
+
+    assert resp.status_code == 422
+
+
+@pytest.mark.parametrize("password", ["\t" * 8, "\n" * 8, " \t\n " * 2])
+async def test_register_rejects_non_space_whitespace_password(client, password):
+    resp = await register(client, password=password)
 
     assert resp.status_code == 422
 
