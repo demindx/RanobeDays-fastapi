@@ -6,7 +6,6 @@ from pydantic import (
     EmailStr,
     Field,
     StringConstraints,
-    ValidationError,
     model_validator,
 )
 
@@ -27,6 +26,12 @@ UserEmail = Annotated[EmailStr, Field(max_length=100)]
 
 
 def validate_bcrypt_password(value: str) -> str:
+    if len(value) == 0:
+        raise ValueError("Password cannot be empty")
+
+    if value.isspace():
+        raise ValueError("Password cannot contain only whitespace")
+
     if len(value.encode("utf-8")) > 72:
         raise ValueError("Password must not exceed 72 bytes")
 
@@ -36,6 +41,9 @@ def validate_bcrypt_password(value: str) -> str:
 def validate_new_password(value: str) -> str:
     if len(value) < config.MIN_PASSWORD_LEN:
         raise ValueError(f"Password must contain at least {config.MIN_PASSWORD_LEN}")
+
+    if value.isspace():
+        raise ValueError("Password cannot contain only whitespace")
 
     return validate_bcrypt_password(value)
 
@@ -95,7 +103,7 @@ class UserPasswordUpdate(SchemaBase):
     @model_validator(mode="after")
     def validate_password(self) -> UserPasswordUpdate:
         if self.password1 != self.password2:
-            raise ValidationError("Passwords mismatch")
+            raise ValueError("Passwords mismatch")
 
         return self
 
@@ -105,9 +113,11 @@ class UserProfileCreate(SchemaBase):
     nickname: Nickname
     readed_chapters: int = 0
 
+
 class UserProfileUpdate(SchemaBase):
     nickname: Nickname | None = None
     readed_chapters: int | None = None
+
 
 class UserProfileResponse(SchemaBase):
     nickname: Nickname
