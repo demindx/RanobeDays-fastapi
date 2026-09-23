@@ -1,38 +1,24 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from src.core.schemas import SchemaBase
 
 
-class Tokens(BaseModel):
+class Tokens(SchemaBase):
     access_token: str
     refresh_token: uuid.UUID
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class TokenResponse(BaseModel):
+class TokenResponse(SchemaBase):
     access_token: str
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class TokenData(BaseModel):
+class TokenData(SchemaBase):
     sub: int
     exp: datetime
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class RefreshRequest(BaseModel):
+class RefreshRequest(SchemaBase):
     refresh_token: uuid.UUID
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class RefreshSessionCreate(BaseModel):
+class RefreshSessionCreate(SchemaBase):
     refresh_token: uuid.UUID
     expires_in: int
     user_id: int
-
-    model_config = ConfigDict(extra="forbid")

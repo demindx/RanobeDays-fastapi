@@ -1,7 +1,8 @@
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import ConfigDict, StringConstraints
 
+from src.core.schemas import SchemaBase
 from src.teams.models import TeamType, TeamUserRole
 from src.users.schemas import UserResponse
 
@@ -10,38 +11,30 @@ TeamName = Annotated[
 ]
 
 
-class TeamCreate(BaseModel):
+class TeamCreate(SchemaBase):
     creator_id: int
     name: TeamName
     type: TeamType
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class TeamUpdate(BaseModel):
+class TeamUpdate(SchemaBase):
     name: TeamName | None = None
     type: TeamType | None = None
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class TeamResponse(BaseModel):
+class TeamResponse(SchemaBase):
     id: int
     name: TeamName
     type: TeamType
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class TeamUsersResponse(BaseModel):
+class TeamUsersResponse(SchemaBase):
     user: UserResponse
     role: TeamUserRole
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class TeamAddUser(BaseModel):
+class TeamAddUser(SchemaBase):
     user_id: int
     role: TeamUserRole
-
-    model_config = ConfigDict(extra="forbid")

@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import ConfigDict, StringConstraints
 
 from src.category.schemas import CategoryResponse
+from src.core.schemas import SchemaBase
 from src.country.schemas import CountryResponse
 from src.language.schemas import LanguageResponse
 from src.novel.models import NovelStatus, NovelType
@@ -16,7 +17,7 @@ CoverPath = Annotated[str, StringConstraints(min_length=1, max_length=255)]
 NovelDescription = Annotated[str, StringConstraints(min_length=1)]
 
 
-class NovelCreate(BaseModel):
+class NovelCreate(SchemaBase):
     title: NovelTitle
     age_limit: int
     team_id: int
@@ -26,10 +27,7 @@ class NovelCreate(BaseModel):
     publish_date: datetime
     type: NovelType
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class NovelUpdate(BaseModel):
+class NovelUpdate(SchemaBase):
     title: NovelTitle | None = None
     age_limit: int | None = None
     language_id: int | None = None
@@ -39,10 +37,7 @@ class NovelUpdate(BaseModel):
     type: NovelType | None = None
     status: NovelStatus | None = None
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class NovelResponse(BaseModel):
+class NovelResponse(SchemaBase):
     id: int
     title: NovelTitle
     slug: NovelSlug
@@ -56,4 +51,4 @@ class NovelResponse(BaseModel):
     country: CountryResponse
     categories: list[CategoryResponse]
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

@@ -1,27 +1,22 @@
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import ConfigDict, StringConstraints
 
 from src.category.model import CategoryTypeEnum
+from src.core.schemas import SchemaBase
 
 CategoryName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
-class CategoryCreate(BaseModel):
+class CategoryCreate(SchemaBase):
     name: CategoryName
     type: CategoryTypeEnum
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class CategoryUpdate(BaseModel):
+class CategoryUpdate(SchemaBase):
     name: CategoryName | None = None
     type: CategoryTypeEnum | None = None
-
-    model_config = ConfigDict(extra="forbid")
-
 
 class CategoryResponse(CategoryCreate):
     id: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

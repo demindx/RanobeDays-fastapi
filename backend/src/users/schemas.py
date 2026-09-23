@@ -2,7 +2,6 @@ from typing import Annotated
 
 from pydantic import (
     AfterValidator,
-    BaseModel,
     ConfigDict,
     EmailStr,
     Field,
@@ -12,6 +11,7 @@ from pydantic import (
 )
 
 from src.config import config
+from src.core.schemas import SchemaBase
 from src.users.models import UserRoleEnum
 
 Login = Annotated[
@@ -44,20 +44,18 @@ PasswordInput = Annotated[str, AfterValidator(validate_bcrypt_password)]
 NewPassword = Annotated[str, AfterValidator(validate_new_password)]
 
 
-class UserResponse(BaseModel):
+class UserResponse(SchemaBase):
     email: UserEmail
     role: UserRoleEnum
     user_profile: UserProfileResponse
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)
 
 
-class UserLogin(BaseModel):
+class UserLogin(SchemaBase):
     login: Login | None = None
     email: UserEmail | None = None
     password: PasswordInput
-
-    model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
     def validate_user_login(self) -> UserLogin:
@@ -71,15 +69,13 @@ class UserLogin(BaseModel):
         return self
 
 
-class UserRegister(BaseModel):
+class UserRegister(SchemaBase):
     login: Login
     email: UserEmail
     nickname: Nickname
 
     password1: NewPassword
     password2: NewPassword
-
-    model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
     def validate_user(self) -> UserRegister:
@@ -92,11 +88,9 @@ class UserRegister(BaseModel):
         return self.password1
 
 
-class UserPasswordUpdate(BaseModel):
+class UserPasswordUpdate(SchemaBase):
     password1: NewPassword
     password2: NewPassword
-
-    model_config = ConfigDict(extra="forbid")
 
     @model_validator(mode="after")
     def validate_password(self) -> UserPasswordUpdate:
@@ -106,23 +100,17 @@ class UserPasswordUpdate(BaseModel):
         return self
 
 
-class UserProfileCreate(BaseModel):
+class UserProfileCreate(SchemaBase):
     user_id: int
     nickname: Nickname
     readed_chapters: int = 0
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class UserProfileUpdate(BaseModel):
+class UserProfileUpdate(SchemaBase):
     nickname: Nickname | None = None
     readed_chapters: int | None = None
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class UserProfileResponse(BaseModel):
+class UserProfileResponse(SchemaBase):
     nickname: Nickname
     readed_chapters: int
 
-    model_config: ConfigDict = ConfigDict(from_attributes=True, extra="forbid")
+    model_config: ConfigDict = ConfigDict(from_attributes=True)

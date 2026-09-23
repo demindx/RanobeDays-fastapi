@@ -1,38 +1,28 @@
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import StringConstraints
+
+from src.core.schemas import SchemaBase
 
 BookmarkName = Annotated[
     str, StringConstraints(strip_whitespace=True, min_length=1, max_length=150)
 ]
 
 
-class BookmarkCreate(BaseModel):
+class BookmarkCreate(SchemaBase):
     name: BookmarkName
     is_public: bool = True
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class BookmarkUpdate(BaseModel):
+class BookmarkUpdate(SchemaBase):
     name: BookmarkName | None = None
     is_public: bool | None = None
 
-    model_config = ConfigDict(extra="forbid")
-
-
-class BookmarkItemCreate(BaseModel):
+class BookmarkItemCreate(SchemaBase):
     novel_id: int
 
-    model_config = ConfigDict(extra="forbid")
+class BookmarkItemResponse(SchemaBase):
+    pass
 
-
-class BookmarkItemResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-
-class BookmarkResponse(BaseModel):
+class BookmarkResponse(SchemaBase):
     name: BookmarkName
     items: list[BookmarkItemResponse]
-
-    model_config = ConfigDict(extra="forbid")
