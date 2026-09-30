@@ -43,7 +43,7 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
 ):
     @override
     async def get_by_id(self, id: int | uuid.UUID) -> ModelType:
-        stmt = select(self.model).where(self.model.id == id)
+        stmt = select(self.model).where(self.model.id == id).order_by(self.model.id)
 
         try:
             result = (await self.session.execute(stmt)).scalar_one()
@@ -67,10 +67,10 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
             await self.session.flush()
             await self.session.refresh(instance)
         except IntegrityError as e:
-            err = str(e)
+            sqlstate = getattr(e.orig, "sqlstate", None)
 
-            if "unique" in err:
-                raise AlreadyExists(self.model)
+            if sqlstate == "23505":  # unique violation
+                raise AlreadyExists(self.model) from e
 
             raise
 

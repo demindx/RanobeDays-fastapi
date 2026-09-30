@@ -2,7 +2,6 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.config import config
 from src.core.exceptions import AlreadyExists
 from src.core.repository import PostgresRepository
 from src.core.schemas import Pagination
@@ -17,26 +16,41 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def get_by_creator_id(self, id: int) -> list[Team]:
-        stmt = select(Team).where(Team.creator_id == id)
-
-        result = await self.session.scalars(stmt)
-
-        return list(result.all())
-
-    async def get_user_teams(self, id: int) -> list[Team]:
+    async def get_by_creator_id(self, id: int, pagination: Pagination) -> list[Team]:
         stmt = (
             select(Team)
-            .join(TeamUsers, Team.id == TeamUsers.team_id)
-            .where(TeamUsers.user_id == id)
+            .where(Team.creator_id == id)
+            .order_by(Team.id)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
         )
 
         result = await self.session.scalars(stmt)
 
         return list(result.all())
 
-    async def get_team_users(self, id: int) -> list[TeamUsers]:
-        stmt = select(TeamUsers).where(TeamUsers.team_id == id)
+    async def get_user_teams(self, id: int, pagination: Pagination) -> list[Team]:
+        stmt = (
+            select(Team)
+            .join(TeamUsers, Team.id == TeamUsers.team_id)
+            .order_by(Team.id)
+            .where(TeamUsers.user_id == id)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+        )
+
+        result = await self.session.scalars(stmt)
+
+        return list(result.all())
+
+    async def get_team_users(self, id: int, pagination: Pagination) -> list[TeamUsers]:
+        stmt = (
+            select(TeamUsers)
+            .where(TeamUsers.team_id == id)
+            .order_by(TeamUsers.user_id)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+        )
 
         return list((await self.session.scalars(stmt)).all())
 
@@ -64,8 +78,13 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
         await self.session.flush()
 
     async def get_novels(self, id: int, pagination: Pagination) -> list[Novel]:
-        team = await self.get_by_id(id)
+        stmt = (
+            select(Novel)
+            .where(Novel.team_id == id)
+            .order_by(Novel.id)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+        )
+        novels = await self.session.scalars(stmt)
 
-        _ = await self.session.run_sync(lambda sess: team.novels)
-
-        return team.novels[pagination.offset : pagination.offset + pagination.limit :]
+        return list(novels.all())

@@ -1,6 +1,5 @@
 from typing import override
 
-from src.config import config
 from src.core.exceptions import InvalidReference, NotFound
 from src.core.schemas import Pagination
 from src.core.service import AbstractService
@@ -24,8 +23,8 @@ class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository])
     async def get_user_teams(self, id: int) -> list[Team]:
         return await self.repo.get_user_teams(id)
 
-    async def get_users(self, id: int) -> list[TeamUsers]:
-        return await self.repo.get_team_users(id)
+    async def get_users(self, id: int, pagination: Pagination) -> list[TeamUsers]:
+        return await self.repo.get_team_users(id, pagination)
 
     async def add_user(self, id: int, data: TeamAddUser):
         await self.repo.add_user(id, data)

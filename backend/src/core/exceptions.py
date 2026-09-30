@@ -18,9 +18,7 @@ class AppException(Exception):
 
 class AlreadyExists(AppException):
     def __init__(self, model: type[Base[Any]]):
-        super().__init__(
-            f"{model.__name__} already exists", status.HTTP_400_BAD_REQUEST
-        )
+        super().__init__(f"{model.__name__} already exists", status.HTTP_409_CONFLICT)
 
 
 class NotFound(AppException):
