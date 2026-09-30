@@ -55,6 +55,8 @@ async def test_get_team_users(client, seed):
     resp = await client.get(f"/api/v1/teams/{team.id}/users")
     assert resp.status_code == 200
     assert len(resp.json()["data"]) == 1
+    assert resp.json()["limit"] == 50
+    assert resp.json()["offset"] == 0
 
 
 async def test_add_user_to_team(client, seed):
@@ -124,6 +126,21 @@ async def test_get_team_users_empty(client, seed):
     resp = await client.get(f"/api/v1/teams/{team.id}/users")
     assert resp.status_code == 200
     assert resp.json()["data"] == []
+
+
+async def test_get_team_users_pagination(client, seed):
+    user, _ = await seed.user()
+    team = await seed.team(user.id)
+    user2, _ = await seed.user(login="user2", email="user2@example.com")
+    await seed.membership(team.id, user.id)
+    await seed.membership(team.id, user2.id)
+
+    resp = await client.get(f"/api/v1/teams/{team.id}/users?limit=1&offset=1")
+
+    assert resp.status_code == 200
+    assert len(resp.json()["data"]) == 1
+    assert resp.json()["limit"] == 1
+    assert resp.json()["offset"] == 1
 
 
 async def test_get_team_novels_empty(client, seed):
