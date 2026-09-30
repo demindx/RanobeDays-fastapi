@@ -78,7 +78,7 @@ async def test_add_duplicate_user_to_team(client, seed):
     resp = await client.patch(
         f"/api/v1/teams/{team.id}/users", json={"user_id": user.id, "role": "manager"}
     )
-    assert resp.status_code == 400
+    assert resp.status_code == 409
 
 
 async def test_remove_user_from_team(client, seed):
