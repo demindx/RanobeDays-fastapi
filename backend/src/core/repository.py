@@ -54,7 +54,12 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
 
     @override
     async def get_all(self, pagination: Pagination) -> list[ModelType]:
-        stmt = select(self.model).limit(pagination.limit).offset(pagination.offset)
+        stmt = (
+            select(self.model)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .order_by(self.model.id)
+        )
 
         result = (await self.session.execute(stmt)).scalars()
 
@@ -91,10 +96,10 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
             await self.session.flush()
             await self.session.refresh(instance)
         except IntegrityError as e:
-            err = str(e)
+            sqlstate = getattr(e.orig, "sqlstate", None)
 
-            if "unique" in err:
-                raise AlreadyExists(self.model)
+            if sqlstate == "23505":  # unique violation
+                raise AlreadyExists(self.model) from e
 
             raise
 
@@ -104,5 +109,5 @@ class PostgresRepository[ModelType: Base[Any], UpdateSchema: BaseModel](
     async def delete(self, id: int | uuid.UUID) -> None:
         stmt = delete(self.model).where(self.model.id == id)
 
-        await self.session.execute(stmt)
+        _ = await self.session.execute(stmt)
         await self.session.flush()

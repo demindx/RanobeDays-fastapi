@@ -17,11 +17,11 @@ class TeamService(AbstractService[Team, TeamCreate, TeamUpdate, TeamRepository])
 
         self._user_repo: UserRepository = user_repo
 
-    async def get_by_creator_id(self, id: int) -> list[Team]:
-        return await self.repo.get_by_creator_id(id)
+    async def get_by_creator_id(self, id: int, pagiantion: Pagination) -> list[Team]:
+        return await self.repo.get_by_creator_id(id, pagiantion)
 
-    async def get_user_teams(self, id: int) -> list[Team]:
-        return await self.repo.get_user_teams(id)
+    async def get_user_teams(self, id: int, pagiantion: Pagination) -> list[Team]:
+        return await self.repo.get_user_teams(id, pagiantion)
 
     async def get_users(self, id: int, pagination: Pagination) -> list[TeamUsers]:
         return await self.repo.get_team_users(id, pagination)

@@ -60,10 +60,10 @@ class TeamRepository(PostgresRepository[Team, TeamUpdate]):
             self.session.add(connection)
             await self.session.flush()
         except IntegrityError as e:
-            err = str(e)
+            sqlstate = getattr(e.orig, "sqlstate", None)
 
-            if "unique" in err:
-                raise AlreadyExists(TeamUsers)
+            if sqlstate == "23505":  # unique violation
+                raise AlreadyExists(self.model) from e
 
             raise
 
