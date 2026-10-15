@@ -39,7 +39,7 @@ async def test_register_success(client):
 async def test_register_duplicate_login(client):
     await register(client)
     resp = await register(client)
-    assert resp.status_code == 400
+    assert resp.status_code == 409
 
 
 async def test_register_password_mismatch(client):
@@ -137,7 +137,7 @@ async def test_register_missing_password(client):
 async def test_register_duplicate_email(client):
     await register(client, login="user1", email="dup@example.com")
     resp = await register(client, login="user2", email="dup@example.com")
-    assert resp.status_code == 400
+    assert resp.status_code == 409
 
 
 async def test_login_by_email(client):

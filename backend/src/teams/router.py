@@ -1,11 +1,9 @@
 from fastapi import APIRouter
 
-from src.config import config
 from src.core.dependencies import PaginationDep
 from src.core.schemas import GenericPaginationResponse, GenericResponse
 from src.novel.schemas import NovelResponse
 from src.teams.dependencies import TeamServiceDep
-from src.teams.models import TeamUsers
 from src.teams.schemas import (
     TeamAddUser,
     TeamCreate,
@@ -68,13 +66,15 @@ async def delete_team_handler(service: TeamServiceDep, id: int) -> None:
 
 @router.get("/{id}/users")
 async def get_team_users(
-    service: TeamServiceDep, id: int
-) -> GenericResponse[list[TeamUsersResponse]]:
-    team_users = await service.get_users(id)
+    service: TeamServiceDep, id: int, pagination: PaginationDep
+) -> GenericPaginationResponse[TeamUsersResponse]:
+    team_users = await service.get_users(id, pagination)
 
     data = [TeamUsersResponse.model_validate(item) for item in team_users]
 
-    return GenericResponse[list[TeamUsersResponse]](data=data)
+    return GenericPaginationResponse[TeamUsersResponse](
+        data=data, limit=pagination.limit, offset=pagination.offset
+    )
 
 
 @router.patch("/{id}/users")

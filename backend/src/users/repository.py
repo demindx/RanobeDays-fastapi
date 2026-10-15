@@ -25,10 +25,10 @@ class UserRepository(PostgresRepository[User, UserPasswordUpdate]):
             await self.session.flush()
             await self.session.refresh(instance)
         except IntegrityError as e:
-            err = str(e)
+            sqlstate = getattr(e.orig, "sqlstate", None)
 
-            if "unique" in err:
-                raise AlreadyExists(self.model)
+            if sqlstate == "23505":  # unique violation
+                raise AlreadyExists(self.model) from e
 
             raise
 
